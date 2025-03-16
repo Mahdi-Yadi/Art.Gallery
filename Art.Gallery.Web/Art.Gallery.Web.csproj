@@ -6,4 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\" />
+    <Folder Include="Areas\AdminPanel\Controllers\" />
+    <Folder Include="Areas\AdminPanel\Views\" />
+    <Folder Include="Areas\UserPanel\Controllers\" />
+    <Folder Include="Areas\UserPanel\Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+  </ItemGroup>
+
 </Project>
