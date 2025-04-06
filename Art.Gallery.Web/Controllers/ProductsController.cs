@@ -23,3 +23,21 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 }
+
+[ApiController]
+[Route("api/[controller]")]
+public class SampleController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get()
+    {
+        var data = new
+        {
+            id = 1,
+            name = "سلام از دات‌نت!",
+            message = "این یک پیام تستی است."
+        };
+
+        return Ok(data);
+    }
+}
