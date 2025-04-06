@@ -1,5 +1,22 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Art.Gallery.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
+var builder = WebApplication.CreateBuilder(args);
+
+#region Data Base
+
+var connectionString = "Data Source=.;Initial Catalog=ArtGallery;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
+//var connectionString = "Server=121243;Initial Catalog=artdb;User Id=use;Password=ee2ews;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
+builder.Services.AddDbContext<SiteDBContext>(options =>
+{
+    options.UseSqlServer(connectionString,
+        o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "TechnotoBlog"));
+});
+
+#endregion
+
+builder.Services.AddAuthorization();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
@@ -11,7 +28,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
 });
 
