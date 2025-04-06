@@ -14,6 +14,7 @@ public class LoginDto
 public enum AccountResult
 {
     Success,
+    Exist,
     Null,
     Error
 }

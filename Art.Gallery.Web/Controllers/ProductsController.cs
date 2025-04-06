@@ -11,7 +11,7 @@ namespace Art.Gallery.Web.Controllers;
 public class ProductsController : ControllerBase
 {
     [HttpGet]
-    public IActionResult GetProducts()
+    public IActionResult Get()
     {
         var products = new List<object>
         {

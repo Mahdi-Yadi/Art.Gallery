@@ -15,6 +15,10 @@ public class User : BaseEntity
     [Required]
     [DataType(DataType.Password)]
     public string Password { get; set; }
+    [MaxLength(300)]
+    [Required]
+    [DataType(DataType.Password)]
+    public string Salt { get; set; }
     public bool IsActive  { get; set; }
     public bool IsAdmin  { get; set; }
 }

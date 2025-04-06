@@ -5,7 +5,7 @@ public interface IAccountService
 
     AccountResult Register(RegisterDto dto);
     AccountResult Login(LoginDto dto);
-    AccountResult Forgot(LoginDto dto);
-    AccountResult Reset(LoginDto dto);
+    AccountResult Forgot(ForgotPasswordDto dto);
+    AccountResult Reset(ResetPasswordDto dto);
 
 }
