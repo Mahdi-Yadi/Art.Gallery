@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Art.Gallery.Web", "Art.Gallery.Web\Art.Gallery.Web.csproj", "{F4A6439F-6C40-4129-9B2A-6F69F2C42CF6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Art.Gallery.Common", "Art.Gallery.Common\Art.Gallery.Common.csproj", "{C301214D-9297-48DD-B09D-864BB5D25DA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Art.Gallery.Core", "Art.Gallery.Core\Art.Gallery.Core.csproj", "{3856E6CD-3F94-404C-9466-5EA798BC66D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Art.Gallery.Data", "Art.Gallery.Data\Art.Gallery.Data.csproj", "{BEF62F3D-0BB9-485A-ADCE-0EC6A23539DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Art.Gallery.Web.Api", "Art.Gallery.Web.Api\Art.Gallery.Web.Api.csproj", "{79BB8C03-AEFC-4161-812E-9B3A38658AB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F4A6439F-6C40-4129-9B2A-6F69F2C42CF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4A6439F-6C40-4129-9B2A-6F69F2C42CF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4A6439F-6C40-4129-9B2A-6F69F2C42CF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4A6439F-6C40-4129-9B2A-6F69F2C42CF6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C301214D-9297-48DD-B09D-864BB5D25DA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C301214D-9297-48DD-B09D-864BB5D25DA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C301214D-9297-48DD-B09D-864BB5D25DA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +29,10 @@ Global
 		{BEF62F3D-0BB9-485A-ADCE-0EC6A23539DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEF62F3D-0BB9-485A-ADCE-0EC6A23539DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEF62F3D-0BB9-485A-ADCE-0EC6A23539DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79BB8C03-AEFC-4161-812E-9B3A38658AB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79BB8C03-AEFC-4161-812E-9B3A38658AB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79BB8C03-AEFC-4161-812E-9B3A38658AB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79BB8C03-AEFC-4161-812E-9B3A38658AB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

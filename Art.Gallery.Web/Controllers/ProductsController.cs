@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Controllers;
+
 /// <summary>
 /// www.technoto.org/api/Products/GetProducts
 /// https://localhost:44350/api/Products/GetProducts
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class ProductsController : ControllerBase
+public class apiProductsController : ControllerBase
 {
     [HttpGet]
     public IActionResult Get()
