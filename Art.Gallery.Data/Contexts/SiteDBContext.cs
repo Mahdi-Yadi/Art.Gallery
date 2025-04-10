@@ -14,6 +14,9 @@ public class SiteDBContext : DbContext
 
     public DbSet<User> Users { get; set; }
 
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+
     #region on model creating
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
