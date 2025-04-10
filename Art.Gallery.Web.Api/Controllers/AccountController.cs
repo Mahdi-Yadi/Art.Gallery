@@ -3,6 +3,7 @@ using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Web.Api.Http;
 using Art.Gallery.Web.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,8 +30,11 @@ public class AccountController : ControllerBase
 
     #endregion
 
+    //Access to XMLHttpRequest at 'http://localhost:5162/register' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
+
     #region Register
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public IActionResult Register([FromBody] RegisterDto dto)
     {

@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Web.Api.Http;
 using Art.Gallery.Web.Api.Models;
@@ -57,6 +57,16 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // اگر کوکی یا header خاص استفاده می‌کنید
+    });
+});
 
 var app = builder.Build();
 
@@ -66,6 +76,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
