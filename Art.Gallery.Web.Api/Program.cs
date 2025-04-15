@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Web.Api.Http;
 using Art.Gallery.Web.Api.Models;
@@ -12,15 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 // اضافه کردن CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000") // آدرس React
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
-
 #region Data Base
 
 //var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
@@ -33,7 +32,7 @@ builder.Services.AddDbContext<SiteDBContext>(options =>
 
 #endregion
 
-
+builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
