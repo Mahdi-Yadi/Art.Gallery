@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Art.Gallery.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class addtoken : Migration
+    public partial class adddb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,7 @@ namespace Art.Gallery.Data.Migrations
                     IsRevoked = table.Column<bool>(type: "bit", nullable: false),
                     IsUsed = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
