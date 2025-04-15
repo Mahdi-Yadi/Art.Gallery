@@ -9,6 +9,18 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// اضافه کردن CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // آدرس React
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 #region Data Base
 
 //var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
@@ -55,26 +67,16 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<TokenService>();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials(); // اگر کوکی یا header خاص استفاده می‌کنید
-    });
-});
-
 var app = builder.Build();
+
+// فعال کردن CORS
+app.UseCors("AllowReactApp");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
-app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
