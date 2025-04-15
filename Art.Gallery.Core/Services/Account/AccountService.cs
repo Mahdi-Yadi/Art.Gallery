@@ -35,6 +35,8 @@ public class AccountService : IAccountService
         u.UserName = san.Sanitize(dto.UserName);
         u.IsActive = false;
         u.IsAdmin = false;
+        u.CreateDate = DateTime.Now;
+        u.UpdateDate = DateTime.Now;
 
         _db.Users.Add(u);
         _db.SaveChanges();

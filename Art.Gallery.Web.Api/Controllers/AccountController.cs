@@ -43,7 +43,12 @@ public class AccountController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
+            return BadRequest(new
+            {
+                status = "ValidationError",
+                message = "داده‌های وارد شده نامعتبر هستند.",
+                errors = ModelState
+            });
         }
 
         var res = _accountService.Register(dto);
@@ -53,26 +58,39 @@ public class AccountController : ControllerBase
             case AccountResult.Success:
                 return Ok(new
                 {
+                    status = "Success",
                     message = "ثبت‌نام با موفقیت انجام شد.",
+                    code = res
                 });
             case AccountResult.Error:
                 return Ok(new
                 {
+                    status = "Error",
                     message = "خطایی رخ داده",
+                    code = res
                 });
             case AccountResult.Null:
                 return Ok(new
                 {
+                    status = "InvalidData",
                     message = "اطلاعات وارد شده صحیح نیست!",
+                    code = res
                 });
             case AccountResult.Exist:
                 return Ok(new
                 {
+                    status = "UserExists",
                     message = "کاربر وارد شده از قبل ثبت نام کرده است.",
+                    code = res
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown",
+                    message = "خطای ناشناخته!",
+                    code = res
                 });
         }
-
-        return BadRequest();
     }
 
     #endregion
@@ -84,9 +102,9 @@ public class AccountController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
+
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
-        if (user != null && user.Password == loginDto.Password) 
+        if (user != null && user.Password == loginDto.Password)
         {
             var jwt = _tokenService.GenerateJwtToken(user.Id);
             var refresh = await _tokenService.GenerateRefreshTokenAsync(user.Id);
