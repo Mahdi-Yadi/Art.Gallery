@@ -11,20 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Data Base
 
-var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
-//var connectionString = "Server=1;Initial Catalog=ArtGalleryDB;User Id=username;Password=1234;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
+//var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
+var connectionString = "Server=31.25.90.164\\sqlserver2022;Initial Catalog=technoto_art;User Id=technoto_11art;Password=dsd3@fvsdf453;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
 builder.Services.AddDbContext<SiteDBContext>(options =>
 {
     options.UseSqlServer(connectionString,
         o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "SiteArtDb"));
 });
 
-
 #endregion
 
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));

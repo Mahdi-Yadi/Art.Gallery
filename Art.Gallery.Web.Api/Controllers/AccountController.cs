@@ -30,7 +30,10 @@ public class AccountController : ControllerBase
 
     #endregion
 
-    //Access to XMLHttpRequest at 'http://localhost:5162/register' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
+    //Access to XMLHttpRequest at
+    //'http://localhost:5162/register'
+    //from origin 'http://localhost:3000' has been blocked by CORS policy:
+    //Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
 
     #region Register
 
