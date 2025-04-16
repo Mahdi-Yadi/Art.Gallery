@@ -15,6 +15,9 @@ public class User : BaseEntity
     [Required]
     [DataType(DataType.Password)]
     public string Password { get; set; }
+    [MaxLength(50)]
+    [DataType(DataType.Text)]
+    public string ActiveCode { get; set; }
     [MaxLength(300)]
     [Required]
     [DataType(DataType.Password)]

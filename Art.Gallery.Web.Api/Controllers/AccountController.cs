@@ -148,10 +148,65 @@ public class AccountController : ControllerBase
 
     #endregion
 
-    //public IActionResult ForgotPassword()
-    //{
-    //    return View();
-    //}
+    #region 
+
+    [AllowAnonymous]
+    [HttpPost("ForgotPassword")]
+    public IActionResult ForgotPassword([FromBody] ForgotPasswordDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                status = "ValidationError",
+                message = "داده‌های وارد شده نامعتبر هستند.",
+                errors = ModelState
+            });
+        }
+
+        var res = _accountService.Forgot(dto);
+
+        switch (res)
+        {
+            case AccountResult.Success:
+                return Ok(new
+                {
+                    status = "Success",
+                    message = "ایمیلی جهت بازیابی ارسال گردید",
+                    code = res
+                });
+            case AccountResult.Error:
+                return Ok(new
+                {
+                    status = "Error",
+                    message = "خطایی رخ داده",
+                    code = res
+                });
+            case AccountResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData",
+                    message = "اطلاعات وارد شده صحیح نیست!",
+                    code = res
+                });
+            case AccountResult.Exist:
+                return Ok(new
+                {
+                    status = "UserExists",
+                    message = "کاربر وارد شده از قبل ثبت نام کرده است.",
+                    code = res
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown",
+                    message = "خطای ناشناخته!",
+                    code = res
+                });
+        }
+    }
+
+    #endregion
 
     //public IActionResult RsetPassword()
     //{

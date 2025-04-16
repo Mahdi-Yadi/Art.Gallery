@@ -1,5 +1,5 @@
 ﻿namespace Art.Gallery.Common;
-public class PathExtentions
+public class PathExtension
 {
 
     public static string DomainAddress = "https://localhost:44350";
