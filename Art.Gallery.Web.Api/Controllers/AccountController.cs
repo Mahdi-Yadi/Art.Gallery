@@ -148,7 +148,7 @@ public class AccountController : ControllerBase
 
     #endregion
 
-    #region 
+    #region Forgot Password
 
     [AllowAnonymous]
     [HttpPost("ForgotPassword")]
@@ -208,10 +208,58 @@ public class AccountController : ControllerBase
 
     #endregion
 
-    //public IActionResult RsetPassword()
-    //{
-    //    return View();
-    //}
+    #region Reset Password
+
+    [AllowAnonymous]
+    [HttpPost("ResetPassword")]
+    public IActionResult ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                status = "ValidationError",
+                message = "داده‌های وارد شده نامعتبر هستند.",
+                errors = ModelState
+            });
+        }
+
+        var res = _accountService.Reset(dto);
+
+        switch (res)
+        {
+            case AccountResult.Success:
+                return Ok(new
+                {
+                    status = "Success",
+                    message = "کلمه عبور با موفقیت تغییر پیدا کرد.",
+                    code = res
+                });
+            case AccountResult.Error:
+                return Ok(new
+                {
+                    status = "Error",
+                    message = "خطایی رخ داده",
+                    code = res
+                });
+            case AccountResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData",
+                    message = "اطلاعات وارد شده صحیح نیست!",
+                    code = res
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown",
+                    message = "خطای ناشناخته!",
+                    code = res
+                });
+        }
+    }
+
+    #endregion
 
     #region Logout
 

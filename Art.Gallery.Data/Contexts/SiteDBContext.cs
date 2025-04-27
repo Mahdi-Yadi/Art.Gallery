@@ -1,4 +1,9 @@
 ﻿using Art.Gallery.Data.Entities.Account;
+using Art.Gallery.Data.Entities.Articles;
+using Art.Gallery.Data.Entities.Artists;
+using Art.Gallery.Data.Entities.Categories;
+using Art.Gallery.Data.Entities.Products;
+using Art.Gallery.Data.Entities.Site;
 using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Data.Contexts;
 public class SiteDBContext : DbContext
@@ -16,6 +21,17 @@ public class SiteDBContext : DbContext
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+    public DbSet<Product> Products { get; set; }
+
+    public DbSet<ProductSelectedCategories> ProductSelectedCategories { get; set; }
+
+    public DbSet<Category> Categories { get; set; }
+
+    public DbSet<SiteSetting> SiteSettings { get; set; }
+
+    public DbSet<Artist> Artists { get; set; }
+
+    public DbSet<Article> Articles { get; set; }
 
     #region on model creating
 

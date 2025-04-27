@@ -1,42 +1,31 @@
 ﻿using Art.Gallery.Data.Entities.Common;
 using System.ComponentModel.DataAnnotations;
-namespace Art.Gallery.Data.Entities.Site;
-public class SiteSetting : BaseEntity
+namespace Art.Gallery.Data.Entities.Articles;
+public class Article : BaseEntity
 {
-
-    [Display(Name = "عنوان سایت")]
-    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
-    [DataType(DataType.Text)]
-    [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
-    [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
-    public string Title { get; set; }
-
-    [Display(Name = "ایمیل سایت")]
-    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
-    [DataType(DataType.Text)]
-    [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
-    [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
-    public string Email { get; set; }
-
-    [Display(Name = "آدرس سایت")]
-    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
-    [DataType(DataType.Text)]
-    [MaxLength(500, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
-    [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
-    public string Address { get; set; }
-
-    [Display(Name = "عنوان شرکت")]
+    [Display(Name = "نام محصول")]
     [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
     [DataType(DataType.Text)]
     [MaxLength(1000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
     public string Name { get; set; }
 
+    [Display(Name = "متن")]
+    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
+    [DataType(DataType.Text)]
+    [MaxLength(10000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
+    [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
+    public string Description { get; set; }
+
+    [Display(Name = "متن آدرس محصول")]
+    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
+    [DataType(DataType.Text)]
+    [MaxLength(1000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
+    [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
+    public string Slug { get; set; }
+
     [Display(Name = "نام تصویر")]
     [DataType(DataType.Text)]
     [MaxLength(100, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     public string ImageName { get; set; }
-
-    [Display(Name = "شماره تماس")]
-    public int Phone { get; set; }  
 }
