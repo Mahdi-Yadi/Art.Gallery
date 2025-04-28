@@ -20,7 +20,7 @@ public class Product : BaseEntity
     public string Description { get; set; }
 
     [Display(Name = "قیمت")]
-    public long? Price { get; set; }
+    public decimal? Price { get; set; }
 
     [Display(Name = "موجودی")]
     public long? Count { get; set; }

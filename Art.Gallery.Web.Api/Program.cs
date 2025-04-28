@@ -34,6 +34,8 @@ builder.Services.AddDbContext<SiteDBContext>(options =>
 
 #endregion
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo

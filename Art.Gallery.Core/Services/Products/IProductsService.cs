@@ -2,14 +2,14 @@
 using Art.Gallery.Data.Entities.Products;
 using Microsoft.AspNetCore.Http;
 namespace Art.Gallery.Core.Services.Products;
-public interface IProductsService
+public interface IProductsService : IAsyncDisposable
 {
 
     #region Products
 
-    FilterProductsDto FilterProductsDto(FilterProductsDto dto);
+    Task<FilterProductsDto> FilterProductsAsync(FilterProductsDto dto);
 
-    Product GetProduct(string Slug);
+    Task<ProductDto> GetProduct(string Slug);
 
     ProductResult AddProduct(Product product, IFormFile imageFile);
     Product GetForUpdateProduct(long id);

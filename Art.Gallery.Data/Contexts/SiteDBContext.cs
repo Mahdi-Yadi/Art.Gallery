@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Data.Contexts;
 public class SiteDBContext : DbContext
 {
+
     #region Constructor
 
     public SiteDBContext(DbContextOptions<SiteDBContext> options) : base(options)

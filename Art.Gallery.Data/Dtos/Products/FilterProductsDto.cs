@@ -1,13 +1,16 @@
 ﻿using Art.Gallery.Data.Dtos.Paging;
-using Art.Gallery.Data.Entities.Products;
 namespace Art.Gallery.Data.Dtos.Products;
 public class FilterProductsDto : BasePaging
 {
-    public List<Product> Products { get; set; }
+    public List<ProductDto> Products { get; set; }
 
-    public string title { get; set; }
+    public string Name { get; set; }
+    public long? CategoryId { get; set; }  // فیلتر براساس دسته‌بندی
+    public decimal? MinPrice { get; set; } // فیلتر حداقل قیمت
+    public decimal? MaxPrice { get; set; } // فیلتر حداکثر قیمت
+    public string SortBy { get; set; }     // مرتب سازی: newest, cheapest, expensive
 
-    public FilterProductsDto SetProducts(List<Product> products)
+    public FilterProductsDto SetProducts(List<ProductDto> products)
     {
         this.Products = products;
         return this;
@@ -28,5 +31,4 @@ public class FilterProductsDto : BasePaging
 
         return this;
     }
-
 }
