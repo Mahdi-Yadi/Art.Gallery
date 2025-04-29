@@ -4,7 +4,6 @@ using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Products;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 namespace Art.Gallery.Core.Services.Products;
@@ -21,6 +20,69 @@ public class ProductsService : IProductsService
     {
         _db = db;
         _cache = cache;
+    }
+
+    // Get Last Products
+    public List<ProductDto> GetLastProducts()
+    {
+        var p = _db.Products
+            .Where(a => !a.IsDelete)
+            .OrderByDescending(p => p.CreateDate)
+            .Skip(0)
+            .Take(3)
+            .Distinct()
+            .ToList();
+
+        if (p.Count == 0)
+            return new List<ProductDto>();
+
+        List<ProductDto> dtos = new List<ProductDto>();
+
+        foreach (var product in p)
+        {
+            var a = new ProductDto()
+            {
+                Name = product.Name,
+                Slug = product.Slug,
+                Price = (decimal)product.Price,
+                ImageName = product.ImageName,
+            };
+            dtos.Add(a);
+        }
+
+        return dtos;
+    }
+
+    // Get Special Products
+    public List<ProductDto> GetSpecialProducts()
+    {
+        var p = _db.Products
+            .Where(a => !a.IsDelete && a.IsSpecial)
+            .OrderByDescending(p => p.CreateDate)
+            .Skip(0)
+            .Take(3)
+            .Distinct()
+            .ToList();
+
+        if (p.Count == 0)
+            return new List<ProductDto>();
+
+        List<ProductDto> dtos = new List<ProductDto>();
+
+        foreach (var product in p)
+        {
+            var a = new ProductDto()
+            {
+                Name = product.Name,
+                Slug = product.Slug,
+                Price = (decimal)product.Price,
+                ImageName = product.ImageName,
+                IsSpecial = product.IsSpecial,
+            };
+            dtos.Add(a);
+        }
+
+        return dtos;
     }
 
     public ProductResult AddProduct(Product product, IFormFile imageFile)
@@ -93,6 +155,7 @@ public class ProductsService : IProductsService
         // اگر در کش نبود، کوئری دیتابیس را اجرا کن
         var query = _db
             .Products
+            .Where(a => !a.IsDelete)
             .Include(a => a.ProductSelectedCategories)
             .AsQueryable();
 
@@ -127,6 +190,7 @@ public class ProductsService : IProductsService
             {
                 Id = p.Id,
                 Name = p.Name,
+                Slug = p.Slug,
                 ImageName = p.ImageName,
                 Price = (decimal)p.Price
             })
@@ -155,7 +219,9 @@ public class ProductsService : IProductsService
         if (string.IsNullOrEmpty(Slug))
             return new ProductDto();
 
-        var product = await _db.Products.FirstOrDefaultAsync(a => a.Slug == Slug);
+        var product = await _db.Products
+                        .FirstOrDefaultAsync(a =>
+                        !a.IsDelete && a.Slug == Slug);
 
         if (product == null)
             return new ProductDto();
@@ -167,7 +233,7 @@ public class ProductsService : IProductsService
         dto.ImageName = product.ImageName;
         dto.Price = (decimal)product.Price;
         dto.Description = product.Description;
-        dto.IsSpecail = product.IsSpecail;
+        dto.IsSpecial = product.IsSpecial;
         // encript
         dto.Id = product.Id;
 

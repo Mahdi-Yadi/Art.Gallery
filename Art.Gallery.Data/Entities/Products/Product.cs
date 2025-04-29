@@ -38,7 +38,7 @@ public class Product : BaseEntity
     public string ImageName { get; set; }
 
     [Display(Name = "وضعیت ویژه")]
-    public bool IsSpecail { get; set; }
+    public bool IsSpecial { get; set; }
 
     public long UserId { get; set; }
 
@@ -49,4 +49,5 @@ public class Product : BaseEntity
     public Artist Artist { get; set; }
 
     public ICollection<ProductSelectedCategories> ProductSelectedCategories { get; set; }
+    public ICollection<ProductGallery> ProductGalleries { get; set; }
 }

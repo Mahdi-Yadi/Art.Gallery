@@ -16,6 +16,10 @@ public interface IProductsService : IAsyncDisposable
     ProductResult UpdateProduct(Product product, IFormFile imageFile);
     ProductResult DeleteProduct(long id);
 
+    List<ProductDto> GetLastProducts();
+
+    List<ProductDto> GetSpecialProducts();
+
     #endregion
 
 }

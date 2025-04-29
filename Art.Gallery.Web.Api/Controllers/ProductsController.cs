@@ -28,9 +28,36 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("Product")]
-    public IActionResult Product(string slug)
+    public async Task<IActionResult> Product(string slug)
     {
-        return BadRequest();
+        var result = await _productsService.GetProduct(slug);
+
+        if(result == null)
+            return BadRequest();
+
+        return Ok(result);
+    }
+
+    [HttpGet("LastProducts")]
+    public IActionResult LastProducts()
+    {
+        var result =  _productsService.GetLastProducts();
+
+        if (result == null)
+            return BadRequest();
+
+        return Ok(result);
+    }
+
+    [HttpGet("SpecialProducts")]
+    public IActionResult SpecialProducts()
+    {
+        var result = _productsService.GetSpecialProducts();
+
+        if (result == null)
+            return BadRequest();
+
+        return Ok(result);
     }
 
 }

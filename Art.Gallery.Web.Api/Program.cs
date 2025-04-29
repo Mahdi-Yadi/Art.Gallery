@@ -1,5 +1,9 @@
 ﻿using System.Text;
 using Art.Gallery.Core.Services.Account;
+using Art.Gallery.Core.Services.Categories;
+using Art.Gallery.Core.Services.Galleries;
+using Art.Gallery.Core.Services.Orders;
+using Art.Gallery.Core.Services.Products;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Emails;
 using Art.Gallery.Web.Api.Http;
@@ -76,6 +80,7 @@ builder.Services.AddAuthentication(options =>
 
 
 // Services
+// Account
 builder.Services.AddTransient<IAccountService, AccountService>();
 // Mail
 builder.Services.AddTransient<IMailSender, MailSender>();
@@ -83,6 +88,14 @@ builder.Services.AddTransient<IMailSender, MailSender>();
 builder.Services.AddTransient<IViewRenderService, RenderViewToString>();
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<TokenService>();
+// Product
+builder.Services.AddTransient<IProductsService, ProductsService>();
+// Orders
+builder.Services.AddTransient<IOrderService, OrderService>();
+// Galleries
+builder.Services.AddTransient<IGalleriesSerivce, GalleriesSerivce>();
+// Categories
+builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 

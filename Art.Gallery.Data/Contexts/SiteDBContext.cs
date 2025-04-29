@@ -34,6 +34,8 @@ public class SiteDBContext : DbContext
 
     public DbSet<Article> Articles { get; set; }
 
+    public DbSet<ProductGallery> ProductGalleries { get; set; }
+
     #region on model creating
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
