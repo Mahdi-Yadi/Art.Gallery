@@ -36,7 +36,7 @@ public class Product : BaseEntity
     [DataType(DataType.Text)]
     [MaxLength(100, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     public string ImageName { get; set; }
-
+  
     [Display(Name = "وضعیت ویژه")]
     public bool IsSpecial { get; set; }
 

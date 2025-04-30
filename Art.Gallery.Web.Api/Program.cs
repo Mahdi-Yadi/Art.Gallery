@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // اضافه کردن CORS
 builder.Services.AddCors(options =>
 {
@@ -112,6 +113,24 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
+app.UseRouting();
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers();
+//});
+
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 404 &&
+        !context.Request.Path.Value.StartsWith("/api"))
+    {
+        context.Request.Path = "/index.html";
+        await next();
+    }
+});
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

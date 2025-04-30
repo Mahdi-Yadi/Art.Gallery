@@ -3,7 +3,7 @@ using Art.Gallery.Data.Dtos.Products;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Controllers;
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
 

@@ -29,7 +29,7 @@ public class ProductsService : IProductsService
             .Where(a => !a.IsDelete)
             .OrderByDescending(p => p.CreateDate)
             .Skip(0)
-            .Take(3)
+            .Take(6)
             .Distinct()
             .ToList();
 
