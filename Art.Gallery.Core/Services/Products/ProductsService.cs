@@ -6,6 +6,7 @@ using Art.Gallery.Data.Entities.Products;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using SixLabors.ImageSharp;
 namespace Art.Gallery.Core.Services.Products;
 public class ProductsService : IProductsService
 {
@@ -116,6 +117,8 @@ public class ProductsService : IProductsService
                 }
                 product.ImageName = imageName;
             }
+            // موقت 
+            product.ImageName = "1.png";
 
             _db.Products.Add(p);
             _db.SaveChanges();

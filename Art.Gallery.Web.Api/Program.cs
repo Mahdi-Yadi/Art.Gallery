@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json.Serialization;
 using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Core.Services.Categories;
 using Art.Gallery.Core.Services.Galleries;
@@ -9,9 +10,12 @@ using Art.Gallery.Emails;
 using Art.Gallery.Web.Api.Http;
 using Art.Gallery.Web.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +34,7 @@ builder.Services.AddCors(options =>
 #region Data Base
 
 var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
-//var connectionString = "Server=31.25.90.164\\sqlserver2022;Initial Catalog=technoto_art;User Id=technoto_11art;Password=dsd3@fvsdf453;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
+//var connectionString = "Server=1;Initial Catalog=1;User Id=1;Password=1;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
 builder.Services.AddDbContext<SiteDBContext>(options =>
 {
     options.UseSqlServer(connectionString,
@@ -38,22 +42,18 @@ builder.Services.AddDbContext<SiteDBContext>(options =>
 });
 
 #endregion
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddMemoryCache();
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "API Documentation",
-        Version = "v1"
-    });
-});
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
@@ -98,46 +98,84 @@ builder.Services.AddTransient<IGalleriesSerivce, GalleriesSerivce>();
 // Categories
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 
-var app = builder.Build();
+builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "clientapp/dist"; });
 
-// فعال کردن CORS
+var app = builder.Build();
+app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Documentation v1");
+    });
 }
+app.UseHsts();
 
-app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStaticFiles();
-app.UseRouting();
-//app.UseEndpoints(endpoints =>
+
+//app.Use(async (context, next) =>
 //{
-//    endpoints.MapControllers();
+//    await next();
+//    if (context.Response.StatusCode == 404 &&
+//        !context.Request.Path.Value.StartsWith("/api"))
+//    {
+//        context.Request.Path = "/index.html";
+//        await next();
+//    }
 //});
 
-app.Use(async (context, next) =>
+app.UseRouting();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// ↓ Add the following lines: ↓
+var spaPath = "/app";
+if (app.Environment.IsDevelopment())
 {
-    await next();
-    if (context.Response.StatusCode == 404 &&
-        !context.Request.Path.Value.StartsWith("/api"))
+    app.MapWhen(y => y.Request.Path.StartsWithSegments(spaPath), client =>
     {
-        context.Request.Path = "/index.html";
-        await next();
-    }
-});
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+        client.UseSpa(spa =>
+        {
+            spa.UseProxyToSpaDevelopmentServer("https://localhost:6363");
+        });
+    });
+}
+else
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Documentation v1");
-});
+    app.Map(new PathString(spaPath), client =>
+    {
+        client.UseSpaStaticFiles();
+        client.UseSpa(spa => {
+            spa.Options.SourcePath = "clientapp";
 
-app.MapControllers();
+            // adds no-store header to index page to prevent deployment issues (prevent linking to old .js files)
+            // .js and other static resources are still cached by the browser
+            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ResponseHeaders headers = ctx.Context.Response.GetTypedHeaders();
+                    headers.CacheControl = new CacheControlHeaderValue
+                    {
+                        NoCache = true,
+                        NoStore = true,
+                        MustRevalidate = true
+                    };
+                }
+            };
+        });
+    });
+}
+// ↑ these lines ↑
 
 app.Run();
