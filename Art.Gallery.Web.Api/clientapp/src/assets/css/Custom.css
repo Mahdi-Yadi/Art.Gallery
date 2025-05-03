@@ -1,0 +1,16 @@
+@charset "UTF-8";
+/**
+ ** Custom Style  v1.0.0
+ ** Copyright 2025-2026 The Mehdi.Emamhadi
+ ** Licensed under MIT
+ */
+
+ /** Reset LightGallery Direction */
+ .lg-outer{
+    direction: ltr;
+ }
+
+ /** Reset Bootstrap sticky Position */
+.sticky-top{
+   top: 4rem;
+}
