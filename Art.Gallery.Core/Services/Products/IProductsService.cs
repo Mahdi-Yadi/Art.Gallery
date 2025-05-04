@@ -11,7 +11,7 @@ public interface IProductsService : IAsyncDisposable
 
     Task<ProductDto> GetProduct(string Slug);
 
-    ProductResult AddProduct(Product product, IFormFile imageFile);
+    ProductResult AddProduct(CEProductDto dto);
     Product GetForUpdateProduct(long id);
     ProductResult UpdateProduct(Product product, IFormFile imageFile);
     ProductResult DeleteProduct(long id);

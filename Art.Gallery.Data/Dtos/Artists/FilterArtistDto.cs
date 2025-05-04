@@ -7,6 +7,7 @@ public class FilterArtistDto : BasePaging
 
     public string Name { get; set; }
 
+    public string SortBy { get; set; }
     public FilterArtistDto SetArtists(List<CEArtistDto> artistDtos)
     {
         this.ArtistsDto = artistDtos;

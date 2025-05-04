@@ -1,8 +1,10 @@
 ﻿using Art.Gallery.Common;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Artists;
+using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Entities.Artists;
 using Ganss.Xss;
+using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Artists;
 public class ArtistService : IArtistService
 {
@@ -14,6 +16,7 @@ public class ArtistService : IArtistService
         _db = db;
     }
 
+    // Add 
     public ArtistDtoResult AddArtist(CEArtistDto dto)
     {
         HtmlSanitizer san = new HtmlSanitizer();
@@ -62,6 +65,7 @@ public class ArtistService : IArtistService
         }
     }
 
+    // Delete
     public ArtistDtoResult DeleteArtist(string id)
     {
         var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id));
@@ -77,6 +81,7 @@ public class ArtistService : IArtistService
         return ArtistDtoResult.Error;
     }
 
+    // Recover
     public ArtistDtoResult RecoverArtist(string id)
     {
         var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id));
@@ -92,9 +97,42 @@ public class ArtistService : IArtistService
         return ArtistDtoResult.Error;
     }
 
-    public FilterArtistDto FilterArtist(FilterArtistDto dto)
+    public async Task<FilterArtistDto> FilterArtist(FilterArtistDto dto)
     {
-        throw new NotImplementedException();
+        var query = _db
+            .Artists
+            .Where(a => !a.IsDelete)
+            .Include(a => a.Products)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(dto.Name))
+            query = query.Where(s => EF.Functions.Like(s.Name, $"%{dto.Name}%"));
+
+        query = dto.SortBy switch
+        {
+            "newest" => query.OrderByDescending(p => p.CreateDate),
+            "oldest" => query.OrderBy(p => p.CreateDate),
+            _ => query.OrderByDescending(p => p.Id)
+        };
+
+        var totalCount = await query.CountAsync();
+        var pager = Pager.Build(dto.PageId, totalCount, dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);
+
+        var artists = await query
+            .Skip(pager.SkipEntity)
+            .Take(pager.TakeEntity)
+            .Select(p => new CEArtistDto
+            {
+                Id = p.Id.ToString(),
+                Name = p.Name,
+                Slug = p.Slug,
+                ImageName = p.ImageName
+            })
+            .ToListAsync();
+
+        var result = dto.SetArtists(artists).SetPaging(pager);
+        
+        return result;
     }
 
     public CEArtistDto GetArtist(string id)
@@ -114,6 +152,7 @@ public class ArtistService : IArtistService
         return dto;
     }
 
+    // Update 
     public ArtistDtoResult UpdateArtist(CEArtistDto dto)
     {
         HtmlSanitizer san = new HtmlSanitizer();
@@ -123,6 +162,34 @@ public class ArtistService : IArtistService
         a.Name = san.Sanitize(dto.Name);
         a.Description = san.Sanitize(dto.Description);
         a.Slug = san.Sanitize(dto.Slug);
+
+        if (dto.ImageFile != null)
+        {
+            if (dto.ImageFile.Length > 10100000)
+            {
+                return ArtistDtoResult.ImageLarge;
+            }
+
+            DateTime curentTime = DateTime.Now;
+
+            var newName = a.Name + "-" + curentTime.ToString("ssmmMMddHHyyyy");
+
+            var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
+
+            var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
+                300, 300, PathExtension.ProductImageThumbServer, a.ImageName);
+
+            if (!res)
+            {
+                return ArtistDtoResult.ImageNotUploaded;
+            }
+            a.ImageName = imageName;
+        }
+        else
+        {
+            if(a.ImageName == null)
+                a.ImageName = "1.png";
+        }
 
         try
         {

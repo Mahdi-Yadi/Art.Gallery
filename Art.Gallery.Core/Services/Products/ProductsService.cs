@@ -3,6 +3,7 @@ using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Products;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -86,39 +87,47 @@ public class ProductsService : IProductsService
         return dtos;
     }
 
-    public ProductResult AddProduct(Product product, IFormFile imageFile)
+    public ProductResult AddProduct(CEProductDto dto)
     {
         try
         {
-            if (product.Name == null)
+            if (dto.Name == null)
                 return ProductResult.Null;
 
             Product p = new Product();
 
-            if (imageFile != null)
+            if (dto.ImageFile != null)
             {
-                if (imageFile.Length > 10100000)
+                if (dto.ImageFile.Length > 10100000)
                 {
                     return ProductResult.ImageLarge;
                 }
 
                 DateTime curentTime = DateTime.Now;
 
-                var newName = product.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
+                var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
 
-                var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(imageFile.FileName);
+                var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
 
-                var res = imageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
+                var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
                     300, 300, PathExtension.ProductImageThumbServer, null);
 
                 if (!res)
                 {
                     return ProductResult.ImageNotUploaded;
                 }
-                product.ImageName = imageName;
+                p.ImageName = imageName;
             }
-            // موقت 
-            product.ImageName = "1.png";
+            else
+            {
+                p.ImageName = "1.png";
+            }
+            
+            HtmlSanitizer san = new HtmlSanitizer();
+
+            p.Name = san.Sanitize(dto.Name);
+            p.Name = san.Sanitize(dto.Name);
+            p.Name = san.Sanitize(dto.Name);
 
             _db.Products.Add(p);
             _db.SaveChanges();

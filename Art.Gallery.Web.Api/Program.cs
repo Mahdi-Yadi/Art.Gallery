@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
 using Art.Gallery.Core.Services.Account;
+using Art.Gallery.Core.Services.Artists;
 using Art.Gallery.Core.Services.Categories;
 using Art.Gallery.Core.Services.Galleries;
 using Art.Gallery.Core.Services.Orders;
@@ -75,7 +76,6 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-
 // Services
 // Account
 builder.Services.AddTransient<IAccountService, AccountService>();
@@ -93,10 +93,13 @@ builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IGalleriesSerivce, GalleriesSerivce>();
 // Categories
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+// Artist
+builder.Services.AddTransient<IArtistService, ArtistService>();
 
 builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "clientapp/dist"; });
 
 var app = builder.Build();
+
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 

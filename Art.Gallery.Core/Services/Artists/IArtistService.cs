@@ -15,7 +15,7 @@ public interface IArtistService
 
     CEArtistDto GetArtist(string id);
 
-    FilterArtistDto FilterArtist(FilterArtistDto dto);
+    Task<FilterArtistDto> FilterArtist(FilterArtistDto dto);
 
     #endregion
 
