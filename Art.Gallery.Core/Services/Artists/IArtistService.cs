@@ -9,6 +9,8 @@ public interface IArtistService
 
     ArtistDtoResult DeleteArtist(string id);
 
+    ArtistDtoResult RecoverArtist(string id);
+
     ArtistDtoResult UpdateArtist(CEArtistDto dto);
 
     CEArtistDto GetArtist(string id);

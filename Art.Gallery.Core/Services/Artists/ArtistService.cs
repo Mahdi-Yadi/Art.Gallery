@@ -1,11 +1,8 @@
 ﻿using Art.Gallery.Common;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Artists;
-using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Artists;
-using Art.Gallery.Data.Entities.Products;
 using Ganss.Xss;
-using System;
 namespace Art.Gallery.Core.Services.Artists;
 public class ArtistService : IArtistService
 {
@@ -48,6 +45,10 @@ public class ArtistService : IArtistService
             }
             a.ImageName = imageName;
         }
+        else
+        {
+            a.ImageName = "1.png";
+        }
 
         try
         {
@@ -67,7 +68,24 @@ public class ArtistService : IArtistService
 
         if (a != null)
         {
-            _db.Artists.Remove(a);
+            a.IsDelete = true;
+
+            _db.Artists.Update(a);
+            _db.SaveChanges();
+            return ArtistDtoResult.Success;
+        }
+        return ArtistDtoResult.Error;
+    }
+
+    public ArtistDtoResult RecoverArtist(string id)
+    {
+        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id));
+
+        if (a != null)
+        {
+            a.IsDelete = false;
+
+            _db.Artists.Update(a);
             _db.SaveChanges();
             return ArtistDtoResult.Success;
         }
@@ -117,4 +135,5 @@ public class ArtistService : IArtistService
             return ArtistDtoResult.Error;
         }
     }
+
 }
