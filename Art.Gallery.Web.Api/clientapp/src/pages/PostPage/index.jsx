@@ -5,7 +5,6 @@ import PostContent from "../../components/PostContent/index.jsx";
 import "../../assets/vendor/font-awesome/css/all.min.css";
 import "../../assets/vendor/bootstrap-icons/bootstrap-icons.css";
 // ==============|Script Files|============== //
-import "../../assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const PostPage = () => {
     return ( 
