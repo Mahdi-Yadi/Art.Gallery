@@ -1,4 +1,5 @@
 ﻿using Art.Gallery.Core.Services.Products;
+using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +17,9 @@ public class AdminProductController : ControllerBase
     }
 
     [HttpPost("AddProduct")]
-    public IActionResult AddProduct([FromForm] Product product/*, [FromForm] IFormFile imageFile*/)
+    public IActionResult AddProduct([FromForm] CEProductDto dto)
     {
-        var result = _productService.AddProduct(product, null);
+        var result = _productService.AddProduct(dto);
         return Ok(result);
     }
     //[HttpPost("update")]
