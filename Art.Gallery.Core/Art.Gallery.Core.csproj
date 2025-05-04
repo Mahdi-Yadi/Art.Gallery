@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlSanitizer" Version="9.0.876" />
+    <PackageReference Include="HtmlSanitizer" Version="9.0.884" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
   </ItemGroup>
@@ -16,6 +16,10 @@
     <ProjectReference Include="..\Art.Gallery.Common\Art.Gallery.Common.csproj" />
     <ProjectReference Include="..\Art.Gallery.Data\Art.Gallery.Data.csproj" />
     <ProjectReference Include="..\Art.Gallery.Emails\Art.Gallery.Emails.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Artists\" />
   </ItemGroup>
 
 </Project>
