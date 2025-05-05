@@ -1,0 +1,160 @@
+﻿ ذخیره توکن‌ها پس از لاگین
+const handleLogin = async () => {
+  const res = await fetch("https://localhost:5001/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await res.json();
+
+  // ذخیره در localStorage
+  localStorage.setItem("access_token", data.token);
+  localStorage.setItem("refresh_token", data.refreshToken);
+};
+ استفاده از Access Token برای درخواست‌های محافظت‌شده
+ const fetchUserData = async () => {
+  const res = await fetch("https://localhost:5001/api/user/me", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
+  });
+
+  if (res.status === 401) {
+    await refreshToken(); // برو توکن جدید بگیر
+    return fetchUserData(); // دوباره تلاش کن
+  }
+
+  const data = await res.json();
+  console.log(data);
+};
+ تابع refreshToken در React
+ const refreshToken = async () => {
+  const res = await fetch("https://localhost:5001/api/refresh-token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      refreshToken: localStorage.getItem("refresh_token"),
+    }),
+  });
+
+  if (!res.ok) {
+    // Refresh هم شکست خورد → کاربر رو لاگ‌اوت کن
+    logout();
+    return;
+  }
+
+  const data = await res.json();
+  localStorage.setItem("access_token", data.token);
+  localStorage.setItem("refresh_token", data.refreshToken);
+};
+ تابع logout برای پاک‌سازی
+ const logout = () => {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  // برو صفحه login یا ...
+};
+// حاج اقا امام هادی این بخش جدا حواست باشه 
+این بخش برای اینه که اتومات درخواست ارسال کن
+مرحله 1: نصب axios
+npm install axios
+مرحله 2: ساخت axios instance با interceptor
+یک فایل جدید بساز به نام api.js یا axiosInstance.js:
+
+// src/api.js
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: "https://localhost:5001/api",
+});
+
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+مرحله 3: Interceptor برای پاسخ‌ها (refresh خودکار)
+ادامه‌ی فایل api.js:
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
+API.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/login") &&
+      !originalRequest.url.includes("/refresh-token")
+    ) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return axios(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      isRefreshing = true;
+
+      try {
+        const res = await axios.post("https://localhost:5001/api/refresh-token", {
+          refreshToken: localStorage.getItem("refresh_token"),
+        });
+
+        const newToken = res.data.token;
+        const newRefresh = res.data.refreshToken;
+
+        localStorage.setItem("access_token", newToken);
+        localStorage.setItem("refresh_token", newRefresh);
+
+        API.defaults.headers.Authorization = `Bearer ${newToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+        processQueue(null, newToken);
+        return axios(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        window.location.href = "/login"; // logout
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+ استفاده در کل پروژه
+حالا هرجای React می‌خوای به API بزنی:
+import API from "./api";
+
+const fetchProfile = async () => {
+  const res = await API.get("/user/me");
+  console.log(res.data);
+};
+
+

@@ -118,12 +118,30 @@ public class AccountController : ControllerBase
 
         return Unauthorized();
     }
+    //    const res = await fetch("https://localhost:5001/api/login", {
 
-    #endregion
+    //        method: "POST",
+    //        headers: { "Content-Type": "application/json" },
+    //        body: JSON.stringify({ email, password }),
+    //    });
 
-    #region Refresh
+    //const data = await res.json();
+    //localStorage.setItem("access_token", data.token);
+    //localStorage.setItem("refresh_token", data.refreshToken);
 
-    [HttpPost("refresh-token")]
+    //fetch("https://localhost:5001/api/user/me", {
+    //    headers:
+    //    {
+    //        Authorization: `Bearer ${ localStorage.getItem("access_token")}`,
+    //    },
+    //});
+
+
+#endregion
+
+#region Refresh
+
+[HttpPost("refresh-token")]
     public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
     {
         var refreshToken = await _context.RefreshTokens

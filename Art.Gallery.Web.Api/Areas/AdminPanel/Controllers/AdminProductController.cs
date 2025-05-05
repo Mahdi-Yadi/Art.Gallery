@@ -1,10 +1,10 @@
 ﻿using Art.Gallery.Core.Services.Products;
 using Art.Gallery.Data.Dtos.Products;
-using Art.Gallery.Data.Entities.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-namespace Art.Gallery.Web.Api.Controllers;
-[Authorize]
+namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
+//[Authorize]
+[Area("AdminPanel")]
 [ApiController]
 [Route("api/[controller]")]
 public class AdminProductController : ControllerBase

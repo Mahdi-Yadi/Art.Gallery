@@ -13,7 +13,7 @@ public interface IProductsService : IAsyncDisposable
 
     ProductResult AddProduct(CEProductDto dto);
     Product GetForUpdateProduct(long id);
-    ProductResult UpdateProduct(Product product, IFormFile imageFile);
+    ProductResult UpdateProduct(CEProductDto dto);
     ProductResult DeleteProduct(long id);
 
     List<ProductDto> GetLastProducts();

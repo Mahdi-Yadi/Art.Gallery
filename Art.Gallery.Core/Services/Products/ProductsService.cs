@@ -4,10 +4,8 @@ using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Products;
 using Ganss.Xss;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using SixLabors.ImageSharp;
 namespace Art.Gallery.Core.Services.Products;
 public class ProductsService : IProductsService
 {
@@ -128,6 +126,8 @@ public class ProductsService : IProductsService
             p.Name = san.Sanitize(dto.Name);
             p.Name = san.Sanitize(dto.Name);
             p.Name = san.Sanitize(dto.Name);
+            p.ArtistId = dto.ArtistId;
+            p.UserId = dto.UserId;
 
             _db.Products.Add(p);
             _db.SaveChanges();
@@ -252,40 +252,47 @@ public class ProductsService : IProductsService
         return dto;
     }
 
-    public ProductResult UpdateProduct(Product product, IFormFile imageFile)
+    public ProductResult UpdateProduct(CEProductDto dto)
     {
         try
         {
-            if (product.Name == null)
+            if (dto.Name == null)
                 return ProductResult.Null;
 
-            Product p = _db.Products.FirstOrDefault(p => p.Id == product.Id);
+            Product p = _db.Products.FirstOrDefault(p => p.Id == Convert.ToInt64(dto.Id));
 
             if (p == null)
                 return ProductResult.Null;
 
-            if (imageFile != null)
+            if (dto.ImageFile != null)
             {
-                if (imageFile.Length > 10100000)
+                if (dto.ImageFile.Length > 10100000)
                 {
                     return ProductResult.ImageLarge;
                 }
 
                 DateTime curentTime = DateTime.Now;
 
-                var newName = product.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
+                var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
 
-                var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(imageFile.FileName);
+                var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
 
-                var res = imageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
+                var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
                     300, 300, PathExtension.ProductImageThumbServer, null);
 
                 if (!res)
                 {
                     return ProductResult.ImageNotUploaded;
                 }
-                product.ImageName = imageName;
+                dto.ImageName = imageName;
             }
+            HtmlSanitizer san = new HtmlSanitizer();
+
+            p.Name = san.Sanitize(dto.Name);
+            p.Name = san.Sanitize(dto.Name);
+            p.Name = san.Sanitize(dto.Name);
+            p.ArtistId = dto.ArtistId;
+            p.UserId = dto.UserId;
 
             _db.Products.Update(p);
             _db.SaveChanges();

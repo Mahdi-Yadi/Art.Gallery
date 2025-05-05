@@ -21,8 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Data Base
 
-//var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
-var connectionString = "Server=185.164.73.239;Initial Catalog=ArtGalleryDB;User Id=f#1d!+34$#$fdG;Password=2dx@ff466vVKss;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
+var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
+//var connectionString = "Server=185.164.73.239;Initial Catalog=ArtGalleryDB;User Id=f#1d!+34$#$fdG;Password=2dx@ff466vVKss;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
 builder.Services.AddDbContext<SiteDBContext>(options =>
 {
     options.UseSqlServer(connectionString,
@@ -96,7 +96,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 // Artist
 builder.Services.AddTransient<IArtistService, ArtistService>();
 
-builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "clientapp/dist"; });
+//builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "clientapp/dist"; });
 
 var app = builder.Build();
 
@@ -137,44 +137,47 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// ↓ Add the following lines: ↓
-var spaPath = "/app";
-if (app.Environment.IsDevelopment())
-{
-    app.MapWhen(y => y.Request.Path.StartsWithSegments(spaPath), client =>
-    {
-        client.UseSpa(spa =>
-        {
-            spa.UseProxyToSpaDevelopmentServer("https://localhost:6363");
-        });
-    });
-}
-else
-{
-    app.Map(new PathString(spaPath), client =>
-    {
-        client.UseSpaStaticFiles();
-        client.UseSpa(spa => {
-            spa.Options.SourcePath = "clientapp";
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+);
 
-            // adds no-store header to index page to prevent deployment issues (prevent linking to old .js files)
-            // .js and other static resources are still cached by the browser
-            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
-            {
-                OnPrepareResponse = ctx =>
-                {
-                    ResponseHeaders headers = ctx.Context.Response.GetTypedHeaders();
-                    headers.CacheControl = new CacheControlHeaderValue
-                    {
-                        NoCache = true,
-                        NoStore = true,
-                        MustRevalidate = true
-                    };
-                }
-            };
-        });
-    });
-}
-// ↑ these lines ↑
+//var spaPath = "/app";
+//if (app.Environment.IsDevelopment())
+//{
+//    app.MapWhen(y => y.Request.Path.StartsWithSegments(spaPath), client =>
+//    {
+//        client.UseSpa(spa =>
+//        {
+//            spa.UseProxyToSpaDevelopmentServer("https://localhost:6363");
+//        });
+//    });
+//}
+//else
+//{
+//    app.Map(new PathString(spaPath), client =>
+//    {
+//        client.UseSpaStaticFiles();
+//        client.UseSpa(spa => {
+//            spa.Options.SourcePath = "clientapp";
+
+//            // adds no-store header to index page to prevent deployment issues (prevent linking to old .js files)
+//            // .js and other static resources are still cached by the browser
+//            spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+//            {
+//                OnPrepareResponse = ctx =>
+//                {
+//                    ResponseHeaders headers = ctx.Context.Response.GetTypedHeaders();
+//                    headers.CacheControl = new CacheControlHeaderValue
+//                    {
+//                        NoCache = true,
+//                        NoStore = true,
+//                        MustRevalidate = true
+//                    };
+//                }
+//            };
+//        });
+//    });
+//}
 
 app.Run();

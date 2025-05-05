@@ -544,7 +544,6 @@
     <PackageReference Include="HtmlSanitizer" Version="9.0.884" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">
       <PrivateAssets>all</PrivateAssets>
@@ -566,6 +565,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\AdminPanel\Views\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
