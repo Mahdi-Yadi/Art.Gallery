@@ -1,8 +1,10 @@
-﻿using Art.Gallery.Core.Services.Account;
+﻿using Art.Gallery.Common;
+using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Web.Api.Http;
 using Art.Gallery.Web.Api.Models;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -104,7 +106,7 @@ public class AccountController : ControllerBase
             return BadRequest(ModelState);
 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
-        if (user != null && user.Password == loginDto.Password)
+        if (user != null && user.Password == Hashing.HashPassword($"{loginDto.Password}{user.Salt}"))
         {
             var jwt = _tokenService.GenerateJwtToken(user.Id);
             var refresh = await _tokenService.GenerateRefreshTokenAsync(user.Id);
