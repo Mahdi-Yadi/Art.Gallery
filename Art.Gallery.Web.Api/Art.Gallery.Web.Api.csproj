@@ -565,7 +565,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\AdminPanel\Views\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

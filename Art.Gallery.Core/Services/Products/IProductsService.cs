@@ -12,7 +12,7 @@ public interface IProductsService : IAsyncDisposable
     Task<ProductDto> GetProduct(string Slug);
 
     ProductResult AddProduct(CEProductDto dto);
-    Product GetForUpdateProduct(long id);
+    CEProductDto GetForUpdateProduct(long id);
     ProductResult UpdateProduct(CEProductDto dto);
     ProductResult DeleteProduct(long id);
 

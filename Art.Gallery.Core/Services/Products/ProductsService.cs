@@ -1,11 +1,12 @@
-﻿using Art.Gallery.Common;
+﻿using AngleSharp.Dom;
+using Art.Gallery.Common;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Products;
 using Ganss.Xss;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 namespace Art.Gallery.Core.Services.Products;
 public class ProductsService : IProductsService
 {
@@ -13,13 +14,10 @@ public class ProductsService : IProductsService
     #region Products
 
     private readonly SiteDBContext _db;
-    private readonly IMemoryCache _cache;
 
-    public ProductsService(SiteDBContext db,
-        IMemoryCache cache)
+    public ProductsService(SiteDBContext db)
     {
         _db = db;
-        _cache = cache;
     }
 
     // Get Last Products
@@ -124,10 +122,16 @@ public class ProductsService : IProductsService
             HtmlSanitizer san = new HtmlSanitizer();
 
             p.Name = san.Sanitize(dto.Name);
-            p.Name = san.Sanitize(dto.Name);
-            p.Name = san.Sanitize(dto.Name);
+            p.Description = san.Sanitize(dto.Description);
+            p.Slug = san.Sanitize(dto.Slug);
+            p.IsSpecial = dto.IsSpecial;
+            p.Count = dto.Count;
+            p.Price = dto.Price;
             p.ArtistId = dto.ArtistId;
             p.UserId = dto.UserId;
+
+            p.CreateDate = DateTime.Now;
+            p.UpdateDate = DateTime.Now;
 
             _db.Products.Add(p);
             _db.SaveChanges();
@@ -155,32 +159,21 @@ public class ProductsService : IProductsService
 
     public async Task<FilterProductsDto> FilterProductsAsync(FilterProductsDto dto)
     {
-        // ساختن کلید کش بر اساس پارامترهای ورودی
-        var cacheKey = $"ProductsFilter_{dto.Name}_{dto.CategoryId}_{dto.MinPrice}_{dto.MaxPrice}_{dto.SortBy}_{dto.PageId}";
+        var query = _db.Products.AsQueryable();
 
-        // تلاش برای گرفتن از کش
-        if (_cache.TryGetValue(cacheKey, out FilterProductsDto cachedResult))
-        {
-            return cachedResult;
-        }
-
-        // اگر در کش نبود، کوئری دیتابیس را اجرا کن
-        var query = _db
-            .Products
-            .Where(a => !a.IsDelete)
-            .Include(a => a.ProductSelectedCategories)
-            .AsQueryable();
+       if(dto.TakeEntity == 0)
+           dto.TakeEntity = 15;
 
         if (!string.IsNullOrEmpty(dto.Name))
             query = query.Where(s => EF.Functions.Like(s.Name, $"%{dto.Name}%"));
 
-        if (dto.CategoryId.HasValue)
+        if (dto.CategoryId != 0)
             query = query.Where(s => s.ProductSelectedCategories.Any(f => f.Category.Id == dto.CategoryId));
 
-        if (dto.MinPrice.HasValue)
+        if (dto.MinPrice != 0)
             query = query.Where(p => p.Price >= dto.MinPrice.Value);
 
-        if (dto.MaxPrice.HasValue)
+        if (dto.MaxPrice != 0)
             query = query.Where(p => p.Price <= dto.MaxPrice.Value);
 
         // مرتب‌سازی
@@ -189,41 +182,51 @@ public class ProductsService : IProductsService
             "newest" => query.OrderByDescending(p => p.CreateDate),
             "cheapest" => query.OrderBy(p => p.Price),
             "expensive" => query.OrderByDescending(p => p.Price),
-            _ => query.OrderByDescending(p => p.Id)
+            _ => query
         };
 
-        var totalCount = await query.CountAsync();
-        var pager = Pager.Build(dto.PageId, totalCount, dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);
+        #region paging
 
-        var products = await query
-            .Skip(pager.SkipEntity)
-            .Take(pager.TakeEntity)
-            .Select(p => new ProductDto
+        var pager = Pager.Build(dto.PageId, await query.CountAsync(), dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);  
+
+        #endregion
+
+        List<ProductDto> dtos = new List<ProductDto>();
+
+        foreach (var item in query)
+        {
+            var a = new ProductDto
             {
-                Id = p.Id,
-                Name = p.Name,
-                Slug = p.Slug,
-                ImageName = p.ImageName,
-                Price = (decimal)p.Price
-            })
-            .ToListAsync();
+                Id = item.Id,
+                Name = item.Name,
+                Slug = item.Slug,
+                ImageName = item.ImageName,
+                Price = (decimal)item.Price
+            };
+            dtos.Add(a);
+        }
 
-        var result = dto.SetProducts(products).SetPaging(pager);
-
-        // ذخیره کردن نتیجه در کش
-        _cache.Set(cacheKey, result, TimeSpan.FromMinutes(5)); // مثلا ۵ دقیقه اعتبار
-
-        return result;
+        return dto.SetProducts(dtos).SetPaging(pager);
     }
 
-    public Product GetForUpdateProduct(long id)
+    public CEProductDto GetForUpdateProduct(long id)
     {
         Product p = _db.Products.FirstOrDefault(p => p.Id == id);
 
         if (p == null)
-            return new Product();
+            return new CEProductDto();
 
-        return p;
+        CEProductDto dto = new CEProductDto();
+
+        dto.Name = p.Name;
+        dto.Slug = p.Slug;
+        dto.ImageName = p.ImageName;
+        dto.Price = p.Price;
+        dto.Description = p.Description;
+        dto.IsSpecial = p.IsSpecial;
+        dto.Count = p.Count;
+
+        return dto;
     }
 
     public async Task<ProductDto> GetProduct(string Slug)
@@ -293,6 +296,7 @@ public class ProductsService : IProductsService
             p.Name = san.Sanitize(dto.Name);
             p.ArtistId = dto.ArtistId;
             p.UserId = dto.UserId;
+            p.UpdateDate = DateTime.Now;
 
             _db.Products.Update(p);
             _db.SaveChanges();

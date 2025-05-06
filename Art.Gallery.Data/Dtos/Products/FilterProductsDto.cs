@@ -18,17 +18,14 @@ public class FilterProductsDto : BasePaging
 
     public FilterProductsDto SetPaging(BasePaging paging)
     {
-        if (paging == null) throw new ArgumentNullException(nameof(paging));
-
-        PageId = paging.PageId;
-        AllEntitiesCount = paging.AllEntitiesCount;
-        StartPage = paging.StartPage;
-        EndPage = paging.EndPage;
-        HowManyShowPageAfterAndBefore = paging.HowManyShowPageAfterAndBefore;
-        TakeEntity = paging.TakeEntity;
-        SkipEntity = paging.SkipEntity;
-        PageCount = paging.PageCount;
-
+        this.PageId = paging.PageId;
+        this.AllEntitiesCount = paging.AllEntitiesCount;
+        this.StartPage = paging.StartPage;
+        this.EndPage = paging.EndPage;
+        this.HowManyShowPageAfterAndBefore = paging.HowManyShowPageAfterAndBefore;
+        this.TakeEntity = paging.TakeEntity;
+        this.SkipEntity = paging.SkipEntity;
+        this.PageCount = paging.PageCount;
         return this;
     }
 }
