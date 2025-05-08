@@ -4,7 +4,6 @@ using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Web.Api.Http;
 using Art.Gallery.Web.Api.Models;
-using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -114,7 +113,8 @@ public class AccountController : ControllerBase
             return Ok(new
             {
                 token = jwt,
-                refreshToken = refresh.Token
+                refreshToken = refresh.Token,
+                username = user.UserName
             });
         }
 
