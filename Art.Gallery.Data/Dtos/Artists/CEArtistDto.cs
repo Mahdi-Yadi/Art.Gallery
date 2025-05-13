@@ -31,7 +31,7 @@ public class CEArtistDto
     [MaxLength(100, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     public string ImageName { get; set; }
 
-    public long UserId { get; set; }
+    public string UserId { get; set; }
 
     public IFormFile ImageFile { get; set; }
 

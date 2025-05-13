@@ -20,9 +20,11 @@ public class AccountController : ControllerBase
     private readonly TokenService _tokenService;
     private readonly JwtTokenGenerator _jwt;
     private readonly SiteDBContext _context;
+    private readonly UrlProtector _urlProtector;
 
-    public AccountController(IAccountService accountService, TokenService tokenService, JwtTokenGenerator jwt, SiteDBContext context)
+    public AccountController(UrlProtector urlProtector,IAccountService accountService, TokenService tokenService, JwtTokenGenerator jwt, SiteDBContext context)
     {
+        _urlProtector = urlProtector;
         _accountService = accountService;
         _tokenService = tokenService;
         _jwt = jwt;
@@ -112,6 +114,7 @@ public class AccountController : ControllerBase
 
             return Ok(new
             {
+                userId = _urlProtector.Protect(user.Id.ToString()),
                 token = jwt,
                 refreshToken = refresh.Token,
                 username = user.UserName
@@ -139,11 +142,11 @@ public class AccountController : ControllerBase
     //});
 
 
-#endregion
+    #endregion
 
-#region Refresh
+    #region Refresh
 
-[HttpPost("refresh-token")]
+    [HttpPost("refresh-token")]
     public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
     {
         var refreshToken = await _context.RefreshTokens

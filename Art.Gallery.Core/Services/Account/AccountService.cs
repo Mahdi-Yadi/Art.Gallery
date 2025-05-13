@@ -94,8 +94,10 @@ public class AccountService : IAccountService
             HtmlSanitizer san = new HtmlSanitizer();
 
             dto.Email = san.Sanitize(dto.Email);
+            dto.ActiveCode = san.Sanitize(dto.ActiveCode);
 
-            var user = _db.Users.FirstOrDefault(a => a.Email == dto.Email);
+            var user = _db.Users.FirstOrDefault(a => a.Email == dto.Email
+            && a.ActiveCode == dto.ActiveCode);
 
             if (user == null)
                 return AccountResult.Null;
@@ -108,6 +110,16 @@ public class AccountService : IAccountService
 
             _db.Users.Update(user);
             _db.SaveChanges();
+
+            MailDTO mail = new MailDTO();
+
+            mail.Email = user.Email;
+            mail.Title = "بروزرسانی حساب";
+            mail.Description = "کلمه عبور شما با موفقیت ویرایش شد.";
+            mail.ButtonTitle = "وب سایت";
+            mail.Link = PathExtension.DomainAddress;
+
+            var res = _mailSender.SendEmail(mail);
 
             return AccountResult.Success;
         }

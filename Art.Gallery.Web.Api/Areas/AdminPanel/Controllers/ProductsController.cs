@@ -9,6 +9,7 @@ namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 [Route("AdminPanel/api/[controller]")]
 public class ProductsController : ControllerBase
 {
+
     private readonly IProductsService _productService;
 
     public ProductsController(IProductsService productService)

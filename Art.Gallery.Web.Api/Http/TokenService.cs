@@ -48,7 +48,8 @@ public class TokenService
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
             UserId = userId, // تغییر به UserId
-            Expires = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(7),
+            CreatedAt = DateTime.Now,
         };
 
         _context.RefreshTokens.Add(refreshToken);

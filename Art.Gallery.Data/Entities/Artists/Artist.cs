@@ -32,6 +32,8 @@ public class Artist : BaseEntity
     [MaxLength(100, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     public string ImageName { get; set; }
 
+    public bool IsActive { get; set; }
+
     public long UserId { get; set; }
 
     public User User { get; set; }

@@ -1,9 +1,11 @@
 ﻿using System.Text;
 using System.Text.Json.Serialization;
+using Art.Gallery.Common;
 using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Core.Services.Artists;
 using Art.Gallery.Core.Services.Categories;
 using Art.Gallery.Core.Services.Galleries;
+using Art.Gallery.Core.Services.Jobs;
 using Art.Gallery.Core.Services.Orders;
 using Art.Gallery.Core.Services.Products;
 using Art.Gallery.Data.Contexts;
@@ -39,6 +41,9 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+builder.Services.AddInfrastructure();
+builder.Services.AddSingleton<UrlProtector>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
