@@ -41,7 +41,7 @@ public class CEProductDto
     [Display(Name = "وضعیت ویژه")]
     public bool IsSpecial { get; set; }
 
-    public long UserId { get; set; }
+    public string UserId { get; set; }
 
     public long ArtistId { get; set; }
 

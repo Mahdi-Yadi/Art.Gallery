@@ -1,11 +1,9 @@
-﻿using AngleSharp.Dom;
-using Art.Gallery.Common;
+﻿using Art.Gallery.Common;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Products;
 using Ganss.Xss;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Products;
 public class ProductsService : IProductsService
@@ -14,10 +12,11 @@ public class ProductsService : IProductsService
     #region Products
 
     private readonly SiteDBContext _db;
-
-    public ProductsService(SiteDBContext db)
+    private readonly UrlProtector _urlProtector;
+    public ProductsService(SiteDBContext db,UrlProtector urlProtector)
     {
         _db = db;
+        _urlProtector = urlProtector;
     }
 
     // Get Last Products
@@ -128,7 +127,7 @@ public class ProductsService : IProductsService
             p.Count = dto.Count;
             p.Price = dto.Price;
             p.ArtistId = dto.ArtistId;
-            p.UserId = dto.UserId;
+            p.UserId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
 
             p.CreateDate = DateTime.Now;
             p.UpdateDate = DateTime.Now;
@@ -169,6 +168,9 @@ public class ProductsService : IProductsService
 
         if (dto.CategoryId != 0)
             query = query.Where(s => s.ProductSelectedCategories.Any(f => f.Category.Id == dto.CategoryId));
+
+        if (dto.ArtistId != null)
+            query = query.Where(s => s.ArtistId == Convert.ToInt64(dto.ArtistId));
 
         if (dto.MinPrice != 0)
             query = query.Where(p => p.Price >= dto.MinPrice.Value);
@@ -232,14 +234,14 @@ public class ProductsService : IProductsService
     public async Task<ProductDto> GetProduct(string Slug)
     {
         if (string.IsNullOrEmpty(Slug))
-            return new ProductDto();
+            return null;
 
         var product = await _db.Products
                         .FirstOrDefaultAsync(a =>
                         !a.IsDelete && a.Slug == Slug);
 
         if (product == null)
-            return new ProductDto();
+            return null;
 
         ProductDto dto = new ProductDto();
 
@@ -295,7 +297,6 @@ public class ProductsService : IProductsService
             p.Name = san.Sanitize(dto.Name);
             p.Name = san.Sanitize(dto.Name);
             p.ArtistId = dto.ArtistId;
-            p.UserId = dto.UserId;
             p.UpdateDate = DateTime.Now;
 
             _db.Products.Update(p);

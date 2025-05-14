@@ -3,9 +3,7 @@ using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Data.Entities.Account;
 using Art.Gallery.Emails;
-using Azure;
 using Ganss.Xss;
-
 namespace Art.Gallery.Core.Services.Account;
 public class AccountService : IAccountService
 {
