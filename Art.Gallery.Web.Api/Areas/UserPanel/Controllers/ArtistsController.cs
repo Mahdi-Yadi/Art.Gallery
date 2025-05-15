@@ -1,6 +1,7 @@
 ﻿using Art.Gallery.Core.Services.Artists;
 using Art.Gallery.Data.Dtos.Artists;
 using Art.Gallery.Data.Entities.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
 //[Authorize]
@@ -15,7 +16,11 @@ public class ArtistsController : ControllerBase
     {
         _artistService = artistService;        
     }
-
+    // تست
+    [Authorize]
+    [HttpGet("test")]
+    public IActionResult GetSecret() => Ok("مجاز!");
+   
     [HttpPost("AddArtist")]
     public IActionResult AddArtist([FromForm] CEArtistDto dto)
     {
