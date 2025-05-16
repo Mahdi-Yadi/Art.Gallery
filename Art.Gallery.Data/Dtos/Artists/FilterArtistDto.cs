@@ -3,7 +3,7 @@ namespace Art.Gallery.Data.Dtos.Artists;
 public class FilterArtistDto : BasePaging
 {
 
-    public List<CEArtistDto> ArtistsDto { get; set; }
+    public List<ArtistDto> ArtistsDto { get; set; }
 
     public string Name { get; set; }
 
@@ -13,9 +13,7 @@ public class FilterArtistDto : BasePaging
 
     public string UserId { get; set; }
 
-    public string ArtistId { get; set; }
-
-    public FilterArtistDto SetArtists(List<CEArtistDto> artistDtos)
+    public FilterArtistDto SetArtists(List<ArtistDto> artistDtos)
     {
         this.ArtistsDto = artistDtos;
         return this;

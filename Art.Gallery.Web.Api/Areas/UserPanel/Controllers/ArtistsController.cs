@@ -1,4 +1,5 @@
 ﻿using Art.Gallery.Core.Services.Artists;
+using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Data.Dtos.Artists;
 using Art.Gallery.Data.Entities.Account;
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +21,38 @@ public class ArtistsController : ControllerBase
     [Authorize]
     [HttpGet("test")]
     public IActionResult GetSecret() => Ok("مجاز!");
-   
+
     [HttpPost("AddArtist")]
     public IActionResult AddArtist([FromForm] CEArtistDto dto)
     {
         if (dto.UserId == null)
             return BadRequest(ModelState);
 
-        var result = _artistService.AddArtist(dto);
-        return Ok(result);
+        ArtistDtoResult result = _artistService.AddArtist(dto);
+
+        switch (result)
+        {
+            case ArtistDtoResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ArtistDtoResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ArtistDtoResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpGet("GetforUpdate/{id}/{userId}")]
@@ -68,6 +92,7 @@ public class ArtistsController : ControllerBase
             return BadRequest(ModelState);
 
         var result = await _artistService.FilterArtist(dto);
+
         return Ok(result);
     }
 

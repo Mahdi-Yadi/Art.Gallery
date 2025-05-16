@@ -163,7 +163,7 @@ public class ArtistService : IArtistService
         var artists = await query
             .Skip(pager.SkipEntity)
             .Take(pager.TakeEntity)
-            .Select(p => new CEArtistDto
+            .Select(p => new ArtistDto
             {
                 Id = p.Id.ToString(),
                 Name = p.Name,
