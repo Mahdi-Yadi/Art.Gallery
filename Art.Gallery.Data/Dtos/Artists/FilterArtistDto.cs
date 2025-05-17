@@ -7,11 +7,11 @@ public class FilterArtistDto : BasePaging
 
     public string Name { get; set; }
 
-    public string SortBy { get; set; }
-
     public bool IsActive { get; set; }
 
     public string UserId { get; set; }
+
+    public int Count { get; set; }
 
     public FilterArtistDto SetArtists(List<ArtistDto> artistDtos)
     {

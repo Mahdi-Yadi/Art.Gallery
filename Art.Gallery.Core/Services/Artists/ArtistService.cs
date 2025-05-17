@@ -2,7 +2,7 @@
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Artists;
 using Art.Gallery.Data.Dtos.Paging;
-using Art.Gallery.Data.Entities.Account;
+using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Artists;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
@@ -134,47 +134,33 @@ public class ArtistService : IArtistService
 
     public async Task<FilterArtistDto> FilterArtist(FilterArtistDto dto)
     {
-        var query = _db
-            .Artists
-            .Where(a => !a.IsDelete)
-            .Include(a => a.Products)
-            .AsQueryable();
+        var query = _db.Artists.AsQueryable();
 
-        if (!string.IsNullOrEmpty(dto.Name))
-            query = query.Where(s => EF.Functions.Like(s.Name, $"%{dto.Name}%"));
-
-        if (dto.UserId != null)
+        var aQuery = query.Select(p => new
         {
-            long userId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
-            if (userId != 0)
-                query = query.Where(s => s.UserId == userId);
-        }
+            p.Id,
+            p.Name,
+            p.ImageName,
+            p.Slug,
+        });
 
-        query = dto.SortBy switch
+        var products = (await aQuery.ToListAsync()).Select(p => new ArtistDto()
         {
-            "newest" => query.OrderByDescending(p => p.CreateDate),
-            "oldest" => query.OrderBy(p => p.CreateDate),
-            _ => query.OrderByDescending(p => p.Id)
-        };
+            Id = p.Id.ToString(),
+            Name = p.Name,
+            ImageName = p.ImageName,
+            Slug = p.Slug,
+        }).ToList();
 
-        var totalCount = await query.CountAsync();
-        var pager = Pager.Build(dto.PageId, totalCount, dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);
+        #region Pagination
 
-        var artists = await query
-            .Skip(pager.SkipEntity)
-            .Take(pager.TakeEntity)
-            .Select(p => new ArtistDto
-            {
-                Id = p.Id.ToString(),
-                Name = p.Name,
-                Slug = p.Slug,
-                ImageName = p.ImageName
-            })
-            .ToListAsync();
+        var pager = Pager.Build(dto.PageId, await query.CountAsync(), dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);
 
-        var result = dto.SetArtists(artists).SetPaging(pager);
+        dto.Count = products.Count;
 
-        return result;
+        return dto.SetArtists(products).SetPaging(pager);
+
+        #endregion
     }
 
     public CEArtistDto GetArtistForShow(string id, string userName)

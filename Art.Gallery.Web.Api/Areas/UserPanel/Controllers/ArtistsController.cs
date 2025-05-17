@@ -88,8 +88,8 @@ public class ArtistsController : ControllerBase
     [HttpPost("filter")]
     public async Task<IActionResult> FilterArtists([FromBody] FilterArtistDto dto)
     {
-        if (dto.UserId == null)
-            return BadRequest(ModelState);
+        //if (dto.UserId == null)
+        //    return BadRequest(ModelState);
 
         var result = await _artistService.FilterArtist(dto);
 

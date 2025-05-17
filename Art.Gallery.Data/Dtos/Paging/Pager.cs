@@ -3,6 +3,13 @@ public class Pager
 {
     public static BasePaging Build(int pageId, int allEntitiesCount, int take, int howManyShowPageAfterAndBefore)
     {
+        if (pageId == 0)
+            pageId = 1;
+        if (howManyShowPageAfterAndBefore == 0)
+            howManyShowPageAfterAndBefore = 3;
+        if (take == 0)
+            take = 15;
+
         var pageCount = Convert.ToInt32(Math.Ceiling(allEntitiesCount / (double)take));
         return new BasePaging
         {
