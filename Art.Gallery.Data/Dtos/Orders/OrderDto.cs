@@ -11,7 +11,9 @@ public class OrderDto
     public DateTime PaymentDate { get; set; }
 
     public string PaymentCode { get; set; }
-    
+
+    public string TrackingCode { get; set; }
+
     public string UserName { get; set; }
 
     public List<OrderDetail> OrderDetails { get; set; }

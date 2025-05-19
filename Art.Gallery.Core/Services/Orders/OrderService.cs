@@ -221,6 +221,27 @@ public class OrderService : IOrderService
         return dto;
     }
 
+    public bool UpdateOrderForPayment(long orderId,string trackingCode)
+    {
+        try
+        {
+            var o = _db.Orders.FirstOrDefault(a => a.Id == orderId);
+
+            if (o == null) return false;
+
+            o.TrackingCode = trackingCode;
+
+            _db.Orders.Update(o);
+            _db.SaveChanges();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     public bool UpdateOrderAfterPayment(string trackingCode, string paymentCode)
     {
         try

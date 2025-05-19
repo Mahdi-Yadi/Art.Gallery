@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.IdentityModel.Tokens;
+using Parbad.Builder;
+using Parbad.Gateway.ZarinPal;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,23 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+// parbad
+builder.Services.AddParbad()
+    .ConfigureGateways(geteway =>
+    {
+        geteway.AddZarinPal()
+            .WithAccounts(accounts =>
+            {
+                accounts.AddInMemory(account =>
+                {
+                    account.MerchantId = "d0879652-f0af-4da0-b803-000629ef2225";
+                    account.IsSandbox = true;
+                });
+            });
+    })
+    .ConfigureHttpContext(build => build.UseDefaultAspNetCore())
+    .ConfigureStorage(build => build.UseMemoryCache());
 
 builder.Services.AddInfrastructure();
 builder.Services.AddSingleton<UrlProtector>();
