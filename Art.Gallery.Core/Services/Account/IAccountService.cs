@@ -8,4 +8,7 @@ public interface IAccountService
     AccountResult Forgot(ForgotPasswordDto dto);
     AccountResult Reset(ResetPasswordDto dto);
 
+    ProfileDto GetUserProfileForEdit(string id);
+    AccountResult EditProfile(ProfileDto dto);
+
 }

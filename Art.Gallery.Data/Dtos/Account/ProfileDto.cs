@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Art.Gallery.Data.Entities.Common;
-namespace Art.Gallery.Data.Entities.Account;
-public class User : BaseEntity
+namespace Art.Gallery.Data.Dtos.Account;
+public class ProfileDto
 {
+    public string Id { get; set; }
+
     [MaxLength(100)]
     [Required]
     [DataType(DataType.Text)]
@@ -24,23 +25,5 @@ public class User : BaseEntity
     [MaxLength(15)]
     [DataType(DataType.PhoneNumber)]
     public string PhoneNumber { get; set; }
-
-    [MaxLength(300)]
-    [Required]
-    [DataType(DataType.Password)]
-    public string Password { get; set; }
-
-    [MaxLength(50)]
-    [DataType(DataType.Text)]
-    public string ActiveCode { get; set; }
-
-    [MaxLength(300)]
-    [Required]
-    [DataType(DataType.Password)]
-    public string Salt { get; set; }
-
-    public bool IsActive  { get; set; }
-
-    public bool IsAdmin  { get; set; }
 
 }

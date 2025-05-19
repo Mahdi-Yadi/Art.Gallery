@@ -9,10 +9,13 @@ public class AccountService : IAccountService
 {
     private readonly SiteDBContext _db;
     private readonly IMailSender _mailSender;
-    public AccountService(SiteDBContext db, IMailSender mailSender)
+    private readonly UrlProtector _urlProtector;
+
+    public AccountService(SiteDBContext db, IMailSender mailSender, UrlProtector urlProtector)
     {
         _db = db;
         _mailSender = mailSender;
+        _urlProtector = urlProtector;
     }
 
     public AccountResult Register(RegisterDto dto)
@@ -73,11 +76,12 @@ public class AccountService : IAccountService
 
         mail.Email = user.Email;
         mail.Title = "فراموشی کلمه عبور";
-        mail.Description = "کاربر گرامی ، ایمیل ارسالی به منظور بازیابی کلمه عبور برای شما ارسال شده است! در صورتی که شما درخواست مورد نظر را ثبت نکرده اید ، این مورد را گزارش دهید.";
+        mail.Description =
+            "کاربر گرامی ، ایمیل ارسالی به منظور بازیابی کلمه عبور برای شما ارسال شده است! در صورتی که شما درخواست مورد نظر را ثبت نکرده اید ، این مورد را گزارش دهید.";
         mail.ButtonTitle = "بازیابی کلمه عبور";
         mail.Link = PathExtension.DomainAddress + $"/Reset-Password/{user.ActiveCode}";
 
-        var res =  _mailSender.SendEmail(mail);
+        var res = _mailSender.SendEmail(mail);
 
         if (res == MailResult.Error)
             return AccountResult.Error;
@@ -95,7 +99,7 @@ public class AccountService : IAccountService
             dto.ActiveCode = san.Sanitize(dto.ActiveCode);
 
             var user = _db.Users.FirstOrDefault(a => a.Email == dto.Email
-            && a.ActiveCode == dto.ActiveCode);
+                                                     && a.ActiveCode == dto.ActiveCode);
 
             if (user == null)
                 return AccountResult.Null;
@@ -127,4 +131,51 @@ public class AccountService : IAccountService
             return AccountResult.Error;
         }
     }
+
+    public ProfileDto GetUserProfileForEdit(string id)
+    {
+        long userId = Convert.ToInt64(_urlProtector.UnProtect(id));
+
+        var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+
+        if (user == null)
+            return new ProfileDto();
+
+        ProfileDto dto = new ProfileDto();
+
+        dto.PhoneNumber = user.PhoneNumber;
+        dto.Email = user.Email;
+        dto.Addrress = user.Addrress;
+        dto.CodePost = user.CodePost;
+        dto.UserName = user.UserName;
+
+        return dto;
+    }
+    public AccountResult EditProfile(ProfileDto dto)
+    {
+        try
+        {
+            long userId = Convert.ToInt64(_urlProtector.UnProtect(dto.Id));
+
+            var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+
+            if (user == null)
+                return AccountResult.Null;
+
+            user.PhoneNumber = dto.PhoneNumber;
+            user.Email = dto.Email;
+            user.Addrress = dto.Addrress;
+            user.CodePost = dto.CodePost;
+            user.UserName = dto.UserName;
+
+            _db.Users.Update(user);
+            _db.SaveChanges();
+            return AccountResult.Success;
+        }
+        catch (Exception)
+        {
+            return AccountResult.Error;
+        }
+    }
+
 }
