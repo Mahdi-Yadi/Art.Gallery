@@ -2,6 +2,7 @@
 using Art.Gallery.Data.Entities.Articles;
 using Art.Gallery.Data.Entities.Artists;
 using Art.Gallery.Data.Entities.Categories;
+using Art.Gallery.Data.Entities.Orders;
 using Art.Gallery.Data.Entities.Products;
 using Art.Gallery.Data.Entities.Site;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,10 @@ public class SiteDBContext : DbContext
     public DbSet<Article> Articles { get; set; }
 
     public DbSet<ProductGallery> ProductGalleries { get; set; }
+
+    public DbSet<Order> Orders { get; set; }
+
+    public DbSet<OrderDetail> OrderDetails { get; set; }
 
     #region on model creating
 

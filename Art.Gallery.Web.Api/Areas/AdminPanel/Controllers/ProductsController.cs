@@ -1,9 +1,7 @@
 ﻿using Art.Gallery.Core.Services.Products;
 using Art.Gallery.Data.Dtos.Products;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
-//[Authorize]
 [Area("AdminPanel")]
 [ApiController]
 [Route("AdminPanel/api/[controller]")]
@@ -17,31 +15,17 @@ public class ProductsController : ControllerBase
         _productService = productService;
     }
 
-    [HttpPost("AddProduct")]
-    public IActionResult AddProduct([FromForm] CEProductDto dto)
+    [HttpDelete("ActiveProduct/{id}")]
+    public IActionResult ActiveProduct(string id)
     {
-        var result = _productService.AddProduct(dto);
+        var result = _productService.ActiveProduct(id);
         return Ok(result);
     }
 
-    [HttpGet("GetforUpdate/{id}")]
-    public IActionResult UpdateProduct(long id)
+    [HttpDelete("RejectProduct/{id}")]
+    public IActionResult RejectProduct(string id)
     {
-        var result = _productService.GetForUpdateProduct(id);
-        return Ok(result);
-    }
-
-    [HttpPost("update")]
-    public IActionResult UpdateProduct([FromForm] CEProductDto dto)
-    {
-        var result = _productService.UpdateProduct(dto);
-        return Ok(result);
-    }
-
-    [HttpDelete("DeleteProduct/{id}")]
-    public IActionResult DeleteProduct(long id)
-    {
-        var result = _productService.DeleteProduct(id);
+        var result = _productService.RejectProduct(id);
         return Ok(result);
     }
 

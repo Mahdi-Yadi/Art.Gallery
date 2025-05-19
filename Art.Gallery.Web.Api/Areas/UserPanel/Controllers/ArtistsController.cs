@@ -1,11 +1,8 @@
 ﻿using Art.Gallery.Core.Services.Artists;
-using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Data.Dtos.Artists;
-using Art.Gallery.Data.Entities.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
-//[Authorize]
 [Area("UserPanel")]
 [ApiController]
 [Route("UserPanel/api/[controller]")]

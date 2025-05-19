@@ -143,6 +143,7 @@ public class AccountService : IAccountService
 
         ProfileDto dto = new ProfileDto();
 
+        dto.Id = _urlProtector.Protect(user.Id.ToString());
         dto.PhoneNumber = user.PhoneNumber;
         dto.Email = user.Email;
         dto.Addrress = user.Addrress;
@@ -176,6 +177,20 @@ public class AccountService : IAccountService
         {
             return AccountResult.Error;
         }
+    }
+
+    // Check User
+    public bool IsAdmin(string id)
+    {
+        long userId = Convert.ToInt64(_urlProtector.UnProtect(id));
+
+        var user = _db.Users.FirstOrDefault(a => a.Id == userId);
+
+        if (user == null) return false;
+
+        if(user.IsAdmin) return true;
+
+        return false;
     }
 
 }

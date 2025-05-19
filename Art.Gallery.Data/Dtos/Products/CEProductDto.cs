@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
-
 namespace Art.Gallery.Data.Dtos.Products;
 public class CEProductDto
 {
@@ -43,7 +42,7 @@ public class CEProductDto
 
     public string UserId { get; set; }
 
-    public long ArtistId { get; set; }
+    public string ArtistId { get; set; }
 
     public IFormFile ImageFile { get; set; }
 }

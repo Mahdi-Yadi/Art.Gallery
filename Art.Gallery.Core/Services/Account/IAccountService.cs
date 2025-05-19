@@ -11,4 +11,6 @@ public interface IAccountService
     ProfileDto GetUserProfileForEdit(string id);
     AccountResult EditProfile(ProfileDto dto);
 
+    bool IsAdmin(string id);
+
 }

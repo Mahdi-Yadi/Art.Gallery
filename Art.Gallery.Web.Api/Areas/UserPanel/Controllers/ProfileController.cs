@@ -1,9 +1,8 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Data.Dtos.Account;
-using Art.Gallery.Data.Dtos.Artists;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
+[Area("UserPanel")]
 [Route("api/[controller]")]
 [ApiController]
 public class ProfileController : ControllerBase
@@ -13,6 +12,17 @@ public class ProfileController : ControllerBase
     public ProfileController(IAccountService accountService)
     {
         _accountService = accountService;
+    }
+
+    [HttpGet("CheckUser/{userId}")]
+    public IActionResult CheckUser(string userId)
+    {
+        if (userId == null)
+            return BadRequest(ModelState);
+
+        var result = _accountService.IsAdmin(userId);
+
+        return Ok(result);
     }
 
     [HttpGet("GetUserProfile/{userId}")]

@@ -2,7 +2,6 @@
 using Art.Gallery.Data.Dtos.Artists;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
-//[Authorize]
 [Area("AdminPanel")]
 [ApiController]
 [Route("AdminPanel/api/[controller]")]
@@ -29,7 +28,7 @@ public class ArtistsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("filter")]
+    [HttpPost("FilterArtists")]
     public async Task<IActionResult> FilterArtists([FromBody] FilterArtistDto dto)
     {
         var result = await _artistService.FilterArtist(dto);

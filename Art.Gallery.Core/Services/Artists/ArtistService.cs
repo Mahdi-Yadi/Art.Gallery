@@ -2,7 +2,6 @@
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Artists;
 using Art.Gallery.Data.Dtos.Paging;
-using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Artists;
 using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
@@ -85,6 +84,7 @@ public class ArtistService : IArtistService
         return ArtistDtoResult.Error;
     }
 
+    // Active
     public ArtistDtoResult ActiveArtist(string id)
     {
         var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id));
@@ -100,6 +100,7 @@ public class ArtistService : IArtistService
         return ArtistDtoResult.Error;
     }
 
+    // Reject
     public ArtistDtoResult RejectArtist(string id)
     {
         var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id));
@@ -132,6 +133,7 @@ public class ArtistService : IArtistService
         return ArtistDtoResult.Error;
     }
 
+    // Filter
     public async Task<FilterArtistDto> FilterArtist(FilterArtistDto dto)
     {
         var query = _db.Artists.AsQueryable();
@@ -163,6 +165,7 @@ public class ArtistService : IArtistService
         #endregion
     }
 
+    // For show
     public CEArtistDto GetArtistForShow(string id, string userName)
     {
         Artist a = _db.Artists.FirstOrDefault(a =>
@@ -182,6 +185,7 @@ public class ArtistService : IArtistService
         return dto;
     }
 
+    // Get data
     public CEArtistDto GetArtist(string id, string userId)
     {
         Artist a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id) &&

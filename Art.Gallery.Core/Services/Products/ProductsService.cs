@@ -13,7 +13,7 @@ public class ProductsService : IProductsService
 
     private readonly SiteDBContext _db;
     private readonly UrlProtector _urlProtector;
-    public ProductsService(SiteDBContext db,UrlProtector urlProtector)
+    public ProductsService(SiteDBContext db, UrlProtector urlProtector)
     {
         _db = db;
         _urlProtector = urlProtector;
@@ -23,7 +23,7 @@ public class ProductsService : IProductsService
     public List<ProductDto> GetLastProducts()
     {
         var p = _db.Products
-            .Where(a => !a.IsDelete)
+            .Where(a => !a.IsDelete && a.IsActive)
             .OrderByDescending(p => p.CreateDate)
             .Skip(0)
             .Take(6)
@@ -49,12 +49,11 @@ public class ProductsService : IProductsService
 
         return dtos;
     }
-
     // Get Special Products
     public List<ProductDto> GetSpecialProducts()
     {
         var p = _db.Products
-            .Where(a => !a.IsDelete && a.IsSpecial)
+            .Where(a => !a.IsDelete && a.IsSpecial && a.IsActive)
             .OrderByDescending(p => p.CreateDate)
             .Skip(0)
             .Take(3)
@@ -81,13 +80,16 @@ public class ProductsService : IProductsService
 
         return dtos;
     }
-
+    // Add
     public ProductResult AddProduct(CEProductDto dto)
     {
         try
         {
             if (dto.Name == null)
                 return ProductResult.Null;
+
+            long userId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
+            long artistId = Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId));
 
             Product p = new Product();
 
@@ -117,7 +119,7 @@ public class ProductsService : IProductsService
             {
                 p.ImageName = "1.png";
             }
-            
+
             HtmlSanitizer san = new HtmlSanitizer();
 
             p.Name = san.Sanitize(dto.Name);
@@ -126,8 +128,8 @@ public class ProductsService : IProductsService
             p.IsSpecial = dto.IsSpecial;
             p.Count = dto.Count;
             p.Price = dto.Price;
-            p.ArtistId = dto.ArtistId;
-            p.UserId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
+            p.ArtistId = artistId;
+            p.UserId = userId;
 
             p.CreateDate = DateTime.Now;
             p.UpdateDate = DateTime.Now;
@@ -142,10 +144,11 @@ public class ProductsService : IProductsService
             return ProductResult.Error;
         }
     }
-
-    public ProductResult DeleteProduct(long id)
+    // Delete
+    public ProductResult DeleteProduct(string id)
     {
-        Product p = _db.Products.FirstOrDefault(p => p.Id == id);
+        long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        var p = _db.Products.FirstOrDefault(a => a.Id == productId);
 
         if (p == null)
             return ProductResult.Null;
@@ -155,13 +158,16 @@ public class ProductsService : IProductsService
         _db.SaveChanges();
         return ProductResult.Success;
     }
-
+    // Filter
     public async Task<FilterProductsDto> FilterProductsAsync(FilterProductsDto dto)
     {
         var query = _db.Products.AsQueryable();
 
-       if(dto.TakeEntity == 0)
-           dto.TakeEntity = 15;
+        if (dto.TakeEntity == 0)
+            dto.TakeEntity = 15;
+
+        if (dto.IsActive)
+            query = query.Where(s => s.IsActive);
 
         if (!string.IsNullOrEmpty(dto.Name))
             query = query.Where(s => EF.Functions.Like(s.Name, $"%{dto.Name}%"));
@@ -189,7 +195,7 @@ public class ProductsService : IProductsService
 
         #region paging
 
-        var pager = Pager.Build(dto.PageId, await query.CountAsync(), dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);  
+        var pager = Pager.Build(dto.PageId, await query.CountAsync(), dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);
 
         #endregion
 
@@ -210,16 +216,18 @@ public class ProductsService : IProductsService
 
         return dto.SetProducts(dtos).SetPaging(pager);
     }
-
-    public CEProductDto GetForUpdateProduct(long id)
+    // Get for Update
+    public CEProductDto GetForUpdateProduct(string id)
     {
-        Product p = _db.Products.FirstOrDefault(p => p.Id == id);
+        long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        Product p = _db.Products.FirstOrDefault(a => a.Id == productId);
 
         if (p == null)
             return new CEProductDto();
 
         CEProductDto dto = new CEProductDto();
 
+        dto.Id = _urlProtector.Protect(p.Id.ToString());
         dto.Name = p.Name;
         dto.Slug = p.Slug;
         dto.ImageName = p.ImageName;
@@ -230,33 +238,7 @@ public class ProductsService : IProductsService
 
         return dto;
     }
-
-    public async Task<ProductDto> GetProduct(string Slug)
-    {
-        if (string.IsNullOrEmpty(Slug))
-            return null;
-
-        var product = await _db.Products
-                        .FirstOrDefaultAsync(a =>
-                        !a.IsDelete && a.Slug == Slug);
-
-        if (product == null)
-            return null;
-
-        ProductDto dto = new ProductDto();
-
-        dto.Slug = product.Slug;
-        dto.Name = product.Name;
-        dto.ImageName = product.ImageName;
-        dto.Price = (decimal)product.Price;
-        dto.Description = product.Description;
-        dto.IsSpecial = product.IsSpecial;
-        // encript
-        dto.Id = product.Id;
-
-        return dto;
-    }
-
+    // Update
     public ProductResult UpdateProduct(CEProductDto dto)
     {
         try
@@ -264,7 +246,9 @@ public class ProductsService : IProductsService
             if (dto.Name == null)
                 return ProductResult.Null;
 
-            Product p = _db.Products.FirstOrDefault(p => p.Id == Convert.ToInt64(dto.Id));
+            long productId = Convert.ToInt64(_urlProtector.Protect(dto.Id));
+
+            Product p = _db.Products.FirstOrDefault(p => p.Id == productId);
 
             if (p == null)
                 return ProductResult.Null;
@@ -296,7 +280,6 @@ public class ProductsService : IProductsService
             p.Name = san.Sanitize(dto.Name);
             p.Name = san.Sanitize(dto.Name);
             p.Name = san.Sanitize(dto.Name);
-            p.ArtistId = dto.ArtistId;
             p.UpdateDate = DateTime.Now;
 
             _db.Products.Update(p);
@@ -308,6 +291,83 @@ public class ProductsService : IProductsService
         {
             return ProductResult.Error;
         }
+    }
+    // Recover Product
+    public ProductResult RecoverProduct(string id, string userId)
+    {
+        long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        long usId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
+
+        if (a != null)
+        {
+            a.IsDelete = false;
+
+            _db.Products.Update(a);
+            _db.SaveChanges();
+            return ProductResult.Success;
+        }
+        return ProductResult.Error;
+    }
+    // Active Product
+    public ProductResult ActiveProduct(string id)
+    {
+         long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        long usId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
+
+        if (a != null)
+        {
+            a.IsActive = true;
+
+            _db.Products.Update(a);
+            _db.SaveChanges();
+            return ProductResult.Success;
+        }
+        return ProductResult.Error;
+    }
+    // Reject Product
+    public ProductResult RejectProduct(string id)
+    {
+        long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        long usId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
+
+        if (a != null)
+        {
+            a.IsActive = false;
+
+            _db.Products.Update(a);
+            _db.SaveChanges();
+            return ProductResult.Success;
+        }
+        return ProductResult.Error;
+    }
+    // Get
+    public async Task<ProductDto> GetProduct(string Slug)
+    {
+        if (string.IsNullOrEmpty(Slug))
+            return null;
+
+        var product = await _db.Products
+            .FirstOrDefaultAsync(a =>
+                !a.IsDelete && a.Slug == Slug);
+
+        if (product == null)
+            return null;
+
+        ProductDto dto = new ProductDto();
+
+        dto.Slug = product.Slug;
+        dto.Name = product.Name;
+        dto.ImageName = product.ImageName;
+        dto.Price = (decimal)product.Price;
+        dto.Description = product.Description;
+        dto.IsSpecial = product.IsSpecial;
+        // encript
+        dto.Id = product.Id;
+
+        return dto;
     }
 
     #endregion

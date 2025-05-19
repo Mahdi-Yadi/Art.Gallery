@@ -40,6 +40,9 @@ public class Product : BaseEntity
     [Display(Name = "وضعیت ویژه")]
     public bool IsSpecial { get; set; }
 
+    [Display(Name = "وضعیت فعالیت")]
+    public bool IsActive { get; set; }
+
     public long UserId { get; set; }
 
     public User User { get; set; }
