@@ -114,6 +114,15 @@ public class OrderService : IOrderService
     {
         var query = _db.Orders.AsQueryable();
 
+        if (!string.IsNullOrEmpty(dto.UserId))
+        {
+            long usId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
+            query = query.Where(a => a.UserId == usId);
+        }
+
+        if (dto.OrderId != 0)
+            query = query.Where(a => a.Id == dto.OrderId);
+
         var aQuery = query.Select(p => new
         {
             p.Id,
@@ -152,21 +161,86 @@ public class OrderService : IOrderService
             .Include(a => a.User)
             .FirstOrDefault(a => a.Id == orderId);
 
-        if(o == null)
+        if (o == null)
             return null;
 
         OrderDto dto = new OrderDto();
 
         dto.Id = orderId;
         dto.PaymentCode = o.PaymentCode;
-        // calculate
-        dto.Sum = o.Sum;
+        if (o.OrderDetails.Count > 0 && o.PaymentCode == null)
+        {
+            dto.Sum = 0;
+            foreach (var item in o.OrderDetails)
+            {
+                dto.Sum += (float)(item.Count * item.Product.Price);
+            }
+        }
+        else
+        {
+            dto.Sum = o.Sum;
+        }
         dto.CreateDate = o.CreateDate;
         dto.UserName = o.User.UserName;
 
         dto.OrderDetails = (List<OrderDetail>)o.OrderDetails;
 
         return dto;
+    }
+
+    public OrderDto GetOpenOrder(string userId)
+    {
+        long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
+
+        var o = _db.Orders
+            .Include(a => a.OrderDetails)
+            .ThenInclude(a => a.Product)
+            .FirstOrDefault(a => a.PaymentCode == null && a.UserId == usId);
+
+        if (o == null) return null;
+
+        OrderDto dto = new OrderDto();
+
+        dto.Id = o.Id;
+        dto.PaymentCode = o.PaymentCode;
+
+        if (o.OrderDetails.Count > 0)
+        {
+            dto.Sum = 0;
+            foreach (var item in o.OrderDetails)
+            {
+                dto.Sum += (float)(item.Count * item.Product.Price);
+            }
+        }
+
+        dto.CreateDate = o.CreateDate;
+        dto.UserName = o.User.UserName;
+
+        dto.OrderDetails = (List<OrderDetail>)o.OrderDetails;
+
+        return dto;
+    }
+
+    public bool UpdateOrderAfterPayment(string trackingCode, string paymentCode)
+    {
+        try
+        {
+            var o = _db.Orders.FirstOrDefault(a => a.TrackingCode == trackingCode);
+
+            if (o == null) return false;
+
+            o.PaymentCode = paymentCode;
+            o.PaymentDate = DateTime.Now;
+
+            _db.Orders.Update(o);
+            _db.SaveChanges();
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     public async ValueTask DisposeAsync()

@@ -9,6 +9,8 @@ public class Order
 
     public long UserId { get; set; }
 
+    public string TrackingCode { get; set; }
+
     public float Sum { get; set; }
 
     public DateTime CreateDate { get; set; }

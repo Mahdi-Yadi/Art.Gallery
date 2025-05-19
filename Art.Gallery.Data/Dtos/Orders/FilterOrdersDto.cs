@@ -4,7 +4,9 @@ public class FilterOrdersDto : BasePaging
 {
     public List<OrderDto> OrderList { get; set; }
 
-    public int OrderId { get; set; }
+    public long OrderId { get; set; }
+
+    public string UserId { get; set; }
 
     public int Count { get; set; }
 

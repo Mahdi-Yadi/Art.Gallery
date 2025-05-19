@@ -1,8 +1,8 @@
 ﻿using Art.Gallery.Core.Services.Orders;
 using Art.Gallery.Data.Dtos.Orders;
 using Microsoft.AspNetCore.Mvc;
-namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
-[Area("UserPanel")]
+namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
+[Area("AdminPanel")]
 [Route("api/[controller]")]
 [ApiController]
 public class OrdersController : ControllerBase

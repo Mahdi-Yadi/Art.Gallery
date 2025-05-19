@@ -9,4 +9,8 @@ public interface IOrderService : IAsyncDisposable
 
     OrderDto GetOrder(long orderId);
 
+    OrderDto GetOpenOrder(string userId);
+
+    bool UpdateOrderAfterPayment(string trackingCode,string paymentCode);
+
 }
