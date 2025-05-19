@@ -39,4 +39,5 @@ public class Artist : BaseEntity
     public User User { get; set; }
 
     public ICollection<Product> Products { get; set; }
+
 }

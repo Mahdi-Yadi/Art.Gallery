@@ -5,4 +5,8 @@ public interface IOrderService : IAsyncDisposable
     // Add Order
     OrderResult AddOrder(long productId, string userId);
 
+    Task<FilterOrdersDto> FilterOrders(FilterOrdersDto dto);
+
+    OrderDto GetOrder(long orderId);
+
 }

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Art.Gallery.Data.Entities.Account;
+
 namespace Art.Gallery.Data.Entities.Orders;
 public class Order
 {
@@ -17,4 +19,5 @@ public class Order
 
     public ICollection<OrderDetail> OrderDetails { get; set; }
 
+    public User User { get; set; }
 }

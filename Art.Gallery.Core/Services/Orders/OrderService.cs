@@ -1,8 +1,9 @@
 ﻿using Art.Gallery.Common;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Orders;
+using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Entities.Orders;
-
+using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Orders;
 public class OrderService : IOrderService
 {
@@ -107,6 +108,65 @@ public class OrderService : IOrderService
         {
             return null;
         }
+    }
+
+    public async Task<FilterOrdersDto> FilterOrders(FilterOrdersDto dto)
+    {
+        var query = _db.Orders.AsQueryable();
+
+        var aQuery = query.Select(p => new
+        {
+            p.Id,
+            p.CreateDate,
+            p.PaymentDate,
+            p.PaymentCode,
+            p.Sum
+        });
+
+        var orders = (await aQuery.ToListAsync()).Select(p => new OrderDto()
+        {
+            Id = p.Id,
+            Sum = p.Sum,
+            CreateDate = p.CreateDate,
+            PaymentCode = p.PaymentCode,
+            PaymentDate = (DateTime)p.PaymentDate,
+        }).ToList();
+
+        #region Pagination
+
+        var pager = Pager.Build(dto.PageId, await query.CountAsync(), dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);
+
+        dto.Count = orders.Count;
+
+        return dto.SetOrders(orders).SetPaging(pager);
+
+        #endregion
+    }
+
+    public OrderDto GetOrder(long orderId)
+    {
+        var o = _db
+            .Orders
+            .Include(a => a.OrderDetails)
+            .ThenInclude(a => a.Product)
+            .Include(a => a.User)
+            .FirstOrDefault(a => a.Id == orderId);
+
+        if(o == null)
+            return null;
+
+        OrderDto dto = new OrderDto();
+
+        dto.Id = orderId;
+        dto.PaymentCode = o.PaymentCode;
+        // calculate
+        dto.Sum = o.Sum;
+        dto.CreateDate = o.CreateDate;
+        dto.UserName = o.User.UserName;
+
+        dto.OrderDetails = (List<OrderDetail>)o.OrderDetails;
+
+        return dto;
     }
 
     public async ValueTask DisposeAsync()

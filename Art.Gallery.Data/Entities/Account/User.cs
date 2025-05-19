@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Art.Gallery.Data.Entities.Artists;
 using Art.Gallery.Data.Entities.Common;
+using Art.Gallery.Data.Entities.Orders;
+
 namespace Art.Gallery.Data.Entities.Account;
 public class User : BaseEntity
 {
@@ -42,5 +45,9 @@ public class User : BaseEntity
     public bool IsActive  { get; set; }
 
     public bool IsAdmin  { get; set; }
+
+    public ICollection<Order> Orders { get; set; }
+
+    public ICollection<Artist> Artists { get; set; }
 
 }

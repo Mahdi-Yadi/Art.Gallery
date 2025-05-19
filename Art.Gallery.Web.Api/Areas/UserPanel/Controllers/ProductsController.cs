@@ -49,7 +49,7 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("filter")]
+    [HttpPost("Filter")]
     public async Task<IActionResult> FilterProducts([FromBody] FilterProductsDto dto)
     {
         if (string.IsNullOrEmpty(dto.ArtistId))

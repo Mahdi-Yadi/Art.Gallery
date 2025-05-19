@@ -1,9 +1,8 @@
 ﻿using Art.Gallery.Data.Entities.Orders;
-
 namespace Art.Gallery.Data.Dtos.Orders;
 public class OrderDto
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
 
     public float Sum { get; set; }
 
