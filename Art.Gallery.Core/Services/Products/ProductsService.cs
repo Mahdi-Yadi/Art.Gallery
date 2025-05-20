@@ -176,7 +176,10 @@ public class ProductsService : IProductsService
             query = query.Where(s => s.ProductSelectedCategories.Any(f => f.Category.Id == dto.CategoryId));
 
         if (dto.ArtistId != null)
-            query = query.Where(s => s.ArtistId == Convert.ToInt64(dto.ArtistId));
+            query = query.Where(s => s.ArtistId == Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId)));
+
+        if (dto.UserId != null)
+            query = query.Where(s => s.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
 
         if (dto.MinPrice != 0)
             query = query.Where(p => p.Price >= dto.MinPrice.Value);

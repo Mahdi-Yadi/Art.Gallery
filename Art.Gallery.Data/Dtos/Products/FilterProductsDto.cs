@@ -6,6 +6,7 @@ public class FilterProductsDto : BasePaging
 
     public string Name { get; set; }
     public string ArtistId { get; set; }
+    public string UserId { get; set; }
     public bool IsActive { get; set; }
     public long? CategoryId { get; set; }  // فیلتر براساس دسته‌بندی
     public decimal? MinPrice { get; set; } // فیلتر حداقل قیمت
