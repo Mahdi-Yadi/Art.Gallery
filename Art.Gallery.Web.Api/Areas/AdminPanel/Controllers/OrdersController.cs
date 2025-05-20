@@ -2,7 +2,7 @@
 using Art.Gallery.Data.Dtos.Orders;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
-[Area("AdminPanel")]
+[Area("s")]
 [Route("api/[controller]")]
 [ApiController]
 public class OrdersController : ControllerBase
@@ -14,7 +14,7 @@ public class OrdersController : ControllerBase
         _orderService = orderService;
     }
 
-    [HttpPost("FilterOrders")]
+    [HttpPost("FilterOrdersAdmin")]
     public async Task<IActionResult> FilterOrders([FromBody] FilterOrdersDto dto)
     {
         var result = await _orderService.FilterOrders(dto);

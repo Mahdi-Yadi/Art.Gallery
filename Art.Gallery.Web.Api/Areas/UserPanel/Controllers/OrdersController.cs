@@ -1,7 +1,6 @@
 ﻿using Art.Gallery.Core.Services.Orders;
 using Art.Gallery.Data.Dtos.Orders;
 using Microsoft.AspNetCore.Mvc;
-using Mono.TextTemplating;
 using Parbad;
 using Parbad.AspNetCore;
 using Parbad.Gateway.ZarinPal;
@@ -20,7 +19,7 @@ public class OrdersController : ControllerBase
         _onlinePayment = onlinePayment;
     }
 
-    [HttpPost("FilterOrders")]
+    [HttpPost("UserFilterOrders")]
     public async Task<IActionResult> FilterOrders([FromBody] FilterOrdersDto dto)
     {
         var result = await _orderService.FilterOrders(dto);
@@ -39,7 +38,7 @@ public class OrdersController : ControllerBase
 
         foreach (var item in order.OrderDetails)
         {
-            decimal price = (decimal)item.Product.Price;
+            decimal price = (decimal)item.Product.Price * item.Count;
 
             totalPrice += price;
         }
