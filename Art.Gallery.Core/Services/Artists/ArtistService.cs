@@ -150,6 +150,9 @@ public class ArtistService : IArtistService
         if(!string.IsNullOrEmpty(dto.UserId))
             query = query.Where(a => a.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
 
+        if(!string.IsNullOrEmpty(dto.Name))
+            query = query.Where(a => a.Name == dto.Name);
+
         var products = (await aQuery.ToListAsync()).Select(p => new ArtistDto()
         {
             Id = _urlProtector.Protect(p.Id.ToString()),
