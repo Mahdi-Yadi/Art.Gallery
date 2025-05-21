@@ -1,4 +1,6 @@
 ﻿using Art.Gallery.Core.Services.Account;
+using Art.Gallery.Data.Dtos.Account;
+using Art.Gallery.Data.Dtos.Products;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 [Area("AdminPanel")]
@@ -12,6 +14,13 @@ public class UsersController : ControllerBase
     public UsersController(IAccountService accountService)
     {
         _accountService = accountService;
+    }
+
+    [HttpPost("FilterUsers")]
+    public async Task<IActionResult> FilterUsers([FromBody] FilterUsersDto dto)
+    {
+        var result = await _accountService.FilterUsers(dto);
+        return Ok(result);
     }
 
     [HttpGet("CheckUser/{userId}")]

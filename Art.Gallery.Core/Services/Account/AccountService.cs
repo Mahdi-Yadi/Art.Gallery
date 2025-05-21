@@ -1,9 +1,11 @@
 ﻿using Art.Gallery.Common;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Account;
+using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Entities.Account;
 using Art.Gallery.Emails;
 using Ganss.Xss;
+using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Account;
 public class AccountService : IAccountService
 {
@@ -18,6 +20,8 @@ public class AccountService : IAccountService
         _urlProtector = urlProtector;
     }
 
+
+    // ثبت نام
     public AccountResult Register(RegisterDto dto)
     {
         var user = _db
@@ -50,6 +54,7 @@ public class AccountService : IAccountService
         return AccountResult.Success;
     }
 
+    // ورود
     public AccountResult Login(LoginDto dto)
     {
         var user = _db
@@ -61,6 +66,7 @@ public class AccountService : IAccountService
         return AccountResult.Success;
     }
 
+    // فراموشی کلمه عبور
     public AccountResult Forgot(ForgotPasswordDto dto)
     {
         HtmlSanitizer san = new HtmlSanitizer();
@@ -89,6 +95,7 @@ public class AccountService : IAccountService
         return AccountResult.Success;
     }
 
+    // بازگرداندن کلمه عبور
     public AccountResult Reset(ResetPasswordDto dto)
     {
         try
@@ -132,6 +139,7 @@ public class AccountService : IAccountService
         }
     }
 
+    // دریافت اطلاعات کاربر برای ویرایش
     public ProfileDto GetUserProfileForEdit(string id)
     {
         long userId = Convert.ToInt64(_urlProtector.UnProtect(id));
@@ -152,6 +160,8 @@ public class AccountService : IAccountService
 
         return dto;
     }
+  
+    // ویرایش حساب کاربری 
     public AccountResult EditProfile(ProfileDto dto)
     {
         try
@@ -179,7 +189,7 @@ public class AccountService : IAccountService
         }
     }
 
-    // Check User
+    // بررسی سرپرست بودن کاربر
     public bool IsAdmin(string id)
     {
         long userId = Convert.ToInt64(_urlProtector.UnProtect(id));
@@ -191,6 +201,38 @@ public class AccountService : IAccountService
         if(user.IsAdmin) return true;
 
         return false;
+    }
+
+    public async Task<FilterUsersDto> FilterUsers(FilterUsersDto dto)
+    {
+        var query = _db.Users.AsQueryable();
+
+        var aQuery = query.Select(p => new
+        {
+            p.Id,
+            p.UserName,
+            p.Email,
+            p.PhoneNumber,
+            p.IsDelete
+        });
+
+        var users = (await aQuery.ToListAsync()).Select(p => new User()
+        {
+            Id = p.Id,
+            UserName = p.UserName,
+            Email = p.Email,
+            PhoneNumber = p.PhoneNumber,
+        }).ToList();
+
+        #region Pagination
+
+        var pager = Pager.Build(dto.PageId, await query.CountAsync(), dto.TakeEntity, dto.HowManyShowPageAfterAndBefore);
+
+        dto.Count = users.Count;
+
+        return dto.SetUsers(users).SetPaging(pager);
+
+        #endregion
     }
 
 }

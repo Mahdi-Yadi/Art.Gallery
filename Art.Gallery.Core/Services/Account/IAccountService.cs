@@ -13,4 +13,6 @@ public interface IAccountService
 
     bool IsAdmin(string id);
 
+    Task<FilterUsersDto> FilterUsers(FilterUsersDto dto);
+
 }
