@@ -147,9 +147,12 @@ public class ArtistService : IArtistService
             p.IsDelete
         });
 
+        if(!string.IsNullOrEmpty(dto.UserId))
+            query = query.Where(a => a.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
+
         var products = (await aQuery.ToListAsync()).Select(p => new ArtistDto()
         {
-            Id = p.Id.ToString(),
+            Id = _urlProtector.Protect(p.Id.ToString()),
             Name = p.Name,
             ImageName = p.ImageName,
             Slug = p.Slug,
@@ -165,6 +168,7 @@ public class ArtistService : IArtistService
         return dto.SetArtists(products).SetPaging(pager);
 
         #endregion
+
     }
 
     // For show
