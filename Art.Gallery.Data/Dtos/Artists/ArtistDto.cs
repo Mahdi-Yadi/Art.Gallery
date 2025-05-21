@@ -23,4 +23,6 @@ public class ArtistDto
     [MaxLength(100, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     public string ImageName { get; set; }
 
+    public bool IsDeleted { get; set; }
+
 }

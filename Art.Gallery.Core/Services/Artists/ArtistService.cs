@@ -144,6 +144,7 @@ public class ArtistService : IArtistService
             p.Name,
             p.ImageName,
             p.Slug,
+            p.IsDelete
         });
 
         var products = (await aQuery.ToListAsync()).Select(p => new ArtistDto()
@@ -152,6 +153,7 @@ public class ArtistService : IArtistService
             Name = p.Name,
             ImageName = p.ImageName,
             Slug = p.Slug,
+            IsDeleted = p.IsDelete
         }).ToList();
 
         #region Pagination
