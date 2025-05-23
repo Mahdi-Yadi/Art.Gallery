@@ -1,5 +1,7 @@
-﻿using Art.Gallery.Core.Services.Artists;
+﻿using Art.Gallery.Core.Services.Account;
+using Art.Gallery.Core.Services.Artists;
 using Art.Gallery.Data.Dtos.Artists;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 [Area("AdminPanel")]
@@ -8,30 +10,52 @@ namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 public class ArtistsController : ControllerBase
 {
     readonly IArtistService _artistService;
+    readonly IAccountService _accountService;
 
-    public ArtistsController(IArtistService artistService)
+    public ArtistsController(IArtistService artistService, IAccountService accountService)
     {
-        _artistService = artistService;        
+        _artistService = artistService;
+        _accountService = accountService;
     }
 
-    [HttpGet("AcceptArtist/{id}")]
-    public IActionResult AcceptArtist(long id)
+    [HttpGet("AcceptArtist/{artistId}/{userId}")]
+    public IActionResult AcceptArtist(string artistId, string userId)
     {
-        var result = _artistService.ActiveArtist(id.ToString());
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest();
+
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
+        var result = _artistService.ActiveArtist(artistId,userId);
+
         return Ok(result);
     }
 
-    [HttpGet("RejectArtist/{id}")]
-    public IActionResult RejectArtist(long id)
+    [HttpGet("RejectArtist/{artistId}/{userId}")]
+    public IActionResult RejectArtist(string artistId,string userId)
     {
-        var result = _artistService.RejectArtist(id.ToString());
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest();
+
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
+        var result = _artistService.RejectArtist(artistId,userId);
         return Ok(result);
     }
 
     [HttpGet("FilterArtists")]
     public async Task<IActionResult> FilterArtists([FromBody] FilterArtistDto dto)
     {
+        if (string.IsNullOrEmpty(dto.UserId))
+            return BadRequest();
+
+        if (!_accountService.IsAdmin(dto.UserId)) 
+            return BadRequest();
+
         var result = await _artistService.FilterArtist(dto);
+
         return Ok(result);
     }
 

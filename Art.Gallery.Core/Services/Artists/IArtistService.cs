@@ -11,9 +11,9 @@ public interface IArtistService
 
     ArtistDtoResult RecoverArtist(string artistId, string userId);
 
-    ArtistDtoResult ActiveArtist(string artistId);
+    ArtistDtoResult ActiveArtist(string artistId, string userId);
 
-    ArtistDtoResult RejectArtist(string artistId);
+    ArtistDtoResult RejectArtist(string artistId, string userId);
 
     ArtistDtoResult UpdateArtist(CEArtistDto dto);
 

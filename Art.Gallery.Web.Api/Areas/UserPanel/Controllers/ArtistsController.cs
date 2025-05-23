@@ -1,6 +1,7 @@
 ﻿using Art.Gallery.Core.Services.Artists;
 using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Data.Dtos.Artists;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
@@ -76,7 +77,7 @@ public class ArtistsController : ControllerBase
     [HttpDelete("DeleteArtist/{artistId}/{userId}")]
     public IActionResult DeleteArtist(string artistId, string userId)
     {
-        if (userId == null)
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(artistId))
             return BadRequest(ModelState);
 
         var result = _artistService.DeleteArtist(artistId, userId);
@@ -105,7 +106,7 @@ public class ArtistsController : ControllerBase
         }
     }
 
-    [HttpPost("filter")]
+    [HttpPost("Filter")]
     public async Task<IActionResult> FilterArtists([FromBody] FilterArtistDto dto)
     {
         if (string.IsNullOrEmpty(dto.UserId))

@@ -8,7 +8,7 @@ namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 public class OrdersController : ControllerBase
 {
     readonly IOrderService _orderService;
-
+   
     public OrdersController(IOrderService orderService)
     {
         _orderService = orderService;
@@ -17,6 +17,9 @@ public class OrdersController : ControllerBase
     [HttpPost("FilterOrdersAdmin")]
     public async Task<IActionResult> FilterOrders([FromBody] FilterOrdersDto dto)
     {
+        if (string.IsNullOrEmpty(dto.UserId))
+            return BadRequest();
+
         var result = await _orderService.FilterOrders(dto);
         return Ok(result);
     }

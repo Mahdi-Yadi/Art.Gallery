@@ -85,9 +85,10 @@ public class ArtistService : IArtistService
     }
 
     // Active
-    public ArtistDtoResult ActiveArtist(string artistId)
+    public ArtistDtoResult ActiveArtist(string artistId, string userId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId)));
+        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId))
+         && a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
 
         if (a != null)
         {
@@ -97,14 +98,15 @@ public class ArtistService : IArtistService
             _db.SaveChanges();
             return ArtistDtoResult.Success;
         }
+
         return ArtistDtoResult.Error;
     }
 
     // Reject
-    public ArtistDtoResult RejectArtist(string artistId)
+    public ArtistDtoResult RejectArtist(string artistId, string userId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId)));
-
+        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId))
+                                                && a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
         if (a != null)
         {
             a.IsActive = false;
@@ -113,6 +115,7 @@ public class ArtistService : IArtistService
             _db.SaveChanges();
             return ArtistDtoResult.Success;
         }
+
         return ArtistDtoResult.Error;
     }
 
@@ -130,6 +133,7 @@ public class ArtistService : IArtistService
             _db.SaveChanges();
             return ArtistDtoResult.Success;
         }
+
         return ArtistDtoResult.Error;
     }
 
@@ -147,7 +151,8 @@ public class ArtistService : IArtistService
             p.Name,
             p.ImageName,
             p.Slug,
-            p.IsDelete
+            p.IsDelete,
+            p.IsActive
         });
 
         if(!string.IsNullOrEmpty(dto.UserId))
@@ -162,7 +167,8 @@ public class ArtistService : IArtistService
             Name = p.Name,
             ImageName = p.ImageName,
             Slug = p.Slug,
-            IsDeleted = p.IsDelete
+            IsDeleted = p.IsDelete,
+            IsActive = p.IsActive
         }).ToList();
 
         #region Pagination

@@ -25,9 +25,9 @@ public interface IProductsService : IAsyncDisposable
     // Recover Product
     ProductResult RecoverProduct(string id, string userId);
     // Active Product
-    ProductResult ActiveProduct(string id);
+    ProductResult ActiveProduct(string id, string userId);
     // Reject Product
-    ProductResult RejectProduct(string id);
+    ProductResult RejectProduct(string id, string userId);
 
     #endregion
 

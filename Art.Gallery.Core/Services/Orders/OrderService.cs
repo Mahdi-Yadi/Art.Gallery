@@ -1,4 +1,5 @@
 ﻿using Art.Gallery.Common;
+using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Orders;
 using Art.Gallery.Data.Dtos.Paging;
@@ -10,13 +11,14 @@ public class OrderService : IOrderService
 
     private readonly SiteDBContext _db;
     private readonly UrlProtector _urlProtector;
+    private readonly IAccountService _accountService;
 
-    public OrderService(SiteDBContext db, UrlProtector urlProtector)
+    public OrderService(SiteDBContext db, UrlProtector urlProtector, IAccountService accountService)
     {
         _db = db;
         _urlProtector = urlProtector;
+        _accountService = accountService;
     }
-
 
     public OrderResult AddOrder(long productId, string userId)
     {
@@ -116,8 +118,11 @@ public class OrderService : IOrderService
 
         if (!string.IsNullOrEmpty(dto.UserId))
         {
-            long usId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
-            query = query.Where(a => a.UserId == usId);
+            if (!_accountService.IsAdmin(dto.UserId))
+            {
+                long usId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
+                query = query.Where(a => a.UserId == usId);
+            }
         }
 
         if (dto.OrderId != 0)

@@ -1,4 +1,5 @@
 ﻿using Art.Gallery.Common;
+using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Dtos.Products;
@@ -13,10 +14,13 @@ public class ProductsService : IProductsService
 
     private readonly SiteDBContext _db;
     private readonly UrlProtector _urlProtector;
-    public ProductsService(SiteDBContext db, UrlProtector urlProtector)
+    readonly IAccountService _accountService;
+
+    public ProductsService(SiteDBContext db, UrlProtector urlProtector, IAccountService accountService)
     {
         _db = db;
         _urlProtector = urlProtector;
+        _accountService = accountService;
     }
 
     // Get Last Products
@@ -179,7 +183,8 @@ public class ProductsService : IProductsService
             query = query.Where(s => s.ArtistId == Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId)));
 
         if (dto.UserId != null)
-            query = query.Where(s => s.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
+            if (!_accountService.IsAdmin(dto.UserId))
+                query = query.Where(s => s.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
 
         if (dto.MinPrice != 0)
             query = query.Where(p => p.Price >= dto.MinPrice.Value);
@@ -313,10 +318,10 @@ public class ProductsService : IProductsService
         return ProductResult.Error;
     }
     // Active Product
-    public ProductResult ActiveProduct(string id)
+    public ProductResult ActiveProduct(string id, string userId)
     {
-         long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
-        long usId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
         var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
 
         if (a != null)
@@ -330,10 +335,10 @@ public class ProductsService : IProductsService
         return ProductResult.Error;
     }
     // Reject Product
-    public ProductResult RejectProduct(string id)
+    public ProductResult RejectProduct(string id, string userId)
     {
         long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
-        long usId = Convert.ToInt64(_urlProtector.UnProtect(id));
+        long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
         var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
 
         if (a != null)

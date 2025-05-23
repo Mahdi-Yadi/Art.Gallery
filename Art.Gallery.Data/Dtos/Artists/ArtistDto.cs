@@ -25,4 +25,6 @@ public class ArtistDto
 
     public bool IsDeleted { get; set; }
 
+    public bool IsActive { get; set; }
+
 }
