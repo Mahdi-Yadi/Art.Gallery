@@ -52,13 +52,13 @@ public class ArtistsController : ControllerBase
         }
     }
 
-    [HttpGet("GetForUpdate/{id}/{userId}")]
-    public IActionResult UpdateArtist(long id,string userId)
+    [HttpGet("GetForUpdate/{artistId}/{userId}")]
+    public IActionResult UpdateArtist(string artistId, string userId)
     {
         if (userId == null)
             return BadRequest(ModelState);
 
-        var result = _artistService.GetArtist(id.ToString(),userId);
+        var result = _artistService.GetArtist(artistId,userId);
         return Ok(result);
     }
 
@@ -72,20 +72,20 @@ public class ArtistsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("DeleteArtist/{id}/{userId}")]
-    public IActionResult DeleteArtist(long id, string userId)
+    [HttpDelete("DeleteArtist/{artistId}/{userId}")]
+    public IActionResult DeleteArtist(string artistId, string userId)
     {
         if (userId == null)
             return BadRequest(ModelState);
 
-        var result = _artistService.DeleteArtist(id.ToString(), userId);
+        var result = _artistService.DeleteArtist(artistId, userId);
         return Ok(result);
     }
 
     [HttpPost("filter")]
     public async Task<IActionResult> FilterArtists([FromBody] FilterArtistDto dto)
     {
-        if (dto.UserId == null)
+        if (string.IsNullOrEmpty(dto.UserId))
             return BadRequest(ModelState);
 
         var result = await _artistService.FilterArtist(dto);

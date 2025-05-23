@@ -14,21 +14,21 @@ public class ArtistsController : ControllerBase
         _artistService = artistService;        
     }
 
-    [HttpDelete("AcceptArtist/{id}")]
+    [HttpGet("AcceptArtist/{id}")]
     public IActionResult AcceptArtist(long id)
     {
         var result = _artistService.ActiveArtist(id.ToString());
         return Ok(result);
     }
 
-    [HttpDelete("RejectArtist/{id}")]
+    [HttpGet("RejectArtist/{id}")]
     public IActionResult RejectArtist(long id)
     {
         var result = _artistService.RejectArtist(id.ToString());
         return Ok(result);
     }
 
-    [HttpPost("FilterArtists")]
+    [HttpGet("FilterArtists")]
     public async Task<IActionResult> FilterArtists([FromBody] FilterArtistDto dto)
     {
         var result = await _artistService.FilterArtist(dto);

@@ -7,19 +7,19 @@ public interface IArtistService
 
     ArtistDtoResult AddArtist(CEArtistDto dto);
 
-    ArtistDtoResult DeleteArtist(string id, string userId);
+    ArtistDtoResult DeleteArtist(string artistId, string userId);
 
-    ArtistDtoResult RecoverArtist(string id, string userId);
+    ArtistDtoResult RecoverArtist(string artistId, string userId);
 
-    ArtistDtoResult ActiveArtist(string id);
+    ArtistDtoResult ActiveArtist(string artistId);
 
-    ArtistDtoResult RejectArtist(string id);
+    ArtistDtoResult RejectArtist(string artistId);
 
     ArtistDtoResult UpdateArtist(CEArtistDto dto);
 
-    CEArtistDto GetArtist(string id, string userId);
+    CEArtistDto GetArtist(string artistId, string userId);
 
-    CEArtistDto GetArtistForShow(string id, string userName);
+    CEArtistDto GetArtistForShow(string artistId, string userName);
 
     Task<FilterArtistDto> FilterArtist(FilterArtistDto dto);
 

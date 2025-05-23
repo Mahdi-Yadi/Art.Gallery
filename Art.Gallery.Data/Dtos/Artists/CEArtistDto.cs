@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Art.Gallery.Data.Dtos.Artists;
 public class CEArtistDto
 {
-    public string Id { get; set; }
+    public string ArtistId { get; set; }
 
     [Display(Name = "نام محصول")]
     [Required(ErrorMessage = "لطفا {0} را وارد کنید")]

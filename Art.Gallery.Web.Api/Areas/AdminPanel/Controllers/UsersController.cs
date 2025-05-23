@@ -16,7 +16,7 @@ public class UsersController : ControllerBase
         _accountService = accountService;
     }
 
-    [HttpPost("FilterUsers")]
+    [HttpPost("FilterUsersList")]
     public async Task<IActionResult> FilterUsers([FromBody] FilterUsersDto dto)
     {
         var result = await _accountService.FilterUsers(dto);

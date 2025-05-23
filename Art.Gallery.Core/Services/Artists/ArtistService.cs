@@ -68,9 +68,9 @@ public class ArtistService : IArtistService
     }
 
     // Delete
-    public ArtistDtoResult DeleteArtist(string id, string userId)
+    public ArtistDtoResult DeleteArtist(string artistId, string userId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id) &&
+        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId)) &&
         a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
 
         if (a != null)
@@ -85,9 +85,9 @@ public class ArtistService : IArtistService
     }
 
     // Active
-    public ArtistDtoResult ActiveArtist(string id)
+    public ArtistDtoResult ActiveArtist(string artistId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id));
+        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId)));
 
         if (a != null)
         {
@@ -101,9 +101,9 @@ public class ArtistService : IArtistService
     }
 
     // Reject
-    public ArtistDtoResult RejectArtist(string id)
+    public ArtistDtoResult RejectArtist(string artistId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id));
+        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId)));
 
         if (a != null)
         {
@@ -117,9 +117,9 @@ public class ArtistService : IArtistService
     }
 
     // Recover
-    public ArtistDtoResult RecoverArtist(string id, string userId)
+    public ArtistDtoResult RecoverArtist(string artistId, string userId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id) &&
+        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId)) &&
         a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
 
         if (a != null)
@@ -138,6 +138,9 @@ public class ArtistService : IArtistService
     {
         var query = _db.Artists.AsQueryable();
 
+        if (!string.IsNullOrEmpty(dto.UserId))
+            query = query.Where(a => a.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
+
         var aQuery = query.Select(p => new
         {
             p.Id,
@@ -149,7 +152,7 @@ public class ArtistService : IArtistService
 
         var products = (await aQuery.ToListAsync()).Select(p => new ArtistDto()
         {
-            Id = p.Id.ToString(),
+            Id = _urlProtector.Protect(p.Id.ToString()),
             Name = p.Name,
             ImageName = p.ImageName,
             Slug = p.Slug,
@@ -168,10 +171,10 @@ public class ArtistService : IArtistService
     }
 
     // For show
-    public CEArtistDto GetArtistForShow(string id, string userName)
+    public CEArtistDto GetArtistForShow(string artistId, string userName)
     {
         Artist a = _db.Artists.FirstOrDefault(a =>
-        !a.IsActive && a.Id == Convert.ToInt64(id) &&
+        !a.IsActive && a.Id == Convert.ToInt64(artistId) &&
         a.Name == userName);
 
         if (a == null)
@@ -188,9 +191,9 @@ public class ArtistService : IArtistService
     }
 
     // Get data
-    public CEArtistDto GetArtist(string id, string userId)
+    public CEArtistDto GetArtist(string artistId, string userId)
     {
-        Artist a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(id) &&
+        Artist a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId)) &&
         a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
 
         if (a == null)
@@ -198,6 +201,7 @@ public class ArtistService : IArtistService
 
         CEArtistDto dto = new CEArtistDto();
 
+        dto.ArtistId = artistId;
         dto.Name = a.Name;
         dto.Description = a.Description;
         dto.Slug = a.Slug;
@@ -211,7 +215,8 @@ public class ArtistService : IArtistService
     {
         HtmlSanitizer san = new HtmlSanitizer();
 
-        Artist a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(dto.Id));
+        Artist a = _db.Artists.FirstOrDefault(a => a.Id == 
+                                                   Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId)));
 
         a.Name = san.Sanitize(dto.Name);
         a.Description = san.Sanitize(dto.Description);

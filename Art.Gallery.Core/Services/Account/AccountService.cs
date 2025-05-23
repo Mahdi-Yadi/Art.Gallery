@@ -205,7 +205,11 @@ public class AccountService : IAccountService
 
     public async Task<FilterUsersDto> FilterUsers(FilterUsersDto dto)
     {
-        var query = _db.Users.AsQueryable();
+        var query = _db.Users
+            .Include(a => a.Orders)
+            .ThenInclude(a => a.OrderDetails)
+            .Include(a => a.Artists)
+            .AsQueryable();
 
         var aQuery = query.Select(p => new
         {
