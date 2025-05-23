@@ -1,4 +1,5 @@
 ﻿using Art.Gallery.Core.Services.Artists;
+using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Data.Dtos.Artists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -79,7 +80,29 @@ public class ArtistsController : ControllerBase
             return BadRequest(ModelState);
 
         var result = _artistService.DeleteArtist(artistId, userId);
-        return Ok(result);
+        switch (result)
+        {
+            case ArtistDtoResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ArtistDtoResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ArtistDtoResult.Null:
+                return Ok(new
+                {
+                    status = "Null"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpPost("filter")]
