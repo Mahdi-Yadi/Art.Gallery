@@ -192,9 +192,9 @@ public class ProductsService : IProductsService
             "all" => query,
             "active" => query.Where(a => a.IsActive),
             "notActive" => query.Where(a => !a.IsActive),
-            "newest" => query.OrderByDescending(p => p.CreateDate),
-            "cheapest" => query.OrderBy(p => p.Price),
-            "expensive" => query.OrderByDescending(p => p.Price),
+            "newest" => query.OrderByDescending(p => p.CreateDate).Where(a => a.IsActive),
+            "cheapest" => query.OrderBy(p => p.Price).Where(a => a.IsActive),
+            "expensive" => query.OrderByDescending(p => p.Price).Where(a => a.IsActive),
             _ => query
         };
 
