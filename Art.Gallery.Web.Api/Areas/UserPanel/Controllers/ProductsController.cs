@@ -154,6 +154,39 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [HttpGet("RecoverProduct/{productId}/{userId}")]
+    public IActionResult RecoverProduct(string productId, string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest(ModelState);
+
+        var result = _productService.RecoverProduct(productId, userId);
+
+        switch (result)
+        {
+            case ProductResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ProductResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ProductResult.Null:
+                return Ok(new
+                {
+                    status = "Null"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
+    }
+
     [HttpPost("Filter")]
     public async Task<IActionResult> FilterProducts([FromBody] FilterProductsDto dto)
     {
