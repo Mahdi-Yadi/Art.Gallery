@@ -167,12 +167,6 @@ public class ProductsService : IProductsService
     {
         var query = _db.Products.AsQueryable();
 
-        if (dto.TakeEntity == 0)
-            dto.TakeEntity = 15;
-
-        if (dto.IsActive)
-            query = query.Where(s => s.IsActive);
-
         if (!string.IsNullOrEmpty(dto.Name))
             query = query.Where(s => EF.Functions.Like(s.Name, $"%{dto.Name}%"));
 
@@ -195,6 +189,9 @@ public class ProductsService : IProductsService
         // مرتب‌سازی
         query = dto.SortBy switch
         {
+            "all" => query,
+            "active" => query.Where(a => a.IsActive),
+            "notActive" => query.Where(a => !a.IsActive),
             "newest" => query.OrderByDescending(p => p.CreateDate),
             "cheapest" => query.OrderBy(p => p.Price),
             "expensive" => query.OrderByDescending(p => p.Price),

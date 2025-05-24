@@ -1,6 +1,7 @@
 ﻿using Art.Gallery.Core.Services.Artists;
 using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Data.Dtos.Artists;
+using Art.Gallery.Data.Entities.Account;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +58,7 @@ public class ArtistsController : ControllerBase
     [HttpGet("GetForUpdate/{artistId}/{userId}")]
     public IActionResult UpdateArtist(string artistId, string userId)
     {
-        if (userId == null)
+        if (string.IsNullOrEmpty(userId))
             return BadRequest(ModelState);
 
         var result = _artistService.GetArtist(artistId,userId);
@@ -67,7 +68,7 @@ public class ArtistsController : ControllerBase
     [HttpPost("update")]
     public IActionResult UpdateArtist([FromForm] CEArtistDto dto)
     {
-        if (dto.UserId == null)
+        if (string.IsNullOrEmpty(dto.UserId))
             return BadRequest(ModelState);
 
         var result = _artistService.UpdateArtist(dto);
