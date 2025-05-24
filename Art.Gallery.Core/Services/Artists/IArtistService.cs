@@ -19,7 +19,7 @@ public interface IArtistService
 
     CEArtistDto GetArtist(string artistId, string userId);
 
-    CEArtistDto GetArtistForShow(string artistId, string userName);
+    CEArtistDto GetArtistForShow(string userName);
 
     Task<FilterArtistDto> FilterArtist(FilterArtistDto dto);
 

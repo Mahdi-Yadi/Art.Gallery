@@ -23,9 +23,11 @@ public class ArtistService : IArtistService
         HtmlSanitizer san = new HtmlSanitizer();
         Artist a = new Artist();
 
+        DateTime curentTime = DateTime.Now;
+
         a.Name = san.Sanitize(dto.Name);
         a.Description = san.Sanitize(dto.Description);
-        a.Slug = san.Sanitize(dto.Slug);
+        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug);
         a.UserId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
 
         if (dto.ImageFile != null)
@@ -34,8 +36,6 @@ public class ArtistService : IArtistService
             {
                 return ArtistDtoResult.ImageLarge;
             }
-
-            DateTime curentTime = DateTime.Now;
 
             var newName = a.Name + "-" + curentTime.ToString("ssmmMMddHHyyyy");
 
@@ -184,11 +184,10 @@ public class ArtistService : IArtistService
     }
 
     // For show
-    public CEArtistDto GetArtistForShow(string artistId, string userName)
+    public CEArtistDto GetArtistForShow(string userName)
     {
         Artist a = _db.Artists.FirstOrDefault(a =>
-        !a.IsActive && a.Id == Convert.ToInt64(artistId) &&
-        a.Name == userName);
+                a.IsActive && a.Slug == userName);
 
         if (a == null)
             return null;
@@ -231,9 +230,11 @@ public class ArtistService : IArtistService
         Artist a = _db.Artists.FirstOrDefault(a => a.Id == 
                                                    Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId)));
 
+        DateTime curentTime = DateTime.Now;
+
         a.Name = san.Sanitize(dto.Name);
         a.Description = san.Sanitize(dto.Description);
-        a.Slug = san.Sanitize(dto.Slug);
+        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug);
 
         if (dto.ImageFile != null)
         {
@@ -241,8 +242,6 @@ public class ArtistService : IArtistService
             {
                 return ArtistDtoResult.ImageLarge;
             }
-
-            DateTime curentTime = DateTime.Now;
 
             var newName = a.Name + "-" + curentTime.ToString("ssmmMMddHHyyyy");
 

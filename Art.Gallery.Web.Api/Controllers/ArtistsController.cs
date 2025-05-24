@@ -17,6 +17,9 @@ public class ArtistsController : ControllerBase
     [HttpPost("FilterArtists")]
     public async Task<IActionResult> FilterArtists([FromBody] FilterArtistDto dto)
     {
+        if (!string.IsNullOrEmpty(dto.UserId))
+            dto.UserId = "";
+
         dto.IsActive = true;
 
         var result = await _artistService.FilterArtist(dto);
@@ -24,10 +27,14 @@ public class ArtistsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("Artist-Profile/{id}/{userName}")]
-    public IActionResult ArtistProfile(long id, string userName)
+    [HttpGet("Artist-Profile/{userName}")]
+    public IActionResult ArtistProfile(string userName)
     {
-        var result = _artistService.GetArtistForShow(id.ToString(), userName);
+        var result = _artistService.GetArtistForShow(userName);
+
+        if (result == null)
+            return null;
+
         return Ok(result);
     }
 

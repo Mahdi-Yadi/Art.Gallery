@@ -32,8 +32,8 @@ public class ProductsController : ControllerBase
     {
         var result = await _productsService.GetProduct(slug);
 
-        if(result == null)
-            return BadRequest();
+        if (result == null)
+            return null;
 
         return Ok(result);
     }
@@ -44,7 +44,7 @@ public class ProductsController : ControllerBase
         var result =  _productsService.GetLastProducts();
 
         if (result == null)
-            return BadRequest();
+            return null;
 
         return Ok(result);
     }
@@ -55,7 +55,7 @@ public class ProductsController : ControllerBase
         var result = _productsService.GetSpecialProducts();
 
         if (result == null)
-            return BadRequest();
+            return null;
 
         return Ok(result);
     }
