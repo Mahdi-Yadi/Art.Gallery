@@ -129,7 +129,29 @@ public class ProductsController : ControllerBase
 
         var result = _productService.DeleteProduct(productId,userId);
 
-        return Ok(result);
+        switch (result)
+        {
+            case ProductResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ProductResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ProductResult.Null:
+                return Ok(new
+                {
+                    status = "Null"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpPost("Filter")]

@@ -151,25 +151,32 @@ public class ProductsService : IProductsService
     // Delete
     public ProductResult DeleteProduct(string productId,string userId)
     {
-        // product
-        long pId = Convert.ToInt64(_urlProtector.UnProtect(productId));
-        // user
-        long uId = Convert.ToInt64(_urlProtector.UnProtect(userId));
+        try
+        {
+            // product
+            long pId = Convert.ToInt64(_urlProtector.UnProtect(productId));
+            // user
+            long uId = Convert.ToInt64(_urlProtector.UnProtect(userId));
 
-        // query
-        var p = _db.Products.FirstOrDefault(a => a.Id == pId && a.UserId == uId);
+            // query
+            var p = _db.Products.FirstOrDefault(a => a.Id == pId && a.UserId == uId);
 
-        if (p == null)
-            return ProductResult.Null;
+            if (p == null)
+                return ProductResult.Null;
 
-        // update
+            // update
 
-        p.IsDelete = true;
+            p.IsDelete = true;
 
-        _db.Products.Update(p);
-        _db.SaveChanges();
+            _db.Products.Update(p);
+            _db.SaveChanges();
 
-        return ProductResult.Success;
+            return ProductResult.Success;
+        }
+        catch (Exception)
+        {
+            return ProductResult.Error;
+        }
     }
     // Filter
     public async Task<FilterProductsDto> FilterProductsAsync(FilterProductsDto dto)
@@ -201,9 +208,9 @@ public class ProductsService : IProductsService
             "all" => query,
             "active" => query.Where(a => a.IsActive),
             "notActive" => query.Where(a => !a.IsActive),
-            "newest" => query.OrderByDescending(p => p.CreateDate).Where(a => a.IsActive),
-            "cheapest" => query.OrderBy(p => p.Price).Where(a => a.IsActive),
-            "expensive" => query.OrderByDescending(p => p.Price).Where(a => a.IsActive),
+            "newest" => query.OrderByDescending(p => p.CreateDate).Where(a => a.IsActive && !a.IsDelete),
+            "cheapest" => query.OrderBy(p => p.Price).Where(a => a.IsActive && !a.IsDelete),
+            "expensive" => query.OrderByDescending(p => p.Price).Where(a => a.IsActive && !a.IsDelete),
             _ => query
         };
 
