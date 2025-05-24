@@ -230,7 +230,8 @@ public class ProductsService : IProductsService
                 Name = item.Name,
                 Slug = item.Slug,
                 ImageName = item.ImageName,
-                Price = (decimal)item.Price
+                Price = (decimal)item.Price,
+                IsDelete = item.IsDelete,
             };
             dtos.Add(a);
         }
