@@ -1,7 +1,7 @@
 ﻿namespace Art.Gallery.Data.Dtos.Products;
 public class ProductDto
 {
-    public long Id { get; set; }
+    public string Id { get; set; }
     public string Name { get; set; }
     public string ImageName { get; set; }
     public decimal Price { get; set; }

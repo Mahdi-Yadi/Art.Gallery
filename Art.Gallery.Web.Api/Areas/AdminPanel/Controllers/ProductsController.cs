@@ -16,7 +16,7 @@ public class ProductsController : ControllerBase
         _productService = productService;
     }
 
-    [HttpDelete("ActiveProduct/{productId}/{userId}")]
+    [HttpGet("ActiveProduct/{productId}/{userId}")]
     public IActionResult ActiveProduct(string productId, string userId)
     {
         if (string.IsNullOrEmpty(userId))
@@ -27,7 +27,7 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("RejectProduct/{productId}/{userId}")]
+    [HttpGet("RejectProduct/{productId}/{userId}")]
     public IActionResult RejectProduct(string productId, string userId)
     {
         if (string.IsNullOrEmpty(userId))

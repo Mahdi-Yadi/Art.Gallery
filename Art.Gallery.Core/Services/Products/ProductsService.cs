@@ -149,17 +149,26 @@ public class ProductsService : IProductsService
         }
     }
     // Delete
-    public ProductResult DeleteProduct(string id)
+    public ProductResult DeleteProduct(string productId,string userId)
     {
-        long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
-        var p = _db.Products.FirstOrDefault(a => a.Id == productId);
+        // product
+        long pId = Convert.ToInt64(_urlProtector.UnProtect(productId));
+        // user
+        long uId = Convert.ToInt64(_urlProtector.UnProtect(userId));
+
+        // query
+        var p = _db.Products.FirstOrDefault(a => a.Id == pId && a.UserId == uId);
 
         if (p == null)
             return ProductResult.Null;
 
+        // update
+
         p.IsDelete = true;
 
+        _db.Products.Update(p);
         _db.SaveChanges();
+
         return ProductResult.Success;
     }
     // Filter
@@ -210,7 +219,7 @@ public class ProductsService : IProductsService
         {
             var a = new ProductDto
             {
-                Id = item.Id,
+                Id = _urlProtector.Protect(item.Id.ToString()),
                 Name = item.Name,
                 Slug = item.Slug,
                 ImageName = item.ImageName,
@@ -369,8 +378,7 @@ public class ProductsService : IProductsService
         dto.Price = (decimal)product.Price;
         dto.Description = product.Description;
         dto.IsSpecial = product.IsSpecial;
-        // encript
-        dto.Id = product.Id;
+        dto.Id = _urlProtector.Protect(product.Id.ToString());
 
         return dto;
     }

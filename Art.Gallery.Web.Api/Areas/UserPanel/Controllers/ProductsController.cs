@@ -121,13 +121,13 @@ public class ProductsController : ControllerBase
         }
     }
 
-    [HttpDelete("DeleteProduct/{id}/{userId}")]
-    public IActionResult DeleteProduct(string id,string userId)
+    [HttpDelete("DeleteProduct/{productId}/{userId}")]
+    public IActionResult DeleteProduct(string productId, string userId)
     {
         if (string.IsNullOrEmpty(userId))
             return BadRequest(ModelState);
 
-        var result = _productService.DeleteProduct(id);
+        var result = _productService.DeleteProduct(productId,userId);
 
         return Ok(result);
     }

@@ -17,7 +17,7 @@ public interface IProductsService : IAsyncDisposable
     // Update Product
     ProductResult UpdateProduct(CEProductDto dto);
     // Delete Product
-    ProductResult DeleteProduct(string id);
+    ProductResult DeleteProduct(string productId,string userId);
     // Get Last Product
     List<ProductDto> GetLastProducts();
     // Get Special Product
