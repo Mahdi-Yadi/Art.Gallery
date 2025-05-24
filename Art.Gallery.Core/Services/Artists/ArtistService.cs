@@ -27,7 +27,7 @@ public class ArtistService : IArtistService
 
         a.Name = san.Sanitize(dto.Name);
         a.Description = san.Sanitize(dto.Description);
-        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug);
+        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug).Replace(" " , "-");
         a.UserId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
 
         if (dto.ImageFile != null)
@@ -234,7 +234,7 @@ public class ArtistService : IArtistService
 
         a.Name = san.Sanitize(dto.Name);
         a.Description = san.Sanitize(dto.Description);
-        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug);
+        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug).Replace(" ", "-");
 
         if (dto.ImageFile != null)
         {

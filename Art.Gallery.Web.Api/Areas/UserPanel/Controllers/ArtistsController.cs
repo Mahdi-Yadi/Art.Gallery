@@ -17,10 +17,6 @@ public class ArtistsController : ControllerBase
     {
         _artistService = artistService;        
     }
-    // تست
-    [Authorize]
-    [HttpGet("test")]
-    public IActionResult GetSecret() => Ok("مجاز!");
 
     [HttpPost("AddArtist")]
     public IActionResult AddArtist([FromForm] CEArtistDto dto)
