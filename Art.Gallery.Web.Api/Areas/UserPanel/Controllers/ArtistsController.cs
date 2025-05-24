@@ -1,9 +1,5 @@
 ﻿using Art.Gallery.Core.Services.Artists;
-using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Data.Dtos.Artists;
-using Art.Gallery.Data.Entities.Account;
-using Humanizer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
 [Area("UserPanel")]
@@ -68,7 +64,29 @@ public class ArtistsController : ControllerBase
             return BadRequest(ModelState);
 
         var result = _artistService.UpdateArtist(dto);
-        return Ok(result);
+        switch (result)
+        {
+            case ArtistDtoResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ArtistDtoResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ArtistDtoResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpDelete("DeleteArtist/{artistId}/{userId}")]
