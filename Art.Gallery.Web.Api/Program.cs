@@ -19,15 +19,18 @@ using Microsoft.IdentityModel.Tokens;
 using Parbad.Builder;
 using Parbad.Gateway.ZarinPal;
 
+IConfiguration configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
 var builder = WebApplication.CreateBuilder(args);
 
 #region Data Base
 
-var connectionString = "Data Source=.;Initial Catalog=ArtGalleryDB;Integrated Security=True;TrustServerCertificate=true;MultipleActiveResultSets=True;";
-//var connectionString = "Server=185.164.73.239;Initial Catalog=ArtGalleryDB;User Id=f#1d!+34$#$fdG;Password=2dx@ff466vVKss;MultipleActiveResultSets=true;Trusted_Connection=True;TrustServerCertificate=True;Integrated Security=False";
 builder.Services.AddDbContext<SiteDBContext>(options =>
 {
-    options.UseSqlServer(connectionString,
+    options.UseSqlServer(
+        configuration.GetConnectionString("WebSiteDBConnectionStrings"),
         o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "SiteArtDb"));
 });
 
