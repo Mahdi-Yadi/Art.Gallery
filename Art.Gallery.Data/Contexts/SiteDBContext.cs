@@ -46,7 +46,7 @@ public class SiteDBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("ArtGallery");
-        modelBuilder.UseCollation("Persian_100_CI_AS_SC_UTF8");
+        //modelBuilder.UseCollation("Persian_100_CI_AS_SC_UTF8");
 
         foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(s => s.GetForeignKeys()))
         {

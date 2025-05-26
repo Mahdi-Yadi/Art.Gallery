@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Art.Gallery.Data.Migrations
 {
     [DbContext(typeof(SiteDBContext))]
-    [Migration("20250513161223_addactivetoartist")]
-    partial class addactivetoartist
+    [Migration("20250526164355_CreateDB")]
+    partial class CreateDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,14 @@ namespace Art.Gallery.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Addrress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("CodePost")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -90,6 +98,10 @@ namespace Art.Gallery.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<string>("Salt")
                         .IsRequired()
@@ -235,6 +247,70 @@ namespace Art.Gallery.Data.Migrations
                     b.ToTable("Categories", "ArtGallery");
                 });
 
+            modelBuilder.Entity("Art.Gallery.Data.Entities.Orders.Order", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float>("Sum")
+                        .HasColumnType("real");
+
+                    b.Property<string>("TrackingCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders", "ArtGallery");
+                });
+
+            modelBuilder.Entity("Art.Gallery.Data.Entities.Orders.OrderDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrderDetails", "ArtGallery");
+                });
+
             modelBuilder.Entity("Art.Gallery.Data.Entities.Products.Product", b =>
                 {
                     b.Property<long>("Id")
@@ -260,6 +336,9 @@ namespace Art.Gallery.Data.Migrations
                     b.Property<string>("ImageName")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -410,10 +489,47 @@ namespace Art.Gallery.Data.Migrations
             modelBuilder.Entity("Art.Gallery.Data.Entities.Artists.Artist", b =>
                 {
                     b.HasOne("Art.Gallery.Data.Entities.Account.User", "User")
-                        .WithMany()
+                        .WithMany("Artists")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Art.Gallery.Data.Entities.Orders.Order", b =>
+                {
+                    b.HasOne("Art.Gallery.Data.Entities.Account.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Art.Gallery.Data.Entities.Orders.OrderDetail", b =>
+                {
+                    b.HasOne("Art.Gallery.Data.Entities.Orders.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Art.Gallery.Data.Entities.Products.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Art.Gallery.Data.Entities.Account.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
 
                     b.Navigation("User");
                 });
@@ -467,6 +583,13 @@ namespace Art.Gallery.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Art.Gallery.Data.Entities.Account.User", b =>
+                {
+                    b.Navigation("Artists");
+
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Art.Gallery.Data.Entities.Artists.Artist", b =>
                 {
                     b.Navigation("Products");
@@ -475,6 +598,11 @@ namespace Art.Gallery.Data.Migrations
             modelBuilder.Entity("Art.Gallery.Data.Entities.Categories.Category", b =>
                 {
                     b.Navigation("ProductSelectedCategories");
+                });
+
+            modelBuilder.Entity("Art.Gallery.Data.Entities.Orders.Order", b =>
+                {
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("Art.Gallery.Data.Entities.Products.Product", b =>

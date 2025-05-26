@@ -18,7 +18,6 @@ namespace Art.Gallery.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("ArtGallery")
-                .UseCollation("Persian_100_CI_AS_SC_UTF8")
                 .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
