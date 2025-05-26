@@ -54,6 +54,8 @@ public class ArtistsController : ControllerBase
         if (!_accountService.IsAdmin(dto.UserId)) 
             return BadRequest();
 
+        dto.UserId = "";
+
         var result = await _artistService.FilterArtist(dto);
 
         return Ok(result);
