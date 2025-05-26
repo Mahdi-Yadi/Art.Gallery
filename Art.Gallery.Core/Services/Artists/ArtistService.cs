@@ -152,7 +152,8 @@ public class ArtistService : IArtistService
             p.ImageName,
             p.Slug,
             p.IsDelete,
-            p.IsActive
+            p.IsActive,
+            p.UserId
         });
 
         if(!string.IsNullOrEmpty(dto.UserId))
@@ -163,7 +164,8 @@ public class ArtistService : IArtistService
 
         var products = (await aQuery.ToListAsync()).Select(p => new ArtistDto()
         {
-            Id = _urlProtector.Protect(p.Id.ToString()),
+            ArtistId = _urlProtector.Protect(p.Id.ToString()),
+            UserId = _urlProtector.Protect(p.UserId.ToString()),
             Name = p.Name,
             ImageName = p.ImageName,
             Slug = p.Slug,

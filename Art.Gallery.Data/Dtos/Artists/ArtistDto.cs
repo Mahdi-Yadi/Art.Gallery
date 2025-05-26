@@ -2,7 +2,9 @@
 namespace Art.Gallery.Data.Dtos.Artists;
 public class ArtistDto
 {
-    public string Id { get; set; }
+    public string ArtistId { get; set; }
+
+    public string UserId { get; set; }
 
     [Display(Name = "نام محصول")]
     [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
