@@ -315,11 +315,11 @@ public class ProductsService : IProductsService
         }
     }
     // Recover Product
-    public ProductResult RecoverProduct(string id, string userId)
+    public ProductResult RecoverProduct(string id, string artistId)
     {
         long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
-        long usId = Convert.ToInt64(_urlProtector.UnProtect(id));
-        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
+        long arId = Convert.ToInt64(_urlProtector.UnProtect(artistId));
+        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.ArtistId == arId);
 
         if (a != null)
         {
@@ -332,11 +332,11 @@ public class ProductsService : IProductsService
         return ProductResult.Error;
     }
     // Active Product
-    public ProductResult ActiveProduct(string id, string userId)
+    public ProductResult ActiveProduct(string id, string artistId)
     {
         long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
-        long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
-        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
+        long arId = Convert.ToInt64(_urlProtector.UnProtect(artistId));
+        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.ArtistId == arId);
 
         if (a != null)
         {
@@ -349,11 +349,11 @@ public class ProductsService : IProductsService
         return ProductResult.Error;
     }
     // Reject Product
-    public ProductResult RejectProduct(string id, string userId)
+    public ProductResult RejectProduct(string id, string artistId)
     {
         long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
-        long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
-        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.UserId == usId);
+        long arId = Convert.ToInt64(_urlProtector.UnProtect(artistId));
+        var a = _db.Products.FirstOrDefault(a => a.Id == productId && a.ArtistId == arId);
 
         if (a != null)
         {

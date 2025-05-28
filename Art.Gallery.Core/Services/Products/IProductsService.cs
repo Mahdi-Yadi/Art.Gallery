@@ -23,11 +23,11 @@ public interface IProductsService : IAsyncDisposable
     // Get Special Product
     List<ProductDto> GetSpecialProducts();
     // Recover Product
-    ProductResult RecoverProduct(string id, string userId);
+    ProductResult RecoverProduct(string id, string artistId);
     // Active Product
-    ProductResult ActiveProduct(string id, string userId);
+    ProductResult ActiveProduct(string id, string artistId);
     // Reject Product
-    ProductResult RejectProduct(string id, string userId);
+    ProductResult RejectProduct(string id, string artistId);
 
     #endregion
 
