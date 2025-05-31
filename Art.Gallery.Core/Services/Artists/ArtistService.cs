@@ -27,7 +27,7 @@ public class ArtistService : IArtistService
 
         a.Name = san.Sanitize(dto.Name);
         a.Description = san.Sanitize(dto.Description);
-        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug).Replace(" " , "-");
+        a.Slug = curentTime.ToString("yyyyMMddHHmmmmss") + "-" + san.Sanitize(dto.Slug).Replace(" ", "-");
         a.UserId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
 
         if (dto.ImageFile != null)
@@ -87,36 +87,49 @@ public class ArtistService : IArtistService
     // Active
     public ArtistDtoResult ActiveArtist(string artistId, string userId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId))
-         && a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
-
-        if (a != null)
+        try
         {
-            a.IsActive = true;
+            var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId))
+        && a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
 
-            _db.Artists.Update(a);
-            _db.SaveChanges();
-            return ArtistDtoResult.Success;
+            if (a != null)
+            {
+                a.IsActive = true;
+
+                _db.Artists.Update(a);
+                _db.SaveChanges();
+                return ArtistDtoResult.Success;
+            }
+            return ArtistDtoResult.Null;
         }
-
-        return ArtistDtoResult.Error;
+        catch (Exception)
+        {
+            return ArtistDtoResult.Error;
+        }
     }
 
     // Reject
     public ArtistDtoResult RejectArtist(string artistId, string userId)
     {
-        var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId))
-                                                && a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
-        if (a != null)
+        try
         {
-            a.IsActive = false;
+            var a = _db.Artists.FirstOrDefault(a => a.Id == Convert.ToInt64(_urlProtector.UnProtect(artistId))
+        && a.UserId == Convert.ToInt64(_urlProtector.UnProtect(userId)));
 
-            _db.Artists.Update(a);
-            _db.SaveChanges();
-            return ArtistDtoResult.Success;
+            if (a != null)
+            {
+                a.IsActive = false;
+
+                _db.Artists.Update(a);
+                _db.SaveChanges();
+                return ArtistDtoResult.Success;
+            }
+            return ArtistDtoResult.Null;
         }
-
-        return ArtistDtoResult.Error;
+        catch (Exception)
+        {
+            return ArtistDtoResult.Error;
+        }
     }
 
     // Recover
@@ -156,10 +169,10 @@ public class ArtistService : IArtistService
             p.UserId
         });
 
-        if(!string.IsNullOrEmpty(dto.UserId))
+        if (!string.IsNullOrEmpty(dto.UserId))
             query = query.Where(a => a.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
 
-        if(!string.IsNullOrEmpty(dto.Name))
+        if (!string.IsNullOrEmpty(dto.Name))
             query = query.Where(a => a.Name == dto.Name);
 
         var products = (await aQuery.ToListAsync()).Select(p => new ArtistDto()
@@ -229,7 +242,7 @@ public class ArtistService : IArtistService
     {
         HtmlSanitizer san = new HtmlSanitizer();
 
-        Artist a = _db.Artists.FirstOrDefault(a => a.Id == 
+        Artist a = _db.Artists.FirstOrDefault(a => a.Id ==
                                                    Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId)));
 
         DateTime curentTime = DateTime.Now;
