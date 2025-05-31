@@ -392,6 +392,7 @@ public class ProductsService : IProductsService
             return null;
 
         var product = await _db.Products
+            .Include(a => a.Artist)
             .FirstOrDefaultAsync(a =>
                 !a.IsDelete && a.Slug == Slug);
 
