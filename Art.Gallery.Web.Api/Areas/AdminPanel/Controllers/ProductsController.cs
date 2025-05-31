@@ -1,5 +1,6 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Core.Services.Products;
+using Art.Gallery.Data.Dtos.Artists;
 using Art.Gallery.Data.Dtos.Products;
 using Art.Gallery.Data.Entities.Account;
 using Humanizer;
@@ -31,7 +32,29 @@ public class ProductsController : ControllerBase
 
         var result = _productService.ActiveProduct(productId, artistId);
 
-        return Ok(result);
+        switch (result)
+        {
+            case ProductResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ProductResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ProductResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpGet("Reject-Product/{productId}/{artistId}/{userId}")]
@@ -45,7 +68,29 @@ public class ProductsController : ControllerBase
 
         var result = _productService.RejectProduct(productId, artistId);
 
-        return Ok(result);
+        switch (result)
+        {
+            case ProductResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ProductResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ProductResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpPost("FilterProducts")]

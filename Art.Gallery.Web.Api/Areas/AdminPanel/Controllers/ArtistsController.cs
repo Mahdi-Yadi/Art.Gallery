@@ -1,6 +1,7 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Core.Services.Artists;
 using Art.Gallery.Data.Dtos.Artists;
+using Art.Gallery.Data.Dtos.Products;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
@@ -29,7 +30,29 @@ public class ArtistsController : ControllerBase
 
         var result = _artistService.ActiveArtist(artistId,userId);
 
-        return Ok(result);
+        switch (result)
+        {
+            case ArtistDtoResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ArtistDtoResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ArtistDtoResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpGet("RejectArtist/{artistId}/{userId}")]
@@ -42,7 +65,30 @@ public class ArtistsController : ControllerBase
             return BadRequest();
 
         var result = _artistService.RejectArtist(artistId,userId);
-        return Ok(result);
+
+        switch (result)
+        {
+            case ArtistDtoResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case ArtistDtoResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case ArtistDtoResult.Null:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
     }
 
     [HttpGet("FilterArtists")]
