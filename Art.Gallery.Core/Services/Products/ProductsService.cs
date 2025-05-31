@@ -235,6 +235,8 @@ public class ProductsService : IProductsService
                 ImageName = item.ImageName,
                 Price = (decimal)item.Price,
                 IsDelete = item.IsDelete,
+                IsActive = item.IsActive,
+                ArtistId = _urlProtector.Protect(item.ArtistId.ToString()),
             };
             dtos.Add(a);
         }
