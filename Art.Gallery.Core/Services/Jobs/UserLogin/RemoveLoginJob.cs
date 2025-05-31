@@ -12,15 +12,21 @@ public class RemoveLoginJob : IJob
     }
     public async Task Execute(IJobExecutionContext context)
     {
-        var tokens = await _db.RefreshTokens.Where(a => a.Expires < DateTime.Now).ToListAsync();
-
-        if (tokens.Count > 0)
+        try
         {
-            foreach (var item in tokens)
+            var tokens = await _db.RefreshTokens.Where(a => a.Expires < DateTime.Now).ToListAsync();
+
+            if (tokens.Count > 0)
             {
-                _db.Remove(item);
+                foreach (var item in tokens)
+                {
+                    _db.Remove(item);
+                }
+                await _db.SaveChangesAsync();
             }
-            await _db.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
         }
     }
 }

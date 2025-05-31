@@ -194,7 +194,10 @@ public class ProductsService : IProductsService
 
         if (dto.UserId != null)
             if (!_accountService.IsAdmin(dto.UserId))
-                query = query.Where(s => s.UserId == Convert.ToInt64(_urlProtector.UnProtect(dto.UserId)));
+            {
+                long id = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
+                query = query.Where(s => s.UserId == id);
+            }
 
         if (dto.MinPrice != 0)
             query = query.Where(p => p.Price >= dto.MinPrice.Value);
