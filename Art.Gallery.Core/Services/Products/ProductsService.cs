@@ -181,7 +181,10 @@ public class ProductsService : IProductsService
     // Filter
     public async Task<FilterProductsDto> FilterProductsAsync(FilterProductsDto dto)
     {
-        var query = _db.Products.AsQueryable();
+        var query = _db
+            .Products
+            .Include(c => c.Artist)
+            .AsQueryable();
 
         if (!string.IsNullOrEmpty(dto.Name))
             query = query.Where(s => EF.Functions.Like(s.Name, $"%{dto.Name}%"));
@@ -235,6 +238,8 @@ public class ProductsService : IProductsService
                 ImageName = item.ImageName,
                 Price = (decimal)item.Price,
                 IsDelete = item.IsDelete,
+                IsSpecial = item.IsSpecial,
+                ArtistSlug = item.Artist.Slug,
                 IsActive = item.IsActive,
                 ArtistId = _urlProtector.Protect(item.ArtistId.ToString()),
             };

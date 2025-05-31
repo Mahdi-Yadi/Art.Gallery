@@ -8,6 +8,7 @@ public class ProductDto
     public decimal Price { get; set; }
     public string Description { get; set; }
     public string Slug { get; set; }
+    public string ArtistSlug { get; set; }
     public bool IsSpecial { get; set; }
     public bool IsActive { get; set; }
     public bool IsDelete { get; set; }
