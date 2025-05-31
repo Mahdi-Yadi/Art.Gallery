@@ -20,7 +20,7 @@ public class ProductsController : ControllerBase
         _accountService = accountService;
     }
 
-    [HttpGet("ActiveProduct/{productId}/{artistId}c")]
+    [HttpGet("Active-Product/{productId}/{artistId}/{userId}")]
     public IActionResult ActiveProduct(string productId, string artistId,string userId)
     {
         if (string.IsNullOrEmpty(artistId))
@@ -34,7 +34,7 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("RejectProduct/{productId}/{artistId},string userId")]
+    [HttpGet("Reject-Product/{productId}/{artistId}/{userId}")]
     public IActionResult RejectProduct(string productId, string artistId, string userId)
     {
         if (string.IsNullOrEmpty(artistId))

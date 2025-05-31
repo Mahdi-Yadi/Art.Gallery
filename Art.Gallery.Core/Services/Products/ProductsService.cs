@@ -189,7 +189,7 @@ public class ProductsService : IProductsService
         if (dto.CategoryId != 0)
             query = query.Where(s => s.ProductSelectedCategories.Any(f => f.Category.Id == dto.CategoryId));
 
-        if (dto.ArtistId != null)
+        if (!string.IsNullOrEmpty(dto.ArtistId))
             query = query.Where(s => s.ArtistId == Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId)));
 
         if (dto.UserId != null)
