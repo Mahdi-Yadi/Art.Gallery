@@ -18,5 +18,18 @@ public class PathExtension
 
     #endregion
 
+    #region Artist
+
+    public static string ArtistImage = "/CMS/Images/ArtistImage/";
+
+    public static string ArtistImageThumb = "/CMS/Images/ArtistImageThumb/";
+
+    public static string ArtistImageServer =
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/CMS/Images/ArtistImage/");
+
+    public static string ArtistImageThumbServer =
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/CMS/Images/ArtistImageThumb/");
+
+    #endregion
 
 }

@@ -46,7 +46,9 @@ public class ProductsService : IProductsService
                 Name = product.Name,
                 Slug = product.Slug,
                 Price = (decimal)product.Price,
-                ImageName = product.ImageName,
+                ImageName = PathExtension.DomainAddress +
+                PathExtension.ProductImage + 
+                product.ImageName,
             };
             dtos.Add(a);
         }
@@ -76,7 +78,8 @@ public class ProductsService : IProductsService
                 Name = product.Name,
                 Slug = product.Slug,
                 Price = (decimal)product.Price,
-                ImageName = product.ImageName,
+                ImageName = PathExtension.DomainAddress +
+                PathExtension.ProductImage + product.ImageName,
                 IsSpecial = product.IsSpecial,
             };
             dtos.Add(a);
@@ -235,7 +238,8 @@ public class ProductsService : IProductsService
                 Id = _urlProtector.Protect(item.Id.ToString()),
                 Name = item.Name,
                 Slug = item.Slug,
-                ImageName = item.ImageName,
+                ImageName = PathExtension.DomainAddress +
+                PathExtension.ProductImage + item.ImageName,
                 Price = (decimal)item.Price,
                 IsDelete = item.IsDelete,
                 IsSpecial = item.IsSpecial,
@@ -262,7 +266,8 @@ public class ProductsService : IProductsService
         dto.Id = _urlProtector.Protect(p.Id.ToString());
         dto.Name = p.Name;
         dto.Slug = p.Slug;
-        dto.ImageName = p.ImageName;
+        dto.ImageName = PathExtension.DomainAddress +
+                PathExtension.ProductImage + p.ImageName;
         dto.Price = p.Price;
         dto.Description = p.Description;
         dto.IsSpecial = p.IsSpecial;
@@ -392,7 +397,8 @@ public class ProductsService : IProductsService
 
         dto.Slug = product.Slug;
         dto.Name = product.Name;
-        dto.ImageName = product.ImageName;
+        dto.ImageName = PathExtension.DomainAddress +
+                PathExtension.ProductImage + product.ImageName;
         dto.Price = (decimal)product.Price;
         dto.Description = product.Description;
         dto.IsSpecial = product.IsSpecial;

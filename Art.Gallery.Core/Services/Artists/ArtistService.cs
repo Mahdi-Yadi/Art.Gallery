@@ -41,8 +41,8 @@ public class ArtistService : IArtistService
 
             var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
 
-            var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
-                300, 300, PathExtension.ProductImageThumbServer, null);
+            var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.ArtistImageServer,
+                300, 300, PathExtension.ArtistImageThumbServer, null);
 
             if (!res)
             {
@@ -180,7 +180,8 @@ public class ArtistService : IArtistService
             ArtistId = _urlProtector.Protect(p.Id.ToString()),
             UserId = _urlProtector.Protect(p.UserId.ToString()),
             Name = p.Name,
-            ImageName = p.ImageName,
+            ImageName = PathExtension.DomainAddress +
+                PathExtension.ArtistImage + p.ImageName,
             Slug = p.Slug,
             IsDeleted = p.IsDelete,
             IsActive = p.IsActive
@@ -212,7 +213,8 @@ public class ArtistService : IArtistService
         dto.Name = a.Name;
         dto.Description = a.Description;
         dto.Slug = a.Slug;
-        dto.ImageName = a.ImageName;
+        dto.ImageName = PathExtension.DomainAddress +
+                PathExtension.ArtistImage + a.ImageName;
 
         return dto;
     }
@@ -232,7 +234,8 @@ public class ArtistService : IArtistService
         dto.Name = a.Name;
         dto.Description = a.Description;
         dto.Slug = a.Slug;
-        dto.ImageName = a.ImageName;
+        dto.ImageName = PathExtension.DomainAddress +
+                PathExtension.ArtistImage + a.ImageName;
 
         return dto;
     }
