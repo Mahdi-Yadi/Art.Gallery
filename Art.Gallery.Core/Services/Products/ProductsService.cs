@@ -47,7 +47,7 @@ public class ProductsService : IProductsService
                 Slug = product.Slug,
                 Price = (decimal)product.Price,
                 ImageName = PathExtension.DomainAddress +
-                PathExtension.ProductImage + 
+                PathExtension.ProductImage +
                 product.ImageName,
             };
             dtos.Add(a);
@@ -100,16 +100,16 @@ public class ProductsService : IProductsService
 
             Product p = new Product();
 
+            DateTime curentTime = DateTime.Now;
+
+            var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
+
             if (dto.ImageFile != null)
             {
                 if (dto.ImageFile.Length > 10100000)
                 {
                     return ProductResult.ImageLarge;
                 }
-
-                DateTime curentTime = DateTime.Now;
-
-                var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
 
                 var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
 
@@ -131,15 +131,16 @@ public class ProductsService : IProductsService
 
             p.Name = san.Sanitize(dto.Name);
             p.Description = san.Sanitize(dto.Description);
-            p.Slug = san.Sanitize(dto.Slug);
+            // slug with date
+            p.Slug = san.Sanitize(newName);
             p.IsSpecial = dto.IsSpecial;
             p.Count = dto.Count;
             p.Price = dto.Price;
             p.ArtistId = artistId;
             p.UserId = userId;
 
-            p.CreateDate = DateTime.Now;
-            p.UpdateDate = DateTime.Now;
+            p.CreateDate = curentTime;
+            p.UpdateDate = curentTime;
 
             _db.Products.Add(p);
             _db.SaveChanges();
@@ -152,7 +153,7 @@ public class ProductsService : IProductsService
         }
     }
     // Delete
-    public ProductResult DeleteProduct(string productId,string userId)
+    public ProductResult DeleteProduct(string productId, string userId)
     {
         try
         {
@@ -290,16 +291,16 @@ public class ProductsService : IProductsService
             if (p == null)
                 return ProductResult.Null;
 
+            DateTime curentTime = DateTime.Now;
+
+            var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
+
             if (dto.ImageFile != null)
             {
                 if (dto.ImageFile.Length > 10100000)
                 {
                     return ProductResult.ImageLarge;
                 }
-
-                DateTime curentTime = DateTime.Now;
-
-                var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
 
                 var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
 
@@ -315,9 +316,13 @@ public class ProductsService : IProductsService
             HtmlSanitizer san = new HtmlSanitizer();
 
             p.Name = san.Sanitize(dto.Name);
-            p.Name = san.Sanitize(dto.Name);
-            p.Name = san.Sanitize(dto.Name);
+            p.Count = dto.Count;
+            p.Price = dto.Price;
+            p.Slug = san.Sanitize(newName);
+            p.Description = san.Sanitize(dto.Description);
             p.UpdateDate = DateTime.Now;
+            p.IsActive = false;
+            p.IsSpecial = dto.IsSpecial;
 
             _db.Products.Update(p);
             _db.SaveChanges();
@@ -401,7 +406,9 @@ public class ProductsService : IProductsService
                 PathExtension.ProductImage + product.ImageName;
         dto.Price = (decimal)product.Price;
         dto.Description = product.Description;
+        dto.Count = product.Count;
         dto.IsSpecial = product.IsSpecial;
+        dto.ArtistSlug = product.Artist.Slug;
         dto.Id = _urlProtector.Protect(product.Id.ToString());
 
         return dto;
