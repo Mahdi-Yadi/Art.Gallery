@@ -1,4 +1,5 @@
 ﻿using Art.Gallery.Core.Services.Orders;
+using Art.Gallery.Data.Dtos.Artists;
 using Art.Gallery.Data.Dtos.Orders;
 using Microsoft.AspNetCore.Mvc;
 using Parbad;
@@ -6,7 +7,7 @@ using Parbad.AspNetCore;
 using Parbad.Gateway.ZarinPal;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
 [Area("UserPanel")]
-[Route("api/[controller]")]
+[Route("UserPanel/api/[controller]")]
 [ApiController]
 public class OrdersController : ControllerBase
 {
@@ -19,10 +20,91 @@ public class OrdersController : ControllerBase
         _onlinePayment = onlinePayment;
     }
 
+    [HttpPost("AddProductToOrder")]
+    public IActionResult AddProductToOrder(long productId, string userId)
+    {
+        if (string.IsNullOrEmpty(userId) || productId == 0)
+            return BadRequest(ModelState);
+
+        OrderResult result = _orderService.AddOrder(productId, userId);
+
+        switch (result)
+        {
+            case OrderResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case OrderResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case OrderResult.Nulls:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
+    }
+
+    [HttpPost("DeleteProductFromOrder")]
+    public IActionResult DeleteProductFromOrder(long productId, string userId)
+    {
+        if (string.IsNullOrEmpty(userId) || productId == 0)
+            return BadRequest(ModelState);
+
+        OrderResult result = _orderService.DeleteProductFromOrder(productId, userId);
+
+        switch (result)
+        {
+            case OrderResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case OrderResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case OrderResult.Nulls:
+                return Ok(new
+                {
+                    status = "InvalidData"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
+    }
+
+    [HttpPost("GetOrder/{orderId}")]
+    public IActionResult FilterOrders(long orderId)
+    {
+        if (orderId == 0)
+            return BadRequest(ModelState);
+
+        var result = _orderService.GetOrder(orderId);
+
+        return Ok(result);
+    }
+
     [HttpPost("UserFilterOrders")]
     public async Task<IActionResult> FilterOrders([FromBody] FilterOrdersDto dto)
     {
+        if (string.IsNullOrEmpty(dto.UserId))
+            return BadRequest(ModelState);
+
         var result = await _orderService.FilterOrders(dto);
+
         return Ok(result);
     }
 

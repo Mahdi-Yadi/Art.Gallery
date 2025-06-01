@@ -2,9 +2,16 @@
 namespace Art.Gallery.Core.Services.Orders;
 public interface IOrderService : IAsyncDisposable
 {
+
+
+    // Delete
+    OrderResult DeleteProductFromOrder(long orderDetailId, string userId);
+
     // Add Order
     OrderResult AddOrder(long productId, string userId);
 
+    // Filter
+    
     Task<FilterOrdersDto> FilterOrders(FilterOrdersDto dto);
 
     OrderDto GetOrder(long orderId);

@@ -20,6 +20,34 @@ public class OrderService : IOrderService
         _accountService = accountService;
     }
 
+    // حذف ریز فاکتور
+    public OrderResult DeleteProductFromOrder(long orderDetailId, string userId)
+    {
+        long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
+
+        var user = _db.Users.FirstOrDefault(u => u.Id == usId);
+
+        if (user == null) return OrderResult.Nulls;
+
+        var od = _db.OrderDetails.
+            Include(a => a.Order)
+            .FirstOrDefault(a => a.Id == orderDetailId);
+
+        if (od == null) return OrderResult.Nulls;
+
+        // بررسی ریز فاکتور
+
+        if(od.Order.PaymentCode != null || od.Order.UserId != user.Id)
+            return OrderResult.Error;
+
+        _db.OrderDetails.Remove(od);
+        _db.SaveChanges();
+
+        return OrderResult.Success;
+    }
+
+    // افزودن فاکتور
+
     public OrderResult AddOrder(long productId, string userId)
     {
         try
@@ -43,6 +71,8 @@ public class OrderService : IOrderService
             return OrderResult.Error;
         }
     }
+
+    // افزودن فاکتور اصلی
 
     private Order OrderCreator(long userId)
     {
@@ -74,6 +104,8 @@ public class OrderService : IOrderService
             return null;
         }
     }
+
+    // افزودن ریز فاکتور به فاکتور اصلی
 
     private OrderDetail OrderDetailCreator(long orderId, long productId)
     {
@@ -112,18 +144,18 @@ public class OrderService : IOrderService
         }
     }
 
+    // فیلتر لیست فاکتور ها هم برای ادمین و هم برای کاربران
     public async Task<FilterOrdersDto> FilterOrders(FilterOrdersDto dto)
     {
         var query = _db.Orders.AsQueryable();
 
         if (!string.IsNullOrEmpty(dto.UserId))
-        {
             if (!_accountService.IsAdmin(dto.UserId))
             {
                 long usId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
                 query = query.Where(a => a.UserId == usId);
             }
-        }
+
 
         if (dto.OrderId != 0)
             query = query.Where(a => a.Id == dto.OrderId);
@@ -157,6 +189,7 @@ public class OrderService : IOrderService
         #endregion
     }
 
+    // گرفتن یک فاکتور
     public OrderDto GetOrder(long orderId)
     {
         var o = _db
@@ -226,7 +259,7 @@ public class OrderService : IOrderService
         return dto;
     }
 
-    public bool UpdateOrderForPayment(long orderId,string trackingCode)
+    public bool UpdateOrderForPayment(long orderId, string trackingCode)
     {
         try
         {
