@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 namespace Art.Gallery.Data.Dtos.Products;
 public class CEProductDto
 {
-    public string Id { get; set; }
+    public string ProductId { get; set; }
 
     [Display(Name = "نام محصول")]
     [Required(ErrorMessage = "لطفا {0} را وارد کنید")]

@@ -62,13 +62,13 @@ public class ProductsController : ControllerBase
         }
     }
 
-    [HttpGet("GetProductUpdate/{id}/{userId}")]
-    public IActionResult GetProductUpdate(string id,string userId)
+    [HttpGet("GetProductUpdate/{productId}/{userId}")]
+    public IActionResult GetProductUpdate(string productId, string userId)
     {
         if (string.IsNullOrEmpty(userId))
             return BadRequest(ModelState);
 
-        var result = _productService.GetForUpdateProduct(id);
+        var result = _productService.GetForUpdateProduct(productId);
 
         return Ok(result);
     }

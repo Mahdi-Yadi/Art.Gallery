@@ -257,6 +257,7 @@ public class ProductsService : IProductsService
     public CEProductDto GetForUpdateProduct(string id)
     {
         long productId = Convert.ToInt64(_urlProtector.UnProtect(id));
+
         Product p = _db.Products.FirstOrDefault(a => a.Id == productId);
 
         if (p == null)
@@ -264,7 +265,7 @@ public class ProductsService : IProductsService
 
         CEProductDto dto = new CEProductDto();
 
-        dto.Id = _urlProtector.Protect(p.Id.ToString());
+        dto.ProductId = _urlProtector.Protect(p.Id.ToString());
         dto.Name = p.Name;
         dto.Slug = p.Slug;
         dto.ImageName = PathExtension.DomainAddress +
@@ -284,7 +285,7 @@ public class ProductsService : IProductsService
             if (dto.Name == null)
                 return ProductResult.Null;
 
-            long productId = Convert.ToInt64(_urlProtector.Protect(dto.Id));
+            long productId = Convert.ToInt64(_urlProtector.UnProtect(dto.ProductId));
 
             Product p = _db.Products.FirstOrDefault(p => p.Id == productId);
 
