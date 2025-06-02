@@ -14,6 +14,7 @@ public class ProductsController : ControllerBase
         _productsService = productsService;
     }
 
+    // لیست کل محصولات
     [HttpGet("Products")]
     public async Task<ActionResult<FilterProductsDto>> Products([FromQuery] FilterProductsDto dto)
     {
@@ -27,6 +28,7 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
+     // محصول
     [HttpGet("Product")]
     public async Task<IActionResult> Product(string slug)
     {
@@ -38,6 +40,7 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
+    // اخرین محصولات 
     [HttpGet("LastProducts")]
     public IActionResult LastProducts()
     {
@@ -49,6 +52,7 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
+    // محصولات ویژه
     [HttpGet("SpecialProducts")]
     public IActionResult SpecialProducts()
     {

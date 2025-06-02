@@ -51,7 +51,54 @@ public class AccountService : IAccountService
         _db.Users.Add(u);
         _db.SaveChanges();
 
+
+        MailDTO mailDTO = new MailDTO();
+
+        mailDTO.Title = "ثبت نام در سایت";
+        mailDTO.CreateDate = DateTime.Now;
+        mailDTO.ActiveCode = PathExtension.DomainAddress + $"/Active-Account/{user.ActiveCode}";
+        mailDTO.ButtonTitle = "فعال سازی";
+        mailDTO.Description = "کاربر گرامی، با تشکر از ثبت نام شما در وب سایت ما، چناچه میخواهید از حساب خود استفاده کنید از لینک زیر اقدام به فعال سازی آن نمایید.";
+        mailDTO.Email = user.Email;
+
         return AccountResult.Success;
+    }
+
+    // فعال سازی حساب
+    public AccountResult ActiveAccount(string activeCode)
+    {
+        try
+        {
+            var user = _db
+           .Users.FirstOrDefault(a => a.ActiveCode == activeCode);
+
+            if (user != null)
+                return AccountResult.Null;
+
+            DateTime currentDate = DateTime.Now;
+
+            user.IsActive = true;
+            user.ActiveCode = currentDate.ToString("ssMMHHyyyyddmm");
+
+            _db.Users.Update(user);
+            _db.SaveChanges();
+
+            MailDTO mailDTO = new MailDTO();
+
+            mailDTO.Title = "فعال سازی حساب کاربری";
+            mailDTO.CreateDate = DateTime.Now;
+            mailDTO.ButtonTitle = "سایت";
+            mailDTO.Description = "حساب کاربری شما با موفقیت فعال گردید.";
+            mailDTO.Email = user.Email;
+
+            _mailSender.SendEmail(mailDTO);
+
+            return AccountResult.Success;
+        }
+        catch (Exception)
+        {
+            return AccountResult.Error;
+        }
     }
 
     // ورود
@@ -62,6 +109,16 @@ public class AccountService : IAccountService
 
         if (user != null)
             return AccountResult.Null;
+
+        MailDTO mailDTO = new MailDTO();
+
+        mailDTO.Title = "ورود موفق به حساب";
+        mailDTO.CreateDate = DateTime.Now;
+        mailDTO.ButtonTitle = "سایت";
+        mailDTO.Description = "ورود موفق به حساب کاربری";
+        mailDTO.Email = user.Email;
+
+        _mailSender.SendEmail(mailDTO);
 
         return AccountResult.Success;
     }
@@ -160,7 +217,7 @@ public class AccountService : IAccountService
 
         return dto;
     }
-  
+
     // ویرایش حساب کاربری 
     public AccountResult EditProfile(ProfileDto dto)
     {
@@ -173,8 +230,24 @@ public class AccountService : IAccountService
             if (user == null)
                 return AccountResult.Null;
 
+            if (user.Email != dto.Email)
+            {
+                MailDTO mailDTO = new MailDTO();
+
+                mailDTO.Title = "تایید ایمیل جدید";
+                mailDTO.CreateDate = DateTime.Now;
+                mailDTO.ActiveCode = PathExtension.DomainAddress + $"/Active-Account/{user.ActiveCode}";
+                mailDTO.ButtonTitle = "فعال سازی";
+                mailDTO.Description = "به دلیل تغییر ایمیل در حساب باید مجدد ایمیل جدید را تایید کنید.";
+                mailDTO.Email = user.Email;
+
+                _mailSender.SendEmail(mailDTO);
+
+                user.Email = dto.Email;
+                user.IsActive = false;
+            }
+
             user.PhoneNumber = dto.PhoneNumber;
-            user.Email = dto.Email;
             user.Addrress = dto.Addrress;
             user.CodePost = dto.CodePost;
             user.UserName = dto.UserName;
@@ -198,11 +271,12 @@ public class AccountService : IAccountService
 
         if (user == null) return false;
 
-        if(user.IsAdmin) return true;
+        if (user.IsAdmin) return true;
 
         return false;
     }
 
+    // لیست کاربران
     public async Task<FilterUsersDto> FilterUsers(FilterUsersDto dto)
     {
         var query = _db.Users
@@ -237,6 +311,7 @@ public class AccountService : IAccountService
         return dto.SetUsers(users).SetPaging(pager);
 
         #endregion
+
     }
 
 }

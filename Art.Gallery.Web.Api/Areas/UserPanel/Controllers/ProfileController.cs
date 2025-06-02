@@ -14,6 +14,7 @@ public class ProfileController : ControllerBase
         _accountService = accountService;
     }
 
+    // بررسی کاربر
     [HttpGet("CheckUser/{userId}")]
     public IActionResult CheckUser(string userId)
     {
@@ -25,6 +26,7 @@ public class ProfileController : ControllerBase
         return Ok(result);
     }
 
+    // گرفتن کاربر برای ویرایش
     [HttpGet("GetUserProfile/{userId}")]
     public IActionResult GetUserProfile(string userId)
     {
@@ -36,6 +38,7 @@ public class ProfileController : ControllerBase
         return Ok(result);
     }
 
+    // ویرایش کاربر
     [HttpPost("UpdateUserProfile")]
     public IActionResult UpdateUserProfile([FromForm] ProfileDto dto)
     {

@@ -38,6 +38,7 @@ public class AccountController : ControllerBase
     //from origin 'http://localhost:3000' has been blocked by CORS policy:
     //Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
 
+    // ثبت نام
     #region Register
 
     [AllowAnonymous]
@@ -98,6 +99,46 @@ public class AccountController : ControllerBase
 
     #endregion
 
+    // فعال سازی
+    #region Active Account
+
+    [HttpPost("Active-Account/{activeCode}")]
+    public IActionResult ActiveAccount(string activeCode)
+    {
+
+        if(string.IsNullOrEmpty(activeCode))
+            return BadRequest();
+
+        AccountResult res = _accountService.ActiveAccount(activeCode);
+
+        switch (res)
+        {
+            case AccountResult.Success:
+                return Ok(new
+                {
+                    status = "Success"
+                });
+            case AccountResult.Error:
+                return Ok(new
+                {
+                    status = "Error"
+                });
+            case AccountResult.Null:
+                return Ok(new
+                {
+                    status = "Null"
+                });
+            default:
+                return BadRequest(new
+                {
+                    status = "Unknown"
+                });
+        }
+    }
+
+    #endregion
+
+    // ورود
     #region Login
 
     [HttpPost("login")]
@@ -144,6 +185,7 @@ public class AccountController : ControllerBase
 
     #endregion
 
+    // دریافت توکن جدید
     #region Refresh
 
     [HttpPost("refresh-token")]
@@ -171,6 +213,7 @@ public class AccountController : ControllerBase
 
     #endregion
 
+    // فراموشی کلمه عبور
     #region Forgot Password
 
     [AllowAnonymous]
@@ -231,6 +274,7 @@ public class AccountController : ControllerBase
 
     #endregion
 
+    // بازگرداندن کلمه عبور
     #region Reset Password
 
     [AllowAnonymous]
@@ -284,6 +328,7 @@ public class AccountController : ControllerBase
 
     #endregion
 
+    // خروج از حساب
     #region Logout
 
     [HttpPost("logout")]
