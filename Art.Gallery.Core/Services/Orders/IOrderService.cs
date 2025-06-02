@@ -8,7 +8,7 @@ public interface IOrderService : IAsyncDisposable
     OrderResult DeleteProductFromOrder(long orderDetailId, string userId);
 
     // Add Order
-    OrderResult AddOrder(long productId, string userId);
+    OrderResult AddOrder(string productId, string userId);
 
     // Filter
     

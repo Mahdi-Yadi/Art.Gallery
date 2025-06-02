@@ -22,9 +22,9 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost("AddProductToOrder")]
-    public IActionResult AddProductToOrder(long productId, string userId)
+    public IActionResult AddProductToOrder(string productId, string userId)
     {
-        if (string.IsNullOrEmpty(userId) || productId == 0)
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(productId))
             return BadRequest(ModelState);
 
         OrderResult result = _orderService.AddOrder(productId, userId);

@@ -63,18 +63,19 @@ public class OrderService : IOrderService
 
     // افزودن فاکتور
 
-    public OrderResult AddOrder(long productId, string userId)
+    public OrderResult AddOrder(string productId, string userId)
     {
         try
         {
             long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
+            long pId = Convert.ToInt64(_urlProtector.UnProtect(productId));
 
             Order o = OrderCreator(usId);
 
             if (o == null)
                 return OrderResult.Error;
 
-            OrderDetail od = OrderDetailCreator(o.Id, productId);
+            OrderDetail od = OrderDetailCreator(o.Id, pId);
 
             if (od == null)
                 return OrderResult.Error;
