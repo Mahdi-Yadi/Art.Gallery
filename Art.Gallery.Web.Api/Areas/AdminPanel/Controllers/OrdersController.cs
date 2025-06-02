@@ -10,6 +10,7 @@ public class OrdersController : ControllerBase
 {
     readonly IOrderService _orderService;
     readonly IAccountService _accountService;
+
     public OrdersController(IOrderService orderService,
         AccountService accountService)
     {
@@ -23,7 +24,7 @@ public class OrdersController : ControllerBase
         if (!_accountService.IsAdmin(dto.UserId))
             return BadRequest();
 
-        var result = await _orderService.FilterOrders(dto);
+        FilterOrdersDto result = await _orderService.FilterOrders(dto);
 
         return Ok(result);
     }
@@ -34,7 +35,29 @@ public class OrdersController : ControllerBase
         if (orderId == 0)
             return BadRequest(ModelState);
 
-        var result = _orderService.GetOrder(orderId);
+        OrderDto result = _orderService.GetOrder(orderId);
+
+        return Ok(result);
+    }
+
+    [HttpPost("UpdateOrderForNotComplete/{orderId}/{userId}")]
+    public IActionResult UpdateOrderForNotComplete(long orderId, string userId)
+    {
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
+        bool result = _orderService.UpdateOrderForNotComplete(orderId);
+
+        return Ok(result);
+    }
+
+    [HttpPost("UpdateOrderForComplete/{orderId}/{userId}")]
+    public IActionResult UpdateOrderForComplete(long orderId, string userId)
+    {
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
+        bool result = _orderService.UpdateOrderForComplete(orderId);
 
         return Ok(result);
     }

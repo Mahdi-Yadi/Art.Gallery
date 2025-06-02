@@ -20,6 +20,10 @@ public interface IOrderService : IAsyncDisposable
 
     bool UpdateOrderForPayment(long orderId, string trackingCode);
 
+    bool UpdateOrderForComplete(long orderId);
+
+    bool UpdateOrderForNotComplete(long orderId);
+
     bool UpdateOrderAfterPayment(string trackingCode,string paymentCode);
 
 }

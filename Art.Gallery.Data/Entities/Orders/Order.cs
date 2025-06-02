@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Art.Gallery.Data.Entities.Account;
-
 namespace Art.Gallery.Data.Entities.Orders;
 public class Order
 {
@@ -18,6 +17,8 @@ public class Order
     public DateTime? PaymentDate { get; set; }
 
     public string PaymentCode { get; set; }
+
+    public bool IsComplete { get; set; }
 
     public ICollection<OrderDetail> OrderDetails { get; set; }
 

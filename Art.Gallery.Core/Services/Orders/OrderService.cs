@@ -4,6 +4,7 @@ using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Orders;
 using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Entities.Orders;
+using Art.Gallery.Emails;
 using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Orders;
 public class OrderService : IOrderService
@@ -12,12 +13,17 @@ public class OrderService : IOrderService
     private readonly SiteDBContext _db;
     private readonly UrlProtector _urlProtector;
     private readonly IAccountService _accountService;
+    private readonly IMailSender _mailSender;
 
-    public OrderService(SiteDBContext db, UrlProtector urlProtector, IAccountService accountService)
+    public OrderService(SiteDBContext db,
+        UrlProtector urlProtector,
+        IAccountService accountService,
+        IMailSender mailSender)
     {
         _db = db;
         _urlProtector = urlProtector;
         _accountService = accountService;
+        _mailSender = mailSender;
     }
 
     // حذف ریز فاکتور
@@ -37,11 +43,20 @@ public class OrderService : IOrderService
 
         // بررسی ریز فاکتور
 
-        if(od.Order.PaymentCode != null || od.Order.UserId != user.Id)
+        if (od.Order.PaymentCode != null || od.Order.UserId != user.Id)
             return OrderResult.Error;
 
         _db.OrderDetails.Remove(od);
         _db.SaveChanges();
+
+        MailDTO mailDTO = new MailDTO();
+
+        mailDTO.Title = "حذف کالا از فاکتور";
+        mailDTO.CreateDate = DateTime.Now;
+        mailDTO.Description = "فاکتور شما با موفقیت بروزرسانی شد و کالایی در ان حذف گردید.";
+        mailDTO.Email = user.Email;
+
+        _mailSender.SendEmail(mailDTO);
 
         return OrderResult.Success;
     }
@@ -94,6 +109,15 @@ public class OrderService : IOrderService
                 _db.Orders.Add(o);
                 _db.SaveChanges();
 
+                MailDTO mailDTO = new MailDTO();
+
+                mailDTO.Title = "ایجاد فاکتور";
+                mailDTO.CreateDate = DateTime.Now;
+                mailDTO.Description = "فاکتور شما با موفقیت ایجاد شد.";
+                mailDTO.Email = user.Email;
+
+                _mailSender.SendEmail(mailDTO);
+
                 return o;
             }
 
@@ -115,7 +139,13 @@ public class OrderService : IOrderService
 
             if (p == null) return null;
 
-            var orderDetail = _db.OrderDetails.FirstOrDefault(a => a.OrderId == orderId && a.ProductId == productId);
+            var orderDetail = _db
+                .OrderDetails
+                .Include(o => o.Order)
+                .ThenInclude(o => o.User)
+                .FirstOrDefault(a => a.OrderId == orderId && a.ProductId == productId);
+
+            MailDTO mailDTO = new MailDTO();
 
             if (orderDetail == null)
             {
@@ -128,6 +158,15 @@ public class OrderService : IOrderService
                 _db.OrderDetails.Add(od);
                 _db.SaveChanges();
 
+                var o = _db.Orders.Include(a => a.User).FirstOrDefault(a => a.Id == orderId);
+
+                mailDTO.Title = "تکمیل فاکتور";
+                mailDTO.CreateDate = DateTime.Now;
+                mailDTO.Description = "فاکتور شما با موفقیت تکمیل شد.";
+                mailDTO.Email = o.User.Email;
+
+                _mailSender.SendEmail(mailDTO);
+
                 return od;
             }
 
@@ -135,6 +174,13 @@ public class OrderService : IOrderService
 
             _db.OrderDetails.Update(orderDetail);
             _db.SaveChanges();
+
+            mailDTO.Title = "بروزرسانی فاکتور";
+            mailDTO.CreateDate = DateTime.Now;
+            mailDTO.Description = "فاکتور شما با موفقیت بروز شد.";
+            mailDTO.Email = orderDetail.Order.User.Email;
+
+            _mailSender.SendEmail(mailDTO);
 
             return orderDetail;
         }
@@ -280,11 +326,77 @@ public class OrderService : IOrderService
         }
     }
 
+    public bool UpdateOrderForComplete(long orderId)
+    {
+        try
+        {
+            var o = _db.Orders
+                .Include(a => a.User).FirstOrDefault(a => a.Id == orderId);
+
+            if (o == null) return false;
+
+            o.IsComplete = true;
+
+            _db.Orders.Update(o);
+            _db.SaveChanges();
+
+
+            MailDTO mailDTO = new MailDTO();
+
+            mailDTO.Title = "تکمیل فاکتور";
+            mailDTO.CreateDate = DateTime.Now;
+            mailDTO.Description = "فاکتور شما با موفقیت تکمیل شد.";
+            mailDTO.Email = o.User.Email;
+
+            _mailSender.SendEmail(mailDTO);
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool UpdateOrderForNotComplete(long orderId)
+    {
+        try
+        {
+            var o = _db
+                .Orders
+                .Include(a => a.User)
+                .FirstOrDefault(a => a.Id == orderId);
+
+            if (o == null) return false;
+
+            o.IsComplete = false;
+
+            _db.Orders.Update(o);
+            _db.SaveChanges();
+
+            MailDTO mailDTO = new MailDTO();
+
+            mailDTO.Title = "لغو تکمیل فاکتور";
+            mailDTO.CreateDate = DateTime.Now;
+            mailDTO.Description = "فاکتور شما با لغو تکمیل شد.";
+            mailDTO.Email = o.User.Email;
+
+            _mailSender.SendEmail(mailDTO);
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     public bool UpdateOrderAfterPayment(string trackingCode, string paymentCode)
     {
         try
         {
-            var o = _db.Orders.FirstOrDefault(a => a.TrackingCode == trackingCode);
+            var o = _db.Orders
+                .Include(a => a.User).FirstOrDefault(a => a.TrackingCode == trackingCode);
 
             if (o == null) return false;
 
@@ -293,6 +405,16 @@ public class OrderService : IOrderService
 
             _db.Orders.Update(o);
             _db.SaveChanges();
+
+
+            MailDTO mailDTO = new MailDTO();
+
+            mailDTO.Title = "پرداخت فاکتور";
+            mailDTO.CreateDate = DateTime.Now;
+            mailDTO.Description = "فاکتور شما با موفقیت پرداخت شد.";
+            mailDTO.Email = o.User.Email;
+
+            _mailSender.SendEmail(mailDTO);
 
             return true;
         }

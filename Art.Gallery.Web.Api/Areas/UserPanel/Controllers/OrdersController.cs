@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Parbad;
 using Parbad.AspNetCore;
 using Parbad.Gateway.ZarinPal;
+using Parbad.Internal;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
 [Area("UserPanel")]
 [Route("UserPanel/api/[controller]")]
@@ -87,12 +88,23 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost("GetOrder/{orderId}")]
-    public IActionResult FilterOrders(long orderId)
+    public IActionResult Order(long orderId)
     {
         if (orderId == 0)
             return BadRequest(ModelState);
 
         var result = _orderService.GetOrder(orderId);
+
+        return Ok(result);
+    }
+
+    [HttpPost("GetOpenOrder/{userId}")]
+    public IActionResult OpenOrder(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest(ModelState);
+
+        OrderDto result = _orderService.GetOpenOrder(userId);
 
         return Ok(result);
     }
