@@ -30,6 +30,8 @@ public class OrderDetailDto
 
     public string ProductImage { get; set; }
 
+    public string Slug { get; set; }
+
     public decimal Price { get; set; }
 }
 public enum OrderResult

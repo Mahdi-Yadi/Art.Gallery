@@ -270,9 +270,10 @@ public class OrderService : IOrderService
                     Price = (decimal)item.Product.Price,
                     ProductId = _urlProtector.Protect(item.ProductId.ToString()),
                     ProductName = item.Product.Name,
-                   ProductImage = PathExtension.DomainAddress +
-                PathExtension.ProductImage +
-                item.Product.ImageName,
+                    ProductImage = PathExtension.DomainAddress +
+                    PathExtension.ProductImage +
+                    item.Product.ImageName,
+                    Slug = item.Product.Slug,
                 };
                 orderDetails.Add(od);
             }
@@ -320,8 +321,9 @@ public class OrderService : IOrderService
                     ProductId = _urlProtector.Protect(item.ProductId.ToString()),
                     ProductName = item.Product.Name,
                     ProductImage = PathExtension.DomainAddress +
-                PathExtension.ProductImage +
-                item.Product.ImageName,
+                    PathExtension.ProductImage +
+                    item.Product.ImageName,
+                    Slug = item.Product.Slug,
                 };
                 orderDetails.Add(od);
             }
