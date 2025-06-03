@@ -2,7 +2,7 @@
 namespace Art.Gallery.Data.Dtos.Orders;
 public class OrderDto
 {
-    public long Id { get; set; }
+    public long OrderId { get; set; }
 
     public float Sum { get; set; }
 
@@ -20,7 +20,7 @@ public class OrderDto
 }
 public class OrderDetailDto
 {
-    public long Id { get; set; }
+    public string OrderDetailId { get; set; }
 
     public string ProductId { get; set; }
 

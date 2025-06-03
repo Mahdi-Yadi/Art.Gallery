@@ -54,7 +54,7 @@ public class OrderService : IOrderService
 
         mailDTO.Title = "حذف کالا از فاکتور";
         mailDTO.CreateDate = DateTime.Now;
-        mailDTO.Description = "فاکتور شما با موفقیت بروزرسانی شد و کالایی در ان حذف گردید.";
+        mailDTO.Description = "فاکتور شما با موفقیت بروزرسانی شد و کالایی در از حذف گردید.";
         mailDTO.Email = user.Email;
 
         _mailSender.SendEmail(mailDTO);
@@ -219,7 +219,7 @@ public class OrderService : IOrderService
 
         var orders = (await aQuery.ToListAsync()).Select(p => new OrderDto()
         {
-            Id = p.Id,
+            OrderId = p.Id,
             Sum = p.Sum,
             CreateDate = p.CreateDate,
             PaymentCode = p.PaymentCode,
@@ -254,7 +254,7 @@ public class OrderService : IOrderService
 
         List<OrderDetailDto> orderDetails = new List<OrderDetailDto>();
 
-        dto.Id = orderId;
+        dto.OrderId = orderId;
         dto.PaymentCode = o.PaymentCode;
         if (o.OrderDetails.Count > 0 && o.PaymentCode == null)
         {
@@ -265,7 +265,7 @@ public class OrderService : IOrderService
                 var od = new OrderDetailDto()
                 {
                     Count = item.Count,
-                    Id = item.Id,
+                    OrderDetailId = _urlProtector.Protect(item.Id.ToString()),
                     Price = (decimal)item.Product.Price,
                     ProductId = _urlProtector.Protect(item.ProductId.ToString()),
                 };
@@ -296,7 +296,7 @@ public class OrderService : IOrderService
 
         OrderDto dto = new OrderDto();
 
-        dto.Id = o.Id;
+        dto.OrderId = o.Id;
         dto.PaymentCode = o.PaymentCode;
 
         List<OrderDetailDto> orderDetails = new List<OrderDetailDto>();
@@ -310,7 +310,7 @@ public class OrderService : IOrderService
                 var od = new OrderDetailDto()
                 {
                     Count = item.Count,
-                    Id = item.Id,
+                    OrderDetailId = _urlProtector.Protect(item.Id.ToString()),
                     Price = (decimal)item.Product.Price,
                     ProductId = _urlProtector.Protect(item.ProductId.ToString()),
                 };

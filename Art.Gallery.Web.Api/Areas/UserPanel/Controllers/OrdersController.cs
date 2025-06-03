@@ -154,10 +154,10 @@ public class OrdersController : ControllerBase
                     .SetGateway("ZarinPal");
             });
 
-            var resOrder = _orderService.UpdateOrderForPayment(order.Id, trackingCode);
+            var resOrder = _orderService.UpdateOrderForPayment(order.OrderId, trackingCode);
             if (!resOrder)
             {
-                resOrder = _orderService.UpdateOrderForPayment(order.Id, trackingCode);
+                resOrder = _orderService.UpdateOrderForPayment(order.OrderId, trackingCode);
                 if (!resOrder)
                     return BadRequest();
             }
