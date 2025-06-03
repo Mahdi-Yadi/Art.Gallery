@@ -4,6 +4,7 @@ using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Orders;
 using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Entities.Orders;
+using Art.Gallery.Data.Entities.Products;
 using Art.Gallery.Emails;
 using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Orders;
@@ -268,6 +269,10 @@ public class OrderService : IOrderService
                     OrderDetailId = _urlProtector.Protect(item.Id.ToString()),
                     Price = (decimal)item.Product.Price,
                     ProductId = _urlProtector.Protect(item.ProductId.ToString()),
+                    ProductName = item.Product.Name,
+                   ProductImage = PathExtension.DomainAddress +
+                PathExtension.ProductImage +
+                item.Product.ImageName,
                 };
                 orderDetails.Add(od);
             }
@@ -278,7 +283,7 @@ public class OrderService : IOrderService
         }
         dto.CreateDate = o.CreateDate;
         dto.UserName = o.User.UserName;
-
+        dto.OrderDetailsDto = orderDetails;
         return dto;
     }
 
@@ -313,6 +318,10 @@ public class OrderService : IOrderService
                     OrderDetailId = _urlProtector.Protect(item.Id.ToString()),
                     Price = (decimal)item.Product.Price,
                     ProductId = _urlProtector.Protect(item.ProductId.ToString()),
+                    ProductName = item.Product.Name,
+                    ProductImage = PathExtension.DomainAddress +
+                PathExtension.ProductImage +
+                item.Product.ImageName,
                 };
                 orderDetails.Add(od);
             }
@@ -320,6 +329,7 @@ public class OrderService : IOrderService
 
         dto.CreateDate = o.CreateDate;
         dto.UserName = o.User.UserName;
+        dto.OrderDetailsDto = orderDetails;
 
         return dto;
     }
