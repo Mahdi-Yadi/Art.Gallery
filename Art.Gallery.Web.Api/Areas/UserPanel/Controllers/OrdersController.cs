@@ -54,13 +54,13 @@ public class OrdersController : ControllerBase
         }
     }
 
-    [HttpPost("DeleteProductFromOrder")]
-    public IActionResult DeleteProductFromOrder(long productId, string userId)
+    [HttpPost("DeleteProductFromOrder/{orderDetailId}/{userId}")]
+    public IActionResult DeleteProductFromOrder(string orderDetailId, string userId)
     {
-        if (string.IsNullOrEmpty(userId) || productId == 0)
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(orderDetailId))
             return BadRequest(ModelState);
 
-        OrderResult result = _orderService.DeleteProductFromOrder(productId, userId);
+        OrderResult result = _orderService.DeleteProductFromOrder(orderDetailId, userId);
 
         switch (result)
         {
@@ -125,14 +125,14 @@ public class OrdersController : ControllerBase
     {
         var order = _orderService.GetOpenOrder(userId);
 
-        if (order == null || order.OrderDetails.Count == 0)
+        if (order == null || order.OrderDetailsDto.Count == 0)
             return BadRequest();
 
         decimal totalPrice = 0;
 
-        foreach (var item in order.OrderDetails)
+        foreach (var item in order.OrderDetailsDto)
         {
-            decimal price = (decimal)item.Product.Price * item.Count;
+            decimal price = (decimal)item.Price * item.Count;
 
             totalPrice += price;
         }

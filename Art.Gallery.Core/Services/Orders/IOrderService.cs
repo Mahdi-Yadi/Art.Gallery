@@ -5,7 +5,7 @@ public interface IOrderService : IAsyncDisposable
 
 
     // Delete
-    OrderResult DeleteProductFromOrder(long orderDetailId, string userId);
+    OrderResult DeleteProductFromOrder(string orderDetailId, string userId);
 
     // Add Order
     OrderResult AddOrder(string productId, string userId);

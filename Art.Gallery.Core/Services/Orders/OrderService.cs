@@ -27,9 +27,10 @@ public class OrderService : IOrderService
     }
 
     // حذف ریز فاکتور
-    public OrderResult DeleteProductFromOrder(long orderDetailId, string userId)
+    public OrderResult DeleteProductFromOrder(string orderDetailId, string userId)
     {
         long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
+        long odId = Convert.ToInt64(_urlProtector.UnProtect(orderDetailId));
 
         var user = _db.Users.FirstOrDefault(u => u.Id == usId);
 
@@ -37,7 +38,7 @@ public class OrderService : IOrderService
 
         var od = _db.OrderDetails.
             Include(a => a.Order)
-            .FirstOrDefault(a => a.Id == orderDetailId);
+            .FirstOrDefault(a => a.Id == odId);
 
         if (od == null) return OrderResult.Nulls;
 
@@ -251,6 +252,8 @@ public class OrderService : IOrderService
 
         OrderDto dto = new OrderDto();
 
+        List<OrderDetailDto> orderDetails = new List<OrderDetailDto>();
+
         dto.Id = orderId;
         dto.PaymentCode = o.PaymentCode;
         if (o.OrderDetails.Count > 0 && o.PaymentCode == null)
@@ -259,6 +262,14 @@ public class OrderService : IOrderService
             foreach (var item in o.OrderDetails)
             {
                 dto.Sum += (float)(item.Count * item.Product.Price);
+                var od = new OrderDetailDto()
+                {
+                    Count = item.Count,
+                    Id = item.Id,
+                    Price = (decimal)item.Product.Price,
+                    ProductId = _urlProtector.Protect(item.ProductId.ToString()),
+                };
+                orderDetails.Add(od);
             }
         }
         else
@@ -268,8 +279,6 @@ public class OrderService : IOrderService
         dto.CreateDate = o.CreateDate;
         dto.UserName = o.User.UserName;
 
-        dto.OrderDetails = (List<OrderDetail>)o.OrderDetails;
-
         return dto;
     }
 
@@ -278,6 +287,7 @@ public class OrderService : IOrderService
         long usId = Convert.ToInt64(_urlProtector.UnProtect(userId));
 
         var o = _db.Orders
+            .Include(a => a.User)
             .Include(a => a.OrderDetails)
             .ThenInclude(a => a.Product)
             .FirstOrDefault(a => a.PaymentCode == null && a.UserId == usId);
@@ -289,19 +299,27 @@ public class OrderService : IOrderService
         dto.Id = o.Id;
         dto.PaymentCode = o.PaymentCode;
 
+        List<OrderDetailDto> orderDetails = new List<OrderDetailDto>();
+
         if (o.OrderDetails.Count > 0)
         {
             dto.Sum = 0;
             foreach (var item in o.OrderDetails)
             {
                 dto.Sum += (float)(item.Count * item.Product.Price);
+                var od = new OrderDetailDto()
+                {
+                    Count = item.Count,
+                    Id = item.Id,
+                    Price = (decimal)item.Product.Price,
+                    ProductId = _urlProtector.Protect(item.ProductId.ToString()),
+                };
+                orderDetails.Add(od);
             }
         }
 
         dto.CreateDate = o.CreateDate;
         dto.UserName = o.User.UserName;
-
-        dto.OrderDetails = (List<OrderDetail>)o.OrderDetails;
 
         return dto;
     }

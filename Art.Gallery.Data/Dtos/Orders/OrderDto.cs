@@ -16,7 +16,17 @@ public class OrderDto
 
     public string UserName { get; set; }
 
-    public List<OrderDetail> OrderDetails { get; set; }
+    public List<OrderDetailDto> OrderDetailsDto { get; set; }
+}
+public class OrderDetailDto
+{
+    public long Id { get; set; }
+
+    public string ProductId { get; set; }
+
+    public int Count { get; set; }
+
+    public decimal Price { get; set; }
 }
 public enum OrderResult
 {
