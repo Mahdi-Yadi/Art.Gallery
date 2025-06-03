@@ -1,9 +1,6 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Core.Services.Products;
-using Art.Gallery.Data.Dtos.Artists;
 using Art.Gallery.Data.Dtos.Products;
-using Art.Gallery.Data.Entities.Account;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 [Area("AdminPanel")]

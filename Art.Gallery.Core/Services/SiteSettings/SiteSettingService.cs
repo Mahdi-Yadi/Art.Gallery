@@ -1,6 +1,96 @@
-﻿namespace Art.Gallery.Core.Services.SiteSettings;
-
-public class SiteSettingService
+﻿using Art.Gallery.Common;
+using Art.Gallery.Data.Contexts;
+using Art.Gallery.Data.Dtos.Products;
+using Art.Gallery.Data.Entities.Site;
+using Microsoft.AspNetCore.Http;
+namespace Art.Gallery.Core.Services.SiteSettings;
+public class SiteSettingService : ISiteSettingService
 {
-    
+
+    private readonly SiteDBContext _db;
+
+    public SiteSettingService(SiteDBContext siteDB)
+    {
+        _db = siteDB;
+    }
+
+    public SiteSetting GetSiteSetting()
+    {
+
+        var siteSetting = _db.SiteSettings.FirstOrDefault(a => a.IsDelete == false);
+
+        if (siteSetting == null)
+        {
+            SiteSetting site = new SiteSetting();
+
+            site.Title = "عنوان سایت";
+            site.IsDelete = false;
+            site.Address = "ایران";
+            site.Email = "info@technoto.org";
+            site.CreateDate = DateTime.Now;
+            site.UpdateDate = DateTime.Now;
+            site.Phone = Convert.ToInt32("09918844233");
+            site.Name = "نام وب سایت";
+            site.ImageName = "logoName.png";
+
+            _db.SiteSettings.Add(site);
+            _db.SaveChanges();
+
+            siteSetting = site;
+        }
+
+        return siteSetting;
+    }
+
+    public SiteResult UpdateSiteSetting(SiteSetting siteSetting, IFormFile logoFile)
+    {
+        try
+        {
+            var site = _db.SiteSettings.FirstOrDefault(a => a.IsDelete == false);
+
+            if (site == null)
+            {
+                site = GetSiteSetting();
+            }
+
+            if(logoFile != null)
+            {
+                if (logoFile.Length > 10100000)
+                {
+                    return SiteResult.ImageLarge;
+                }
+
+                var imageName = TextFixer.FixTextForUrl(site.Name) + Path.GetExtension(logoFile.FileName);
+
+                var res = logoFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
+                    300, 300, PathExtension.ProductImageThumbServer, null);
+
+                if (!res)
+                {
+                    return SiteResult.ImageNotUploaded;
+                }
+
+                siteSetting.ImageName = imageName;
+            }
+
+            site = siteSetting;
+
+            _db.SiteSettings.Update(site);
+            _db.SaveChanges();
+
+            return SiteResult.Success;
+        }
+        catch (Exception)
+        {
+            return SiteResult.Error;
+        }
+    }
+
+}
+public enum SiteResult
+{
+    ImageLarge,
+    ImageNotUploaded,
+    Success,
+    Error
 }

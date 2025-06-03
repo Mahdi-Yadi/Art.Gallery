@@ -55,6 +55,7 @@ public class ProductsService : IProductsService
 
         return dtos;
     }
+
     // Get Special Products
     public List<ProductDto> GetSpecialProducts()
     {
@@ -87,6 +88,7 @@ public class ProductsService : IProductsService
 
         return dtos;
     }
+
     // Add
     public ProductResult AddProduct(CEProductDto dto)
     {
@@ -182,6 +184,7 @@ public class ProductsService : IProductsService
             return ProductResult.Error;
         }
     }
+
     // Filter
     public async Task<FilterProductsDto> FilterProductsAsync(FilterProductsDto dto)
     {
@@ -253,6 +256,7 @@ public class ProductsService : IProductsService
 
         return dto.SetProducts(dtos).SetPaging(pager);
     }
+
     // Get for Update
     public CEProductDto GetForUpdateProduct(string id)
     {
@@ -277,6 +281,7 @@ public class ProductsService : IProductsService
 
         return dto;
     }
+
     // Update
     public ProductResult UpdateProduct(CEProductDto dto)
     {
@@ -335,6 +340,7 @@ public class ProductsService : IProductsService
             return ProductResult.Error;
         }
     }
+
     // Recover Product
     public ProductResult RecoverProduct(string id, string artistId)
     {
@@ -352,6 +358,7 @@ public class ProductsService : IProductsService
         }
         return ProductResult.Error;
     }
+
     // Active Product
     public ProductResult ActiveProduct(string id, string artistId)
     {
@@ -369,6 +376,7 @@ public class ProductsService : IProductsService
         }
         return ProductResult.Error;
     }
+
     // Reject Product
     public ProductResult RejectProduct(string id, string artistId)
     {
@@ -386,6 +394,7 @@ public class ProductsService : IProductsService
         }
         return ProductResult.Error;
     }
+
     // Get
     public async Task<ProductDto> GetProduct(string Slug)
     {
