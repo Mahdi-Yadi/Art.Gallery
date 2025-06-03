@@ -161,10 +161,10 @@ public class OrderService : IOrderService
 
                 var o = _db.Orders.Include(a => a.User).FirstOrDefault(a => a.Id == orderId);
 
-                mailDTO.Title = "تکمیل فاکتور";
+                mailDTO.Title = "بروزرسانی فاکتور";
                 mailDTO.CreateDate = DateTime.Now;
-                mailDTO.Description = "فاکتور شما با موفقیت تکمیل شد.";
-                mailDTO.Email = o.User.Email;
+                mailDTO.Description = "فاکتور شما با موفقیت بروز شد.";
+                mailDTO.Email = orderDetail.Order.User.Email;
 
                 _mailSender.SendEmail(mailDTO);
 
