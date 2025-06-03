@@ -312,7 +312,7 @@ public class ProductsService : IProductsService
                 {
                     return ProductResult.ImageNotUploaded;
                 }
-                dto.ImageName = imageName;
+                p.ImageName = imageName;
             }
             HtmlSanitizer san = new HtmlSanitizer();
 

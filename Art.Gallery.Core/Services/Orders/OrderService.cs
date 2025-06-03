@@ -321,8 +321,7 @@ public class OrderService : IOrderService
                     ProductId = _urlProtector.Protect(item.ProductId.ToString()),
                     ProductName = item.Product.Name,
                     ProductImage = PathExtension.DomainAddress +
-                    PathExtension.ProductImage +
-                    item.Product.ImageName,
+                    PathExtension.ProductImage + item.Product.ImageName,
                     Slug = item.Product.Slug,
                 };
                 orderDetails.Add(od);
