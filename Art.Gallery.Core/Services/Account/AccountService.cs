@@ -56,10 +56,12 @@ public class AccountService : IAccountService
 
         mailDTO.Title = "ثبت نام در سایت";
         mailDTO.CreateDate = DateTime.Now;
-        mailDTO.ActiveCode = PathExtension.DomainAddress + $"/Active-Account/{user.ActiveCode}";
+        mailDTO.Link = PathExtension.DomainAddress + $"/Active-Account/{u.ActiveCode}";
         mailDTO.ButtonTitle = "فعال سازی";
         mailDTO.Description = "کاربر گرامی، با تشکر از ثبت نام شما در وب سایت ما، چناچه میخواهید از حساب خود استفاده کنید از لینک زیر اقدام به فعال سازی آن نمایید.";
-        mailDTO.Email = user.Email;
+        mailDTO.Email = u.Email;
+
+        _mailSender.SendEmail(mailDTO);
 
         return AccountResult.Success;
     }
@@ -72,7 +74,7 @@ public class AccountService : IAccountService
             var user = _db
            .Users.FirstOrDefault(a => a.ActiveCode == activeCode);
 
-            if (user != null)
+            if (user == null)
                 return AccountResult.Null;
 
             DateTime currentDate = DateTime.Now;
