@@ -120,6 +120,57 @@ public class OrdersController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("Pay-Verify/{userId}")]
+    public IActionResult PayVerify(string userId)
+    {
+        var order = _orderService.GetOpenOrder(userId);
+
+        if (order == null || order.OrderDetailsDto.Count == 0)
+            return BadRequest();
+
+        decimal totalPrice = 0;
+
+        foreach (var item in order.OrderDetailsDto)
+        {
+            decimal price = (decimal)item.Price * item.Count;
+
+            totalPrice += price;
+        }
+
+        try
+        {
+            string trackingCode = $"{DateTime.Now:yyyyMMddHHmmmmssffff}";
+
+            var resOrder = _orderService.UpdateOrderForPayment(order.OrderId, trackingCode);
+            if (!resOrder)
+            {
+                resOrder = _orderService.UpdateOrderForPayment(order.OrderId, trackingCode);
+                if (!resOrder)
+                    return BadRequest();
+            }
+
+            string verifyResult = $"{DateTime.Now:yyyyMMddHHmmmmssffff}";
+
+            var res = _orderService.UpdateOrderAfterPayment(trackingCode, verifyResult);
+
+            if (res)
+            {
+                return Ok(new
+                {
+                    status = "Success",
+                    code = verifyResult
+                });
+            }
+
+        }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
+
+        return BadRequest();
+    }
+
     [HttpGet("Pay/{userId}")]
     public async Task<IActionResult> Pay(string userId)
     {
