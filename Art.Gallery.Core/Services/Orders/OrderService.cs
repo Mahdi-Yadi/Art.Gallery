@@ -257,6 +257,7 @@ public class OrderService : IOrderService
 
         dto.OrderId = orderId;
         dto.PaymentCode = o.PaymentCode;
+        dto.IsComplete = o.IsComplete;
         if (o.OrderDetails.Count > 0 && o.PaymentCode == null)
         {
             dto.Sum = 0;

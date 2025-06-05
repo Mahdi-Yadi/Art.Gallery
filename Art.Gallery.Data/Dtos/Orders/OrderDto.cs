@@ -14,6 +14,8 @@ public class OrderDto
 
     public string TrackingCode { get; set; }
 
+    public bool IsComplete { get; set; }
+
     public string UserName { get; set; }
 
     public List<OrderDetailDto> OrderDetailsDto { get; set; }

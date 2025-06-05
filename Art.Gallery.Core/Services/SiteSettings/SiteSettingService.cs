@@ -29,7 +29,7 @@ public class SiteSettingService : ISiteSettingService
             site.Email = "info@technoto.org";
             site.CreateDate = DateTime.Now;
             site.UpdateDate = DateTime.Now;
-            site.Phone = Convert.ToInt32("09918844233");
+            site.Phone = 0;
             site.Name = "نام وب سایت";
             site.ImageName = "logoName.png";
 
