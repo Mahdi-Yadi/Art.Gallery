@@ -304,12 +304,13 @@ public class OrderService : IOrderService
 
         dto.OrderId = o.Id;
         dto.PaymentCode = o.PaymentCode;
-
+        dto.CreateDate = o.CreateDate;
+        dto.UserName = o.User.UserName;
+        dto.Sum = 0;
         List<OrderDetailDto> orderDetails = new List<OrderDetailDto>();
 
-        if (o.OrderDetails.Count > 0)
+        if (o.OrderDetails != null)
         {
-            dto.Sum = 0;
             foreach (var item in o.OrderDetails)
             {
                 dto.Sum += (float)(item.Count * item.Product.Price);
@@ -328,8 +329,6 @@ public class OrderService : IOrderService
             }
         }
 
-        dto.CreateDate = o.CreateDate;
-        dto.UserName = o.User.UserName;
         dto.OrderDetailsDto = orderDetails;
 
         return dto;
