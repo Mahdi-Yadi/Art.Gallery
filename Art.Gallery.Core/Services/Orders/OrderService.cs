@@ -345,6 +345,15 @@ public class OrderService : IOrderService
 
             o.TrackingCode = trackingCode;
 
+            if (o.OrderDetails.Count > 0)
+            {
+                o.Sum = 0;
+                foreach (var item in o.OrderDetails)
+                {
+                    o.Sum += (float)(item.Count * item.Product.Price);
+                }
+            }
+
             _db.Orders.Update(o);
             _db.SaveChanges();
 
