@@ -33,6 +33,8 @@ public class OrderDetailDto
     public string Slug { get; set; }
 
     public decimal Price { get; set; }
+
+    public decimal TotalPrice => Count * Price;
 }
 public enum OrderResult
 {
