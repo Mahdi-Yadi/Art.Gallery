@@ -339,7 +339,9 @@ public class OrderService : IOrderService
     {
         try
         {
-            var o = _db.Orders.FirstOrDefault(a => a.Id == orderId);
+            var o = _db.Orders
+                .Include(a => a.OrderDetails)
+                .FirstOrDefault(a => a.Id == orderId);
 
             if (o == null) return false;
 
@@ -351,7 +353,12 @@ public class OrderService : IOrderService
                 foreach (var item in o.OrderDetails)
                 {
                     o.Sum += (float)(item.Count * item.Product.Price);
+
+                    item.Price = (decimal)item.Product.Price;
+                   
+                    _db.OrderDetails.Update(item);
                 }
+                _db.SaveChanges();
             }
 
             _db.Orders.Update(o);

@@ -13,6 +13,8 @@ public class OrderDetail
 
     public int Count { get; set; }
 
+    public decimal Price { get; set; }
+
     public Order Order { get; set; }
 
     public User User { get; set; }
