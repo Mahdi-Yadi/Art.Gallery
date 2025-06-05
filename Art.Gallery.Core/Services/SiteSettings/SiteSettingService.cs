@@ -39,7 +39,7 @@ public class SiteSettingService : ISiteSettingService
             siteSetting = site;
         }
 
-        siteSetting.ImageName = PathExtension.SiteImage + "/"+siteSetting.ImageName;
+        siteSetting.ImageName = PathExtension.DomainAddress + PathExtension.SiteImage + siteSetting.ImageName;
 
         return siteSetting;
     }
