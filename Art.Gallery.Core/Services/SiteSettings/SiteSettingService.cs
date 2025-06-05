@@ -39,6 +39,8 @@ public class SiteSettingService : ISiteSettingService
             siteSetting = site;
         }
 
+        siteSetting.ImageName = PathExtension.SiteImage + "/"+siteSetting.ImageName;
+
         return siteSetting;
     }
 
@@ -62,8 +64,8 @@ public class SiteSettingService : ISiteSettingService
 
                 var imageName = TextFixer.FixTextForUrl(site.Name) + Path.GetExtension(logoFile.FileName);
 
-                var res = logoFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
-                    300, 300, PathExtension.ProductImageThumbServer, null);
+                var res = logoFile.AddImageToServer(imageName, PathExtension.SiteImageServer,
+                    null, null, null, null);
 
                 if (!res)
                 {

@@ -5,28 +5,30 @@ public class SiteSetting : BaseEntity
 {
 
     [Display(Name = "عنوان سایت")]
-    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
     [DataType(DataType.Text)]
     [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
     public string Title { get; set; }
 
     [Display(Name = "ایمیل سایت")]
-    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
     [DataType(DataType.Text)]
     [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
     public string Email { get; set; }
 
     [Display(Name = "آدرس سایت")]
-    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
     [DataType(DataType.Text)]
     [MaxLength(500, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
     public string Address { get; set; }
 
+    [Display(Name = "توضیحات")]
+    [DataType(DataType.Text)]
+    [MaxLength(1000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
+    [MinLength(10, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]
+    public string Text { get; set; }
+
     [Display(Name = "عنوان شرکت")]
-    [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
     [DataType(DataType.Text)]
     [MaxLength(1000, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد")]
     [MinLength(2, ErrorMessage = "{0} نمی تواند کمتر از {1} کاراکتر باشد")]

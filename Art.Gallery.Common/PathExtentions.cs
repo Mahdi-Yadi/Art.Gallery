@@ -4,6 +4,15 @@ public class PathExtension
 
     public static string DomainAddress = "https://localhost:44350";
 
+    #region Site
+
+    public static string SiteImage = "/CMS/Images/Site/";
+
+    public static string SiteImageServer =
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/CMS/Images/Site/");
+
+    #endregion
+
     #region Product
 
     public static string ProductImage = "/CMS/Images/ProductImage/";
