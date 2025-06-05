@@ -100,7 +100,7 @@ public class OrderService : IOrderService
 
             if (user == null) return null;
 
-            var oldOrder = _db.Orders.FirstOrDefault(a => a.UserId == user.Id);
+            var oldOrder = _db.Orders.FirstOrDefault(a => a.UserId == user.Id && a.PaymentCode == null);
 
             if (oldOrder == null)
             {
