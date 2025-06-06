@@ -199,12 +199,11 @@ public class OrderService : IOrderService
         var query = _db.Orders.AsQueryable();
 
         if (!string.IsNullOrEmpty(dto.UserId))
-            if (!_accountService.IsAdmin(dto.UserId))
+            if (dto.IsUserPanel)
             {
                 long usId = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
                 query = query.Where(a => a.UserId == usId);
             }
-
 
         if (dto.OrderId != 0)
             query = query.Where(a => a.Id == dto.OrderId);
@@ -224,7 +223,7 @@ public class OrderService : IOrderService
             Sum = p.Sum,
             CreateDate = p.CreateDate,
             PaymentCode = p.PaymentCode,
-            PaymentDate = (DateTime)p.PaymentDate,
+            PaymentDate = p.PaymentDate,
         }).ToList();
 
         #region Pagination
@@ -355,7 +354,7 @@ public class OrderService : IOrderService
                     o.Sum += (float)(item.Count * item.Product.Price);
 
                     item.Price = (decimal)item.Product.Price;
-                   
+
                     _db.OrderDetails.Update(item);
                 }
                 _db.SaveChanges();

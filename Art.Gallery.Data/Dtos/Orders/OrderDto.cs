@@ -8,7 +8,7 @@ public class OrderDto
 
     public DateTime CreateDate { get; set; }
 
-    public DateTime PaymentDate { get; set; }
+    public DateTime? PaymentDate { get; set; }
 
     public string PaymentCode { get; set; }
 

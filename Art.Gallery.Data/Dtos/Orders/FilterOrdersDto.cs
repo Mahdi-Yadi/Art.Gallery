@@ -8,6 +8,8 @@ public class FilterOrdersDto : BasePaging
 
     public string UserId { get; set; }
 
+    public bool IsUserPanel { get; set; }
+
     public int Count { get; set; }
 
     public FilterOrdersDto SetOrders(List<OrderDto> orderDtos)

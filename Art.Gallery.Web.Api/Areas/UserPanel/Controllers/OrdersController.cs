@@ -115,6 +115,8 @@ public class OrdersController : ControllerBase
         if (string.IsNullOrEmpty(dto.UserId))
             return BadRequest(ModelState);
 
+        dto.IsUserPanel = true;
+
         var result = await _orderService.FilterOrders(dto);
 
         return Ok(result);
