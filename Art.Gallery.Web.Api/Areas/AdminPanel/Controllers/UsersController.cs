@@ -1,7 +1,5 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Data.Dtos.Account;
-using Art.Gallery.Data.Dtos.Products;
-using Art.Gallery.Data.Entities.Account;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 [Area("AdminPanel")]

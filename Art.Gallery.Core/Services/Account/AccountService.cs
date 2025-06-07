@@ -286,14 +286,13 @@ public class AccountService : IAccountService
     public async Task<FilterUsersDto> FilterUsers(FilterUsersDto dto)
     {
         var query = _db.Users
-            .Include(a => a.Orders)
-            .ThenInclude(a => a.OrderDetails)
-            .Include(a => a.Artists)
             .AsQueryable();
 
         var aQuery = query.Select(p => new
         {
             p.Id,
+            p.IsActive,
+            p.IsAdmin,
             p.UserName,
             p.Email,
             p.PhoneNumber,
@@ -306,6 +305,9 @@ public class AccountService : IAccountService
             UserName = p.UserName,
             Email = p.Email,
             PhoneNumber = p.PhoneNumber,
+            IsAdmin = p.IsAdmin,
+            IsActive = p.IsActive,
+            IsDelete = p.IsDelete
         }).ToList();
 
         #region Pagination
