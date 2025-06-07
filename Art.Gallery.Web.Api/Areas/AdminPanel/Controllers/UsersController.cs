@@ -57,7 +57,7 @@ public class UsersController : ControllerBase
         if (!_accountService.IsAdmin(adminId))
             return BadRequest();
 
-        var result = _accountService.IsAdmin(userId);
+        var result = _accountService.AddAdmin(userId);
 
         return Ok(result);
     }
@@ -72,7 +72,7 @@ public class UsersController : ControllerBase
         if (!_accountService.IsAdmin(adminId))
             return BadRequest();
 
-        var result = _accountService.IsAdmin(userId);
+        var result = _accountService.RemoveAdmin(userId);
 
         return Ok(result);
     }
