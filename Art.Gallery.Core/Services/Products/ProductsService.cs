@@ -149,7 +149,7 @@ public class ProductsService : IProductsService
 
             if (dto.CategoriesId != null)
             {
-
+                AddCategoriesForProduct(p.Id, dto.CategoriesId);
             }
 
             return ProductResult.Success;
@@ -160,25 +160,38 @@ public class ProductsService : IProductsService
         }
     }
 
-    private async Task<bool> Add(long productId, List<long> selectedCategoriesId)
+    private void AddCategoriesForProduct(long productId, List<long> selectedCategoriesId)
     {
-        if (selectedCategoriesId != null && selectedCategoriesId.Any())
+        try
         {
-            var productSelectedCategories = new List<ProductSelectedCategories>();
-            foreach (var categoryId in selectedCategoriesId)
+            if (selectedCategoriesId != null && selectedCategoriesId.Any())
             {
-                productSelectedCategories.Add(new ProductSelectedCategories
-                {
-                    CategoryId = categoryId,
-                    ProductId = productId
-                });
-            }
-            await _db.ProductSelectedCategories.AddRangeAsync(productSelectedCategories);
-        }
-        await _db.SaveChangesAsync();
+                var cats = _db.ProductSelectedCategories.Where(a => a.ProductId == productId).ToList();
+                if(cats != null)
+                    _db.ProductSelectedCategories.RemoveRange(cats);
 
-// Delete
-public ProductResult DeleteProduct(string productId, string userId)
+                var productSelectedCategories = new List<ProductSelectedCategories>();
+                foreach (var categoryId in selectedCategoriesId)
+                {
+                    productSelectedCategories.Add(new ProductSelectedCategories
+                    {
+                        CategoryId = categoryId,
+                        ProductId = productId
+                    });
+                }
+
+                _db.ProductSelectedCategories.AddRange(productSelectedCategories);
+            }
+
+            _db.SaveChanges();
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    // Delete
+    public ProductResult DeleteProduct(string productId, string userId)
     {
         try
         {
@@ -301,7 +314,8 @@ public ProductResult DeleteProduct(string productId, string userId)
         dto.Description = p.Description;
         dto.IsSpecial = p.IsSpecial;
         dto.Count = p.Count;
-
+        dto.CategoriesId = (List<long>)_db.ProductSelectedCategories.Where(a => a.ProductId == p.Id).ToList().Select(a => a.CategoryId);
+        
         return dto;
     }
 
@@ -355,6 +369,11 @@ public ProductResult DeleteProduct(string productId, string userId)
 
             _db.Products.Update(p);
             _db.SaveChanges();
+
+            if (dto.CategoriesId != null)
+            {
+                AddCategoriesForProduct(p.Id, dto.CategoriesId);
+            }
 
             return ProductResult.Success;
         }
