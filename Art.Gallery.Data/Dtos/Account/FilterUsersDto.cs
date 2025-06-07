@@ -4,13 +4,13 @@ namespace Art.Gallery.Data.Dtos.Account;
 public class FilterUsersDto : BasePaging
 {
     
-    public List<User> Users { get; set; }
+    public List<UserDto> Users { get; set; }
 
     public string UserName { get; set; }
 
     public int Count { get; set; }
 
-    public FilterUsersDto SetUsers(List<User> users)
+    public FilterUsersDto SetUsers(List<UserDto> users)
     {
         this.Users = users;
         return this;
@@ -29,4 +29,15 @@ public class FilterUsersDto : BasePaging
         return this;
     }
 
+}
+public class UserDto
+{
+    public string Id { get; set; }
+    public string UserName { get; set; }
+    public string Email { get; set; }
+    public string PhoneNumber { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsDelete { get; set; }
+    public DateTime CreateDate { get; set; }
+    public bool IsAdmin { get; set; }
 }

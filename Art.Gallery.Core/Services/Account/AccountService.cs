@@ -299,9 +299,9 @@ public class AccountService : IAccountService
             p.IsDelete
         });
 
-        var users = (await aQuery.ToListAsync()).Select(p => new User()
+        var users = (await aQuery.ToListAsync()).Select(p => new UserDto()
         {
-            Id = p.Id,
+            Id = _urlProtector.Protect(p.Id.ToString()),
             UserName = p.UserName,
             Email = p.Email,
             PhoneNumber = p.PhoneNumber,
