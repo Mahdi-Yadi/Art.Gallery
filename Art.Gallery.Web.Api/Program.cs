@@ -8,6 +8,7 @@ using Art.Gallery.Core.Services.Galleries;
 using Art.Gallery.Core.Services.Jobs;
 using Art.Gallery.Core.Services.Orders;
 using Art.Gallery.Core.Services.Products;
+using Art.Gallery.Core.Services.Requests;
 using Art.Gallery.Core.Services.SiteSettings;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Emails;
@@ -123,6 +124,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IArtistService, ArtistService>();
 // Site Setting
 builder.Services.AddTransient<ISiteSettingService, SiteSettingService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 //builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "clientapp/dist"; });
 
 var app = builder.Build();

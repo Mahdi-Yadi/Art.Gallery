@@ -16,7 +16,8 @@ public class SlidersController : ControllerBase
         _sliderService = sliderService;
         _accountService = accountService;
     }
-    [HttpPost]
+
+    [HttpPost("AddSlider")]
     public IActionResult AddSlider([FromBody] Slider slider, string userId)
     {
         if (!_accountService.IsAdmin(userId))
@@ -31,7 +32,7 @@ public class SlidersController : ControllerBase
         };
     }
 
-    [HttpPut]
+    [HttpPut("UpdateSlider")]
     public IActionResult UpdateSlider([FromBody] Slider slider, string userId)
     {
         if (!_accountService.IsAdmin(userId))
@@ -46,7 +47,7 @@ public class SlidersController : ControllerBase
         };
     }
 
-    [HttpDelete("{id:long}")]
+    [HttpDelete("DeleteSlider/id")]
     public IActionResult DeleteSlider(long id,string userId)
     {
         if (!_accountService.IsAdmin(userId))
@@ -61,7 +62,7 @@ public class SlidersController : ControllerBase
         };
     }
 
-    [HttpGet("{id:long}")]
+    [HttpGet("GetSlider/{id}")]
     public IActionResult GetSlider(long id, string userId)
     {
         if (!_accountService.IsAdmin(userId))
@@ -73,7 +74,7 @@ public class SlidersController : ControllerBase
         return Ok(slider);
     }
 
-    [HttpGet]
+    [HttpGet("GetSliders")]
     public IActionResult GetSliders(string userId)
     {
         if (!_accountService.IsAdmin(userId))

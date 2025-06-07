@@ -14,7 +14,7 @@ public class HomeController : ControllerBase
         _categoryService = categoryService;
     }
 
-    [HttpGet]
+    [HttpGet("GetCategoriesSite")]
     public IActionResult GetCategories()
     {
         var categories = _categoryService.GetCategories();

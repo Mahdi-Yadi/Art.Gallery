@@ -19,8 +19,8 @@ public class CategoriesController : ControllerBase
         _categoryService = categoryService;
     }
 
-    [HttpPost]
-    public IActionResult AddCategory([FromBody] Category cat,string userId)
+    [HttpPost("AddCategory")]
+    public IActionResult AddCategory([FromBody] CategoryDto cat,string userId)
     {
         if (!_accountService.IsAdmin(userId))
             return BadRequest();
@@ -35,7 +35,7 @@ public class CategoriesController : ControllerBase
         };
     }
 
-    [HttpDelete("{id:long}")]
+    [HttpDelete("DeleteCategory/{id}")]
     public IActionResult DeleteCategory(long id,string userId)
     {
         if (!_accountService.IsAdmin(userId))
@@ -50,7 +50,7 @@ public class CategoriesController : ControllerBase
         };
     }
 
-    [HttpGet]
+    [HttpGet("GetCategories/{userId}")]
     public IActionResult GetCategories(string userId)
     {
         if (!_accountService.IsAdmin(userId))
@@ -60,7 +60,7 @@ public class CategoriesController : ControllerBase
         return Ok(categories);
     }
 
-    [HttpGet("{id:long}")]
+    [HttpGet("GetCategory/{id}")]
     public IActionResult GetCategory(long id, string userId)
     {
         if (!_accountService.IsAdmin(userId))
@@ -72,8 +72,8 @@ public class CategoriesController : ControllerBase
         return Ok(category);
     }
 
-    [HttpPut]
-    public IActionResult UpdateCategory([FromBody] Category cat,string userId)
+    [HttpPut("UpdateCategory")]
+    public IActionResult UpdateCategory([FromBody] CategoryDto cat,string userId)
     {
         if (!_accountService.IsAdmin(userId))
             return BadRequest();

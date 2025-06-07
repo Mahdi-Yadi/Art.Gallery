@@ -6,17 +6,17 @@ public interface ICategoryService : IAsyncDisposable
 
     #region Categories
 
-    CatResult AddCategory(Category cat);
+    CatResult AddCategory(CategoryDto cat);
 
-    Category GetForUpdateCategory(long Id);
+    CategoryDto GetForUpdateCategory(long Id);
 
-    CatResult UpdateCategory(Category cat);
+    CatResult UpdateCategory(CategoryDto cat);
 
     CatResult DeleteCategory(long Id);
 
-    Category GetCategory(long Id);
+    CategoryDto GetCategory(long Id);
 
-    List<Category> GetCategories();
+    List<CategoryDto> GetCategories();
 
     #endregion
 
