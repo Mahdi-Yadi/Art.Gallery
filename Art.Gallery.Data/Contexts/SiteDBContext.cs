@@ -43,12 +43,13 @@ public class SiteDBContext : DbContext
 
     public DbSet<OrderDetail> OrderDetails { get; set; }
 
+    public DbSet<Slider> Sliders { get; set; }
+
     #region on model creating
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("ArtGallery");
-        //modelBuilder.UseCollation("Persian_100_CI_AS_SC_UTF8");
 
         foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(s => s.GetForeignKeys()))
         {

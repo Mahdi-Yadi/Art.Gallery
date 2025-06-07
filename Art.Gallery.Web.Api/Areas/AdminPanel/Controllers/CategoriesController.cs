@@ -1,6 +1,7 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Core.Services.Categories;
 using Art.Gallery.Data.Dtos.Categories;
+using Art.Gallery.Data.Entities.Account;
 using Art.Gallery.Data.Entities.Categories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +20,11 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult AddCategory([FromBody] Category cat)
+    public IActionResult AddCategory([FromBody] Category cat,string userId)
     {
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
         var result = _categoryService.AddCategory(cat);
         return result switch
         {
@@ -32,8 +36,11 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
-    public IActionResult DeleteCategory(long id)
+    public IActionResult DeleteCategory(long id,string userId)
     {
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
         var result = _categoryService.DeleteCategory(id);
         return result switch
         {
@@ -44,15 +51,21 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetCategories()
+    public IActionResult GetCategories(string userId)
     {
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
         var categories = _categoryService.GetCategories();
         return Ok(categories);
     }
 
     [HttpGet("{id:long}")]
-    public IActionResult GetCategory(long id)
+    public IActionResult GetCategory(long id, string userId)
     {
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
         var category = _categoryService.GetCategory(id);
         if (category == null)
             return NotFound("Category not found.");
@@ -60,8 +73,11 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult UpdateCategory([FromBody] Category cat)
+    public IActionResult UpdateCategory([FromBody] Category cat,string userId)
     {
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
         var result = _categoryService.UpdateCategory(cat);
         return result switch
         {

@@ -1,9 +1,11 @@
 ﻿using Art.Gallery.Common;
 using Art.Gallery.Core.Services.Account;
+using Art.Gallery.Core.Services.Requests;
 using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Account;
 using Art.Gallery.Web.Api.Http;
 using Art.Gallery.Web.Api.Models;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +23,16 @@ public class AccountController : ControllerBase
     private readonly JwtTokenGenerator _jwt;
     private readonly SiteDBContext _context;
     private readonly UrlProtector _urlProtector;
+    private readonly IRequestService _requestService;
 
-    public AccountController(UrlProtector urlProtector,IAccountService accountService, TokenService tokenService, JwtTokenGenerator jwt, SiteDBContext context)
+    public AccountController(IAccountService accountService, TokenService tokenService, JwtTokenGenerator jwt, SiteDBContext context, UrlProtector urlProtector, IRequestService requestService)
     {
-        _urlProtector = urlProtector;
         _accountService = accountService;
         _tokenService = tokenService;
         _jwt = jwt;
         _context = context;
+        _urlProtector = urlProtector;
+        _requestService = requestService;
     }
 
     #endregion
@@ -43,7 +47,7 @@ public class AccountController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterDto dto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         if (!ModelState.IsValid)
         {
@@ -52,6 +56,14 @@ public class AccountController : ControllerBase
                 status = "ValidationError",
                 message = "داده‌های وارد شده نامعتبر هستند.",
                 errors = ModelState
+            });
+        }
+
+        if (await _requestService.CanUserSendRequestAsync(HttpContext.Connection.RemoteIpAddress.ToString(), $"ثبت نام - {dto.Email}"))
+        {
+            return BadRequest(new
+            {
+                status = "Blocked"
             });
         }
 
@@ -103,11 +115,19 @@ public class AccountController : ControllerBase
     #region Active Account
 
     [HttpPost("Active-Account/{activeCode}")]
-    public IActionResult ActiveAccount(string activeCode)
+    public async Task<IActionResult> ActiveAccount(string activeCode)
     {
 
         if(string.IsNullOrEmpty(activeCode))
             return BadRequest();
+
+        if (await _requestService.CanUserSendRequestAsync(HttpContext.Connection.RemoteIpAddress.ToString(), $"فعال سازی"))
+        {
+            return BadRequest(new
+            {
+                status = "Blocked"
+            });
+        }
 
         AccountResult res = _accountService.ActiveAccount(activeCode);
 
@@ -147,7 +167,16 @@ public class AccountController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
+        if (await _requestService.CanUserSendRequestAsync(HttpContext.Connection.RemoteIpAddress.ToString(), $"ورود - {loginDto.Email}"))
+        {
+            return BadRequest(new
+            {
+                status = "Blocked"
+            });
+        }
+
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
         if (user != null && user.Password == Hashing.HashPassword($"{loginDto.Password}{user.Salt}"))
         {
             var jwt = _tokenService.GenerateJwtToken(user.Id);
@@ -218,7 +247,7 @@ public class AccountController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("ForgotPassword")]
-    public IActionResult ForgotPassword([FromBody] ForgotPasswordDto dto)
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
     {
         if (!ModelState.IsValid)
         {
@@ -227,6 +256,14 @@ public class AccountController : ControllerBase
                 status = "ValidationError",
                 message = "داده‌های وارد شده نامعتبر هستند.",
                 errors = ModelState
+            });
+        }
+
+        if (await _requestService.CanUserSendRequestAsync(HttpContext.Connection.RemoteIpAddress.ToString(), $"فراموشی کلمه عبور- {dto.Email}"))
+        {
+            return BadRequest(new
+            {
+                status = "Blocked"
             });
         }
 
@@ -279,7 +316,7 @@ public class AccountController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("ResetPassword")]
-    public IActionResult ResetPassword([FromBody] ResetPasswordDto dto)
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
     {
         if (!ModelState.IsValid)
         {
@@ -288,6 +325,14 @@ public class AccountController : ControllerBase
                 status = "ValidationError",
                 message = "داده‌های وارد شده نامعتبر هستند.",
                 errors = ModelState
+            });
+        }
+
+        if (await _requestService.CanUserSendRequestAsync(HttpContext.Connection.RemoteIpAddress.ToString(), $"بازیابی کلمه عبور - {dto.Email}"))
+        {
+            return BadRequest(new
+            {
+                status = "Blocked"
             });
         }
 
