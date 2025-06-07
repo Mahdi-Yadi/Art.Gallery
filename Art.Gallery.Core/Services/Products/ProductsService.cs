@@ -147,6 +147,11 @@ public class ProductsService : IProductsService
             _db.Products.Add(p);
             _db.SaveChanges();
 
+            if (dto.CategoriesId != null)
+            {
+
+            }
+
             return ProductResult.Success;
         }
         catch (Exception)
@@ -154,8 +159,26 @@ public class ProductsService : IProductsService
             return ProductResult.Error;
         }
     }
-    // Delete
-    public ProductResult DeleteProduct(string productId, string userId)
+
+    private async Task<bool> Add(long productId, List<long> selectedCategoriesId)
+    {
+        if (selectedCategoriesId != null && selectedCategoriesId.Any())
+        {
+            var productSelectedCategories = new List<ProductSelectedCategories>();
+            foreach (var categoryId in selectedCategoriesId)
+            {
+                productSelectedCategories.Add(new ProductSelectedCategories
+                {
+                    CategoryId = categoryId,
+                    ProductId = productId
+                });
+            }
+            await _db.ProductSelectedCategories.AddRangeAsync(productSelectedCategories);
+        }
+        await _db.SaveChangesAsync();
+
+// Delete
+public ProductResult DeleteProduct(string productId, string userId)
     {
         try
         {
