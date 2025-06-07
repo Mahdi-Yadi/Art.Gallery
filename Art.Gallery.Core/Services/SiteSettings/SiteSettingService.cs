@@ -29,7 +29,7 @@ public class SiteSettingService : ISiteSettingService
             site.Email = "info@technoto.org";
             site.CreateDate = DateTime.Now;
             site.UpdateDate = DateTime.Now;
-            site.Phone = 0;
+            site.Phone = "0";
             site.Name = "نام وب سایت";
             site.ImageName = "logoName.png";
 
@@ -72,10 +72,15 @@ public class SiteSettingService : ISiteSettingService
                     return SiteResult.ImageNotUploaded;
                 }
 
-                siteSetting.ImageName = imageName;
+                site.ImageName = imageName;
             }
 
-            site = siteSetting;
+            site.Text = siteSetting.Text;
+            site.Address = siteSetting.Address;
+            site.Title = siteSetting.Title;
+            site.Email = siteSetting.Email;
+            site.Phone = siteSetting.Phone;
+            site.Name = siteSetting.Name;
 
             _db.SiteSettings.Update(site);
             _db.SaveChanges();

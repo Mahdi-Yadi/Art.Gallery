@@ -40,5 +40,5 @@ public class SiteSetting : BaseEntity
     public string ImageName { get; set; }
 
     [Display(Name = "شماره تماس")]
-    public int Phone { get; set; }  
+    public string Phone { get; set; }  
 }
