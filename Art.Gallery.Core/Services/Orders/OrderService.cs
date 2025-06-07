@@ -4,7 +4,6 @@ using Art.Gallery.Data.Contexts;
 using Art.Gallery.Data.Dtos.Orders;
 using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Entities.Orders;
-using Art.Gallery.Data.Entities.Products;
 using Art.Gallery.Emails;
 using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Orders;

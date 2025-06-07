@@ -1,12 +1,10 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Core.Services.Categories;
 using Art.Gallery.Data.Dtos.Categories;
-using Art.Gallery.Data.Entities.Account;
 using Art.Gallery.Data.Entities.Categories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
-[Route("api/[controller]")]
+[Route("AdminPanel/api/[controller]")]
 [ApiController]
 public class CategoriesController : ControllerBase
 {
@@ -28,10 +26,20 @@ public class CategoriesController : ControllerBase
         var result = _categoryService.AddCategory(cat);
         return result switch
         {
-            CatResult.Success => Ok("success"),
-            CatResult.Exist => Conflict("xists"),
-            CatResult.Null => BadRequest("Category name is required."),
-            _ => StatusCode(500, "An error occurred while adding the category.")
+            CatResult.Success => Ok(new
+            {
+                status = "Success"
+            }),
+            CatResult.Exist => Conflict(
+                new
+                {
+                    status = "Exist"
+                }),
+            CatResult.Null => BadRequest(new
+            {
+                status = "name is required"
+            }),
+            _ => StatusCode(500, new { status = "error" })
         };
     }
 
@@ -44,9 +52,20 @@ public class CategoriesController : ControllerBase
         var result = _categoryService.DeleteCategory(id);
         return result switch
         {
-            CatResult.Success => Ok("success"),
-            CatResult.Null => NotFound("Category not found."),
-            _ => StatusCode(500, "An error occurred while deleting the category.")
+            CatResult.Success => Ok(new
+            {
+                status = "Success"
+            }),
+            CatResult.Exist => Conflict(
+                new
+                {
+                    status = "Exist"
+                }),
+            CatResult.Null => BadRequest(new
+            {
+                status = "name is required"
+            }),
+            _ => StatusCode(500, new { status = "error" })
         };
     }
 
@@ -81,10 +100,20 @@ public class CategoriesController : ControllerBase
         var result = _categoryService.UpdateCategory(cat);
         return result switch
         {
-            CatResult.Success => Ok("success."),
-            CatResult.Null => BadRequest("name is required"),
-            CatResult.Exist => NotFound("Category not found for update"),
-            _ => StatusCode(500, "An error occurred while updating the category.")
+            CatResult.Success => Ok(new
+            {
+                status = "Success"
+            }),
+            CatResult.Exist => Conflict(
+                new
+                {
+                    status = "Exist"
+                }),
+            CatResult.Null => BadRequest(new
+            {
+                status = "name is required"
+            }),
+            _ => StatusCode(500, new { status = "error" })
         };
     }
 }
