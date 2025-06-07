@@ -18,7 +18,6 @@ public class CategoryService : ICategoryService
 
     #region Categories
 
-
     public CatResult AddCategory(Category cat)
     {
         try

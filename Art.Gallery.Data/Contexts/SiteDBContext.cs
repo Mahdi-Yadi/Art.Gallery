@@ -19,6 +19,8 @@ public class SiteDBContext : DbContext
 
     #endregion
 
+    public DbSet<UserRequests> UserRequests { get; set; }
+
     public DbSet<User> Users { get; set; }
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
