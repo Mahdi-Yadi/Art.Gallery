@@ -21,4 +21,8 @@ public interface IAccountService
 
     Task<FilterUsersDto> FilterUsers(FilterUsersDto dto);
 
+    bool AddAdmin(string userId);
+
+    bool RemoveAdmin(string userId);
+
 }

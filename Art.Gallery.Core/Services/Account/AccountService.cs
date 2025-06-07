@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Account;
 public class AccountService : IAccountService
 {
+
+    #region Constructor
+
     private readonly SiteDBContext _db;
     private readonly IMailSender _mailSender;
     private readonly UrlProtector _urlProtector;
@@ -20,6 +23,7 @@ public class AccountService : IAccountService
         _urlProtector = urlProtector;
     }
 
+    #endregion
 
     // ثبت نام
     public AccountResult Register(RegisterDto dto)
@@ -314,6 +318,52 @@ public class AccountService : IAccountService
 
         #endregion
 
+    }
+
+    public bool AddAdmin(string userId)
+    {
+        try
+        {
+            long id = Convert.ToInt64(_urlProtector.UnProtect(userId));
+
+            var user = _db.Users.FirstOrDefault(a => a.Id == id);
+
+            if(user == null)
+                return false;
+
+            user.IsAdmin = true;
+
+            _db.Users.Update(user);
+            _db.SaveChanges();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    public bool RemoveAdmin(string userId)
+    {
+        try
+        {
+            long id = Convert.ToInt64(_urlProtector.UnProtect(userId));
+
+            var user = _db.Users.FirstOrDefault(a => a.Id == id);
+
+            if (user == null)
+                return false;
+
+            user.IsAdmin = false;
+
+            _db.Users.Update(user);
+            _db.SaveChanges();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
 }
