@@ -296,7 +296,8 @@ public class AccountService : IAccountService
             p.UserName,
             p.Email,
             p.PhoneNumber,
-            p.IsDelete
+            p.IsDelete,
+            p.CreateDate
         });
 
         var users = (await aQuery.ToListAsync()).Select(p => new UserDto()
@@ -307,7 +308,8 @@ public class AccountService : IAccountService
             PhoneNumber = p.PhoneNumber,
             IsAdmin = p.IsAdmin,
             IsActive = p.IsActive,
-            IsDelete = p.IsDelete
+            IsDelete = p.IsDelete,
+            CreateDate = p.CreateDate
         }).ToList();
 
         #region Pagination
