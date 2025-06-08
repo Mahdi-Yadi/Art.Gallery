@@ -1,5 +1,4 @@
-﻿using Art.Gallery.Data.Dtos.Artists;
-using Art.Gallery.Data.Dtos.Products;
+﻿using Art.Gallery.Data.Dtos.Products;
 namespace Art.Gallery.Core.Services.Products;
 public interface IProductsService : IAsyncDisposable
 {
@@ -18,10 +17,14 @@ public interface IProductsService : IAsyncDisposable
     ProductResult UpdateProduct(CEProductDto dto);
     // Delete Product
     ProductResult DeleteProduct(string productId,string userId);
-    // Get Last Product
+    // Get Last Products
     List<ProductDto> GetLastProducts();
-    // Get Special Product
+    // Get Special Products
     List<ProductDto> GetSpecialProducts();
+    // Get Popular Products
+    List<ProductDto> GetPopularProducts();
+    // Get Best Selling Products
+    List<ProductDto> GetBestSellingProducts();
     // Recover Product
     ProductResult RecoverProduct(string id, string artistId);
     // Active Product

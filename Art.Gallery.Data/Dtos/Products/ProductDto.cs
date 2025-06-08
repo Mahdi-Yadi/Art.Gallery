@@ -14,4 +14,5 @@ public class ProductDto
     public bool IsActive { get; set; }
     public bool IsDelete { get; set; }
 
+    public List<string> Categories { get; set; }
 }

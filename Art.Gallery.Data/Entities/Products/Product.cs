@@ -2,6 +2,8 @@
 using Art.Gallery.Data.Entities.Artists;
 using Art.Gallery.Data.Entities.Common;
 using System.ComponentModel.DataAnnotations;
+using Art.Gallery.Data.Entities.Orders;
+
 namespace Art.Gallery.Data.Entities.Products;
 public class Product : BaseEntity
 {
@@ -43,6 +45,9 @@ public class Product : BaseEntity
     [Display(Name = "وضعیت فعالیت")]
     public bool IsActive { get; set; }
 
+    [Display(Name = "بازدید")]
+    public long VisitorCount { get; set; }
+
     public long UserId { get; set; }
 
     public User User { get; set; }
@@ -53,4 +58,5 @@ public class Product : BaseEntity
 
     public ICollection<ProductSelectedCategories> ProductSelectedCategories { get; set; }
     public ICollection<ProductGallery> ProductGalleries { get; set; }
+    public ICollection<OrderDetail> OrderDetails { get; set; }
 }

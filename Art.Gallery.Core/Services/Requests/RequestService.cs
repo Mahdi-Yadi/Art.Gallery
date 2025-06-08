@@ -1,6 +1,6 @@
 ﻿using Art.Gallery.Data.Contexts;
-using Art.Gallery.Data.Dtos.Paging;
 using Art.Gallery.Data.Entities.Account;
+using Art.Gallery.Emails;
 using Microsoft.EntityFrameworkCore;
 namespace Art.Gallery.Core.Services.Requests;
 public class RequestService : IRequestService
@@ -9,10 +9,12 @@ public class RequestService : IRequestService
     #region Constructor
 
     private readonly SiteDBContext _siteDBContext;
+    private readonly IMailSender _mailSender;
 
-    public RequestService(SiteDBContext siteDbContext)
+    public RequestService(SiteDBContext siteDbContext, IMailSender mailSender)
     {
         _siteDBContext = siteDbContext;
+        _mailSender = mailSender;
     }
 
     #endregion
@@ -58,6 +60,33 @@ public class RequestService : IRequestService
             }
         }
         return recentRequestsCount.Count > 4;
+    }
+
+    private void SendSecurityEmailToAdmin(string text)
+    {
+        try
+        {
+            var users = _siteDBContext.Users.Where(a => a.IsAdmin && !a.IsDelete && a.IsActive).ToList();
+
+            MailDTO mailDTO = new MailDTO();
+
+            if (users.Count > 0)
+            {
+                mailDTO.Title = "هشدار فعالیت مشکوک";
+                mailDTO.Description = text;
+
+                foreach (var item in users)
+                {
+                    mailDTO.Email = item.Email;
+
+                    _mailSender.SendEmail(mailDTO);
+                }
+            }
+
+        }
+        catch (Exception)
+        {
+        }
     }
 
     #endregion

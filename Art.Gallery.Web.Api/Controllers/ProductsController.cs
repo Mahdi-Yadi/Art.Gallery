@@ -64,4 +64,28 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
+    // پر بازدید
+    [HttpGet("PopularProducts")]
+    public IActionResult PopularProducts()
+    {
+        var result = _productsService.GetPopularProducts();
+
+        if (result == null)
+            return null;
+
+        return Ok(result);
+    }
+
+    // پر فروش
+    [HttpGet("BestSellingProducts")]
+    public IActionResult BestSellingProducts()
+    {
+        var result = _productsService.GetBestSellingProducts();
+
+        if (result == null)
+            return null;
+
+        return Ok(result);
+    }
+
 }

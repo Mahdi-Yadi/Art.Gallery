@@ -10,7 +10,7 @@ namespace Art.Gallery.Core.Services.Products;
 public class ProductsService : IProductsService
 {
 
-    #region Products
+    #region Constructor
 
     private readonly SiteDBContext _db;
     private readonly UrlProtector _urlProtector;
@@ -22,6 +22,10 @@ public class ProductsService : IProductsService
         _urlProtector = urlProtector;
         _accountService = accountService;
     }
+
+    #endregion
+
+    #region Products
 
     // Get Last Products
     public List<ProductDto> GetLastProducts()
@@ -63,7 +67,7 @@ public class ProductsService : IProductsService
             .Where(a => !a.IsDelete && a.IsSpecial && a.IsActive)
             .OrderByDescending(p => p.CreateDate)
             .Skip(0)
-            .Take(3)
+            .Take(6)
             .Distinct()
             .ToList();
 
@@ -81,6 +85,73 @@ public class ProductsService : IProductsService
                 Price = (decimal)product.Price,
                 ImageName = PathExtension.DomainAddress +
                 PathExtension.ProductImage + product.ImageName,
+                IsSpecial = product.IsSpecial,
+            };
+            dtos.Add(a);
+        }
+
+        return dtos;
+    }
+
+    // Get Popular Products
+    public List<ProductDto> GetPopularProducts()
+
+    {
+        var p = _db.Products
+            .Where(a => !a.IsDelete && a.IsActive)
+            .OrderByDescending(p => p.VisitorCount)
+            .Skip(0)
+            .Take(6)
+            .Distinct()
+            .ToList();
+
+        if (p.Count == 0)
+            return new List<ProductDto>();
+
+        List<ProductDto> dtos = new List<ProductDto>();
+
+        foreach (var product in p)
+        {
+            var a = new ProductDto()
+            {
+                Name = product.Name,
+                Slug = product.Slug,
+                Price = (decimal)product.Price,
+                ImageName = PathExtension.DomainAddress +
+                            PathExtension.ProductImage + product.ImageName,
+                IsSpecial = product.IsSpecial,
+            };
+            dtos.Add(a);
+        }
+
+        return dtos;
+    }
+
+    // Get Best Selling Products
+    public List<ProductDto> GetBestSellingProducts()
+    {
+        var p = _db.Products
+            .Where(a => !a.IsDelete && a.IsActive)
+            .OrderByDescending(p => p.OrderDetails.Count)
+            .Skip(0)
+            .Take(6)
+            .Distinct()
+            .ToList();
+
+        if (p.Count == 0)
+            return new List<ProductDto>();
+
+        List<ProductDto> dtos = new List<ProductDto>();
+
+        foreach (var product in p)
+        {
+            var a = new ProductDto()
+            {
+                Name = product.Name,
+                Slug = product.Slug,
+                Price = (decimal)product.Price,
+                ImageName = PathExtension.DomainAddress +
+                            PathExtension.ProductImage + product.ImageName,
                 IsSpecial = product.IsSpecial,
             };
             dtos.Add(a);
@@ -159,7 +230,8 @@ public class ProductsService : IProductsService
             return ProductResult.Error;
         }
     }
-
+    
+    // Add Categories To Product
     private void AddCategoriesForProduct(long productId, List<long> selectedCategoriesId)
     {
         try
@@ -448,7 +520,7 @@ public class ProductsService : IProductsService
         return ProductResult.Error;
     }
 
-    // Get
+    // Get Product To Show
     public async Task<ProductDto> GetProduct(string Slug)
     {
         if (string.IsNullOrEmpty(Slug))
@@ -474,16 +546,38 @@ public class ProductsService : IProductsService
         dto.IsSpecial = product.IsSpecial;
         dto.ArtistSlug = product.Artist.Slug;
         dto.Id = _urlProtector.Protect(product.Id.ToString());
+        dto.Categories = _db.ProductSelectedCategories
+            .Include(a => a.Category)
+            .Where(a => a.ProductId == product.Id)
+            .Select(a => a.Category.Name)
+            .ToList();
 
         return dto;
     }
 
+    private void UpdateVisit(Product p)
+    {
+        try
+        {
+            p.VisitorCount++;
+            _db.Products.Update(p);
+            _db.SaveChanges();
+        }
+        catch (Exception)
+        {
+        }
+    }
+
     #endregion
+
+    #region Dispose
 
     public async ValueTask DisposeAsync()
     {
         if (_db != null)
             await _db.DisposeAsync();
     }
+
+    #endregion
 
 }
