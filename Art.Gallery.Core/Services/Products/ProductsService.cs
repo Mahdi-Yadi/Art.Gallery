@@ -65,7 +65,7 @@ public class ProductsService : IProductsService
     {
         var p = _db.Products
             .Where(a => !a.IsDelete && a.IsSpecial && a.IsActive)
-            .OrderByDescending(p => p.CreateDate)
+            .OrderByDescending(p => p.UpdateDate)
             .Skip(0)
             .Take(6)
             .Distinct()
@@ -80,6 +80,8 @@ public class ProductsService : IProductsService
         {
             var a = new ProductDto()
             {
+                
+                Count = product.Count,
                 Name = product.Name,
                 Slug = product.Slug,
                 Price = (decimal)product.Price,
