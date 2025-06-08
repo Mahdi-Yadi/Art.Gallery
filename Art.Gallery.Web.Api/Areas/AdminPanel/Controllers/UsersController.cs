@@ -1,7 +1,5 @@
 ﻿using Art.Gallery.Core.Services.Account;
 using Art.Gallery.Data.Dtos.Account;
-using Art.Gallery.Data.Dtos.Products;
-using Art.Gallery.Data.Entities.Account;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 [Area("AdminPanel")]
@@ -59,7 +57,7 @@ public class UsersController : ControllerBase
         if (!_accountService.IsAdmin(adminId))
             return BadRequest();
 
-        var result = _accountService.IsAdmin(userId);
+        var result = _accountService.AddAdmin(userId);
 
         return Ok(result);
     }
@@ -74,7 +72,7 @@ public class UsersController : ControllerBase
         if (!_accountService.IsAdmin(adminId))
             return BadRequest();
 
-        var result = _accountService.IsAdmin(userId);
+        var result = _accountService.RemoveAdmin(userId);
 
         return Ok(result);
     }

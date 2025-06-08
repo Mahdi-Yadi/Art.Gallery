@@ -286,26 +286,30 @@ public class AccountService : IAccountService
     public async Task<FilterUsersDto> FilterUsers(FilterUsersDto dto)
     {
         var query = _db.Users
-            .Include(a => a.Orders)
-            .ThenInclude(a => a.OrderDetails)
-            .Include(a => a.Artists)
             .AsQueryable();
 
         var aQuery = query.Select(p => new
         {
             p.Id,
+            p.IsActive,
+            p.IsAdmin,
             p.UserName,
             p.Email,
             p.PhoneNumber,
-            p.IsDelete
+            p.IsDelete,
+            p.CreateDate
         });
 
-        var users = (await aQuery.ToListAsync()).Select(p => new User()
+        var users = (await aQuery.ToListAsync()).Select(p => new UserDto()
         {
-            Id = p.Id,
+            Id = _urlProtector.Protect(p.Id.ToString()),
             UserName = p.UserName,
             Email = p.Email,
             PhoneNumber = p.PhoneNumber,
+            IsAdmin = p.IsAdmin,
+            IsActive = p.IsActive,
+            IsDelete = p.IsDelete,
+            CreateDate = p.CreateDate
         }).ToList();
 
         #region Pagination

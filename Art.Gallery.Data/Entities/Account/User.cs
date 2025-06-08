@@ -2,7 +2,6 @@
 using Art.Gallery.Data.Entities.Artists;
 using Art.Gallery.Data.Entities.Common;
 using Art.Gallery.Data.Entities.Orders;
-
 namespace Art.Gallery.Data.Entities.Account;
 public class User : BaseEntity
 {
