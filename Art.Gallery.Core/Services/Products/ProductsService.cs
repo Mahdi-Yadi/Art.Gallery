@@ -80,7 +80,7 @@ public class ProductsService : IProductsService
         {
             var a = new ProductDto()
             {
-                
+
                 Count = product.Count,
                 Name = product.Name,
                 Slug = product.Slug,
@@ -177,7 +177,7 @@ public class ProductsService : IProductsService
 
             DateTime curentTime = DateTime.Now;
 
-            var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
+            p.Slug = dto.Slug + "-" + curentTime.ToString("yyyyMMdd");
 
             if (dto.ImageFile != null)
             {
@@ -186,7 +186,7 @@ public class ProductsService : IProductsService
                     return ProductResult.ImageLarge;
                 }
 
-                var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
+                var imageName = TextFixer.FixTextForUrl(p.Slug) + Path.GetExtension(dto.ImageFile.FileName);
 
                 var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
                     300, 300, PathExtension.ProductImageThumbServer, null);
@@ -206,8 +206,6 @@ public class ProductsService : IProductsService
 
             p.Name = san.Sanitize(dto.Name);
             p.Description = san.Sanitize(dto.Description);
-            // slug with date
-            p.Slug = san.Sanitize(newName);
             p.IsSpecial = dto.IsSpecial;
             p.Count = dto.Count;
             p.Price = dto.Price;
@@ -232,7 +230,7 @@ public class ProductsService : IProductsService
             return ProductResult.Error;
         }
     }
-    
+
     // Add Categories To Product
     private void AddCategoriesForProduct(long productId, List<long> selectedCategoriesId)
     {
@@ -421,7 +419,10 @@ public class ProductsService : IProductsService
 
             DateTime curentTime = DateTime.Now;
 
-            var newName = dto.Slug + "-" + curentTime.ToString("yyyyMMddHHmmss");
+            if (p.Slug != dto.Slug)
+            {
+                p.Slug = dto.Slug + "-" + curentTime.ToString("yyyyMMdd");
+            }
 
             if (dto.ImageFile != null)
             {
@@ -430,7 +431,7 @@ public class ProductsService : IProductsService
                     return ProductResult.ImageLarge;
                 }
 
-                var imageName = TextFixer.FixTextForUrl(newName) + Path.GetExtension(dto.ImageFile.FileName);
+                var imageName = TextFixer.FixTextForUrl(p.Slug) + Path.GetExtension(dto.ImageFile.FileName);
 
                 var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.ProductImageServer,
                     300, 300, PathExtension.ProductImageThumbServer, null);
@@ -446,7 +447,6 @@ public class ProductsService : IProductsService
             p.Name = san.Sanitize(dto.Name);
             p.Count = dto.Count;
             p.Price = dto.Price;
-            p.Slug = san.Sanitize(newName);
             p.Description = san.Sanitize(dto.Description);
             p.UpdateDate = DateTime.Now;
             p.IsActive = false;
