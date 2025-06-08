@@ -8,16 +8,18 @@ public class SiteSettingService : ISiteSettingService
 {
 
     private readonly SiteDBContext _db;
+    private readonly UrlProtector _urlProtector;
 
-    public SiteSettingService(SiteDBContext siteDB)
+    public SiteSettingService(SiteDBContext db, UrlProtector urlProtector)
     {
-        _db = siteDB;
+        _db = db;
+        _urlProtector = urlProtector;
     }
 
-    public SiteSetting GetSiteSetting()
+    public SiteDto GetSiteSetting()
     {
 
-        var siteSetting = _db.SiteSettings.FirstOrDefault(a => a.IsDelete == false);
+        var siteSetting = _db.SiteSettings.FirstOrDefault(a => !a.IsDelete);
 
         if (siteSetting == null)
         {
@@ -39,32 +41,44 @@ public class SiteSettingService : ISiteSettingService
             siteSetting = site;
         }
 
-        siteSetting.ImageName = PathExtension.DomainAddress + PathExtension.SiteImage + siteSetting.ImageName;
+        SiteDto dto = new SiteDto();
 
-        return siteSetting;
+        dto.Id = _urlProtector.Protect(siteSetting.Id.ToString());
+        dto.Title = siteSetting.Title;
+        dto.Address = siteSetting.Address;
+        dto.Email = siteSetting.Email;
+        dto.Phone = siteSetting.Phone;
+        dto.Text = siteSetting.Text;
+        dto.Name = siteSetting.Name;
+        dto.ImageName = PathExtension.DomainAddress + PathExtension.SiteImage + siteSetting.ImageName;
+
+        return dto;
     }
 
-    public SiteResult UpdateSiteSetting(SiteSetting siteSetting, IFormFile logoFile)
+    public SiteResult UpdateSiteSetting(SiteDto dto)
     {
         try
         {
-            var site = _db.SiteSettings.FirstOrDefault(a => a.Id == siteSetting.Id);
+            long siteId = Convert.ToInt64(_urlProtector.UnProtect(dto.Id));
+
+            var site = _db.SiteSettings.FirstOrDefault(a => a.Id == siteId);
 
             if (site == null)
             {
-                site = GetSiteSetting();
+                GetSiteSetting();
+                site = _db.SiteSettings.FirstOrDefault(a => !a.IsDelete);
             }
 
-            if(logoFile != null)
+            if (dto.ImageFile != null)
             {
-                if (logoFile.Length > 10100000)
+                if (dto.ImageFile.Length > 10100000)
                 {
                     return SiteResult.ImageLarge;
                 }
 
-                var imageName = TextFixer.FixTextForUrl(site.Name) + Path.GetExtension(logoFile.FileName);
+                var imageName = TextFixer.FixTextForUrl(dto.Name) + Path.GetExtension(dto.ImageFile.FileName);
 
-                var res = logoFile.AddImageToServer(imageName, PathExtension.SiteImageServer,
+                var res = dto.ImageFile.AddImageToServer(imageName, PathExtension.SiteImageServer,
                     null, null, null, null);
 
                 if (!res)
@@ -75,12 +89,12 @@ public class SiteSettingService : ISiteSettingService
                 site.ImageName = imageName;
             }
 
-            site.Text = siteSetting.Text;
-            site.Address = siteSetting.Address;
-            site.Title = siteSetting.Title;
-            site.Email = siteSetting.Email;
-            site.Phone = siteSetting.Phone;
-            site.Name = siteSetting.Name;
+            site.Text = dto.Text;
+            site.Address = dto.Address;
+            site.Title = dto.Title;
+            site.Email = dto.Email;
+            site.Phone = dto.Phone;
+            site.Name = dto.Name;
 
             _db.SiteSettings.Update(site);
             _db.SaveChanges();

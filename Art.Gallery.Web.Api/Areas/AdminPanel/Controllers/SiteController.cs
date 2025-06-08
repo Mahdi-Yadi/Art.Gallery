@@ -30,12 +30,12 @@ public class SiteController : ControllerBase
     }
 
     [HttpPost("UpdateSiteSetting/{userId}")]
-    public IActionResult UpdateSiteSetting([FromForm] SiteSetting site,IFormFile logoFile,string userId)
+    public IActionResult UpdateSiteSetting([FromForm] SiteDto dto,string userId)
     {
         if (!_accountService.IsAdmin(userId))
             return BadRequest();
 
-        SiteResult result = _siteSettingService.UpdateSiteSetting(site,logoFile);
+        SiteResult result = _siteSettingService.UpdateSiteSetting(dto);
 
         switch (result)
         {
