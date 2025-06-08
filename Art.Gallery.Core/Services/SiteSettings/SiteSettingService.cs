@@ -48,7 +48,7 @@ public class SiteSettingService : ISiteSettingService
     {
         try
         {
-            var site = _db.SiteSettings.FirstOrDefault(a => a.IsDelete == false);
+            var site = _db.SiteSettings.FirstOrDefault(a => a.Id == siteSetting.Id);
 
             if (site == null)
             {
