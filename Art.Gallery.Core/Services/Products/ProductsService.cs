@@ -167,17 +167,23 @@ public class ProductsService : IProductsService
             if (selectedCategoriesId != null && selectedCategoriesId.Any())
             {
                 var cats = _db.ProductSelectedCategories.Where(a => a.ProductId == productId).ToList();
-                if(cats != null)
+                if (cats.Count != 0)
                     _db.ProductSelectedCategories.RemoveRange(cats);
 
-                var productSelectedCategories = new List<ProductSelectedCategories>();
+                List<ProductSelectedCategories> productSelectedCategories = new List<ProductSelectedCategories>();
                 foreach (var categoryId in selectedCategoriesId)
                 {
-                    productSelectedCategories.Add(new ProductSelectedCategories
+                    if (categoryId != 0 && productId != 0)
                     {
-                        CategoryId = categoryId,
-                        ProductId = productId
-                    });
+                        ProductSelectedCategories psc = new ProductSelectedCategories
+                        {
+                            CategoryId = categoryId,
+                            ProductId = productId,
+                            CreateDate = DateTime.Now,
+                            UpdateDate = DateTime.Now
+                        };
+                        productSelectedCategories.Add(psc);
+                    }
                 }
 
                 _db.ProductSelectedCategories.AddRange(productSelectedCategories);
@@ -311,11 +317,16 @@ public class ProductsService : IProductsService
         dto.ImageName = PathExtension.DomainAddress +
                 PathExtension.ProductImage + p.ImageName;
         dto.Price = p.Price;
+        dto.ArtistId = _urlProtector.Protect(p.ArtistId.ToString());
+        dto.UserId = _urlProtector.Protect(p.UserId.ToString());
         dto.Description = p.Description;
         dto.IsSpecial = p.IsSpecial;
         dto.Count = p.Count;
-        dto.CategoriesId = (List<long>)_db.ProductSelectedCategories.Where(a => a.ProductId == p.Id).ToList().Select(a => a.CategoryId);
-        
+        dto.CategoriesId = _db.ProductSelectedCategories
+            .Where(a => a.ProductId == p.Id)
+            .Select(a => a.CategoryId)
+            .ToList();
+
         return dto;
     }
 

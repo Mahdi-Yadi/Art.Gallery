@@ -1,4 +1,5 @@
-﻿using Art.Gallery.Core.Services.Products;
+﻿using Art.Gallery.Core.Services.Categories;
+using Art.Gallery.Core.Services.Products;
 using Art.Gallery.Data.Dtos.Products;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
@@ -9,10 +10,12 @@ public class ProductsController : ControllerBase
 {
 
     private readonly IProductsService _productService;
+    private readonly ICategoryService _categoryService;
 
-    public ProductsController(IProductsService productService)
+    public ProductsController(IProductsService productService, ICategoryService categoryService)
     {
         _productService = productService;
+        _categoryService = categoryService;
     }
 
     [HttpPost("AddProduct")]
@@ -197,4 +200,12 @@ public class ProductsController : ControllerBase
         
         return Ok(result);
     }
+
+    [HttpGet("GetCategories")]
+    public IActionResult GetCategories()
+    {
+        var categories = _categoryService.GetCategories();
+        return Ok(categories);
+    }
+
 }
