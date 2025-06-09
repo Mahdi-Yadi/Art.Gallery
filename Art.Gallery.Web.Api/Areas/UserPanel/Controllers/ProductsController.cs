@@ -201,6 +201,17 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("AllFilterProducts")]
+    public async Task<IActionResult> AllFilterProducts([FromBody] FilterProductsDto dto)
+    {
+        if (string.IsNullOrEmpty(dto.UserId))
+            return BadRequest();
+
+        var result = await _productService.FilterProductsAsync(dto);
+
+        return Ok(result);
+    }
+
     [HttpGet("GetCategories")]
     public IActionResult GetCategories()
     {
