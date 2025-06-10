@@ -18,6 +18,8 @@ public class ProductsController : ControllerBase
     [HttpGet("Products")]
     public async Task<ActionResult<FilterProductsDto>> Products([FromQuery] FilterProductsDto dto)
     {
+        dto.IsActive = true;
+
         var result = await _productsService.FilterProductsAsync(dto);
 
         if (dto.PageId > result.PageCount && result.PageCount != 0)

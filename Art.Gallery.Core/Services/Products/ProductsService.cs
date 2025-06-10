@@ -287,6 +287,7 @@ public class ProductsService : IProductsService
             // update
 
             p.IsDelete = true;
+            p.IsActive = false;
 
             _db.Products.Update(p);
             _db.SaveChanges();
@@ -307,6 +308,10 @@ public class ProductsService : IProductsService
             .Include(c => c.Artist)
             .AsQueryable();
 
+        if (dto.IsActive)
+            query = query.Where(s => s.IsActive);
+
+
         if (!string.IsNullOrEmpty(dto.Name))
             query = query.Where(s => EF.Functions.Like(s.Name, $"%{dto.Name}%"));
 
@@ -316,7 +321,7 @@ public class ProductsService : IProductsService
         if (!string.IsNullOrEmpty(dto.ArtistId))
             query = query.Where(s => s.ArtistId == Convert.ToInt64(_urlProtector.UnProtect(dto.ArtistId)));
 
-        if (dto.UserId != null)
+        if (!string.IsNullOrEmpty(dto.UserId))
             if (!_accountService.IsAdmin(dto.UserId))
             {
                 long id = Convert.ToInt64(_urlProtector.UnProtect(dto.UserId));
