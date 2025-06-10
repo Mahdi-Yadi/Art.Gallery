@@ -558,6 +558,12 @@ public class ProductsService : IProductsService
             .Where(a => a.ProductId == product.Id)
             .Select(a => a.Category.Name)
             .ToList();
+        dto.ArtistSlug = product.Artist.Slug;
+        dto.ArtistName = product.Artist.Name;
+        dto.ArtistImageName =
+            PathExtension.DomainAddress + 
+            PathExtension.ArtistImage +
+            product.Artist.ImageName;
 
         return dto;
     }
