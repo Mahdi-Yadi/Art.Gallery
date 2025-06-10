@@ -14,21 +14,29 @@ public class ProductsController : ControllerBase
         _productsService = productsService;
     }
 
-    // لیست کل محصولات
-    [HttpGet("Products")]
-    public async Task<ActionResult<FilterProductsDto>> Products([FromQuery] FilterProductsDto dto)
+    [HttpPost("FilterProducts")]
+    public async Task<IActionResult> FilterProducts([FromBody] FilterProductsDto dto)
     {
         dto.IsActive = true;
-
         var result = await _productsService.FilterProductsAsync(dto);
-
-        if (dto.PageId > result.PageCount && result.PageCount != 0)
-        {
-            return BadRequest($"شماره صفحه {dto.PageId} خارج از محدوده است. حداکثر صفحه {result.PageCount}.");
-        }
 
         return Ok(result);
     }
+    // لیست کل محصولات
+    //[HttpPost("Products")]
+    //public async Task<ActionResult<FilterProductsDto>> Products([FromQuery] FilterProductsDto dto)
+    //{
+    //    dto.IsActive = true;
+
+    //    var result = await _productsService.FilterProductsAsync(dto);
+
+    //    //if (dto.PageId > result.PageCount && result.PageCount != 0)
+    //    //{
+    //    //    return BadRequest($"شماره صفحه {dto.PageId} خارج از محدوده است. حداکثر صفحه {result.PageCount}.");
+    //    //}
+
+    //    return Ok(result);
+    //}
 
      // محصول
     [HttpGet("Product")]
