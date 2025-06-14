@@ -12,17 +12,12 @@ public class OrderService : IOrderService
 
     private readonly SiteDBContext _db;
     private readonly UrlProtector _urlProtector;
-    private readonly IAccountService _accountService;
     private readonly IMailSender _mailSender;
 
-    public OrderService(SiteDBContext db,
-        UrlProtector urlProtector,
-        IAccountService accountService,
-        IMailSender mailSender)
+    public OrderService(SiteDBContext db, UrlProtector urlProtector, IMailSender mailSender)
     {
         _db = db;
         _urlProtector = urlProtector;
-        _accountService = accountService;
         _mailSender = mailSender;
     }
 
@@ -256,34 +251,39 @@ public class OrderService : IOrderService
         dto.OrderId = orderId;
         dto.PaymentCode = o.PaymentCode;
         dto.IsComplete = o.IsComplete;
-        if (o.OrderDetails.Count > 0 && o.PaymentCode == null)
+        if (o.OrderDetails.Count > 0)
         {
             dto.Sum = 0;
             foreach (var item in o.OrderDetails)
             {
-                dto.Sum += (float)(item.Count * item.Product.Price);
-                var od = new OrderDetailDto()
+                if (o.PaymentCode == null)
                 {
-                    Count = item.Count,
-                    OrderDetailId = _urlProtector.Protect(item.Id.ToString()),
-                    Price = (decimal)item.Product.Price,
-                    ProductId = _urlProtector.Protect(item.ProductId.ToString()),
-                    ProductName = item.Product.Name,
-                    ProductImage = PathExtension.DomainAddress +
-                    PathExtension.ProductImage +
-                    item.Product.ImageName,
-                    Slug = item.Product.Slug,
-                };
+                    dto.Sum += (float)(item.Count * item.Product.Price);
+                }
+                else
+                {
+                    dto.Sum = o.Sum;
+                }
+
+                OrderDetailDto od = new OrderDetailDto();
+
+                od.Count = item.Count;
+                od.OrderDetailId = _urlProtector.Protect(item.Id.ToString());
+                od.Price = (decimal)item.Product.Price;
+                od.ProductId = _urlProtector.Protect(item.ProductId.ToString());
+                od.ProductName = item.Product.Name;
+                od.ProductImage = PathExtension.DomainAddress +
+                                  PathExtension.ProductImage +
+                                  item.Product.ImageName;
+                od.Slug = item.Product.Slug;
                 orderDetails.Add(od);
             }
         }
-        else
-        {
-            dto.Sum = o.Sum;
-        }
+
         dto.CreateDate = o.CreateDate;
         dto.UserName = o.User.UserName;
         dto.OrderDetailsDto = orderDetails;
+
         return dto;
     }
 
