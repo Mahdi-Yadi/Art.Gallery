@@ -4,15 +4,15 @@ using Art.Gallery.Data.Dtos.Orders;
 using Microsoft.AspNetCore.Mvc;
 namespace Art.Gallery.Web.Api.Areas.AdminPanel.Controllers;
 [Area("AdminPanel")]
-[Route("AdminPanel/api/[controller]")]
 [ApiController]
+[Route("AdminPanel/api/[controller]")]
 public class OrdersController : ControllerBase
 {
-    readonly IOrderService _orderService;
-    readonly IAccountService _accountService;
+    private readonly IOrderService _orderService;
+    private readonly IAccountService _accountService;
 
     public OrdersController(IOrderService orderService,
-        AccountService accountService)
+        IAccountService accountService)
     {
         _orderService = orderService;
         _accountService = accountService;
@@ -29,11 +29,15 @@ public class OrdersController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("GetOrder/{orderId}")]
-    public IActionResult FilterOrders(long orderId)
+    [HttpPost("Get-Order/{userId}/{orderId}")]
+    public IActionResult GetOrder(string userId,long orderId)
     {
         if (orderId == 0)
             return BadRequest(ModelState);
+
+        if (!_accountService.IsAdmin(userId))
+            return BadRequest();
+
 
         OrderDto result = _orderService.GetOrder(orderId);
 

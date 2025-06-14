@@ -13,12 +13,10 @@ namespace Art.Gallery.Web.Api.Areas.UserPanel.Controllers;
 public class OrdersController : ControllerBase
 {
     readonly IOrderService _orderService;
-    private readonly IOnlinePayment _onlinePayment;
 
-    public OrdersController(IOrderService orderService, IOnlinePayment onlinePayment)
+    public OrdersController(IOrderService orderService)
     {
         _orderService = orderService;
-        _onlinePayment = onlinePayment;
     }
 
     [HttpPost("AddProductToOrder")]

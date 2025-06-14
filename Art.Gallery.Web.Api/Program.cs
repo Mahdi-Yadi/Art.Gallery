@@ -104,8 +104,7 @@ builder.Services.AddAuthentication(options =>
     });
 
 // Services
-// Account
-builder.Services.AddTransient<IAccountService, AccountService>();
+
 // Mail
 builder.Services.AddTransient<IMailSender, MailSender>();
 // render view
@@ -125,6 +124,8 @@ builder.Services.AddTransient<IArtistService, ArtistService>();
 // Site Setting
 builder.Services.AddTransient<ISiteSettingService, SiteSettingService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+// Account
+builder.Services.AddScoped<IAccountService, AccountService>();
 //builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "clientapp/dist"; });
 
 var app = builder.Build();
